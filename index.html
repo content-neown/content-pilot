@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ContentPilot — Login</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    body{display:flex;align-items:center;justify-content:center;min-height:100vh;position:relative;overflow:hidden}
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.18;pointer-events:none}
+    .orb-1{width:500px;height:500px;background:var(--accent);top:-100px;left:-100px}
+    .orb-2{width:400px;height:400px;background:var(--accent3);bottom:-100px;right:-50px}
+    .orb-3{width:300px;height:300px;background:var(--pink);top:50%;left:60%}
+    .auth-container{position:relative;z-index:1;width:100%;max-width:460px;padding:20px}
+    .auth-logo{text-align:center;margin-bottom:32px}
+    .auth-logo h1{font-size:32px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .auth-logo p{color:var(--text3);font-size:14px;margin-top:4px}
+    .auth-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,0.4);animation:fadeIn 0.5s ease}
+    .auth-tabs{display:flex;background:var(--bg3);border-radius:var(--radius-sm);padding:4px;margin-bottom:28px}
+    .auth-tab{flex:1;padding:10px;text-align:center;font-size:14px;font-weight:600;color:var(--text3);border-radius:6px;cursor:pointer;transition:all 0.2s;border:none;background:none}
+    .auth-tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 12px rgba(108,99,255,0.4)}
+    .auth-form{display:none}.auth-form.active{display:block}
+    .auth-form h2{font-size:22px;margin-bottom:6px}
+    .auth-form p.subtitle{color:var(--text3);font-size:14px;margin-bottom:24px}
+    .auth-submit{width:100%;padding:13px;border-radius:var(--radius-sm);font-size:15px;font-weight:700;background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border:none;cursor:pointer;transition:all 0.2s;margin-top:4px}
+    .auth-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(108,99,255,0.45)}
+    .auth-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+    .error-msg{background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.3);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:16px;display:none}
+    .error-msg.show{display:block}
+    .success-msg{background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--green);margin-bottom:16px;display:none}
+    .success-msg.show{display:block}
+    .input-wrapper{position:relative}
+    .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px;pointer-events:none}
+    .input-wrapper .input-field{padding-left:42px}
+    .password-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+    .features-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:28px}
+    .feature-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)}
+    .feature-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+  </style>
+</head>
+<body>
+  <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+  <div class="auth-container">
+    <div class="auth-logo">
+      <h1>ContentPilot</h1>
+      <p>Your all-in-one content operations platform</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+      <div class="auth-form active" id="login-form">
+        <h2>Welcome back 👋</h2>
+        <p class="subtitle">Sign in to your ContentPilot account</p>
+        <div class="error-msg" id="login-error"></div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="input-wrapper"><span class="input-icon">✉</span><input type="email" class="input-field" id="login-email" placeholder="you@company.com"/></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrapper"><span class="input-icon">🔒</span><input type="password" class="input-field" id="login-password" placeholder="Your password"/><button class="password-toggle" onclick="togglePwd('login-password',this)">👁</button></div>
+        </div>
+        <button class="auth-submit" id="login-btn" onclick="handleLogin()">Sign In →</button>
+        <p style="text-align:center;font-size:13px;color:var(--text3);margin-top:16px">No account? <a onclick="switchTab('signup')" style="color:var(--accent2);cursor:pointer;font-weight:600">Sign up free</a></p>
+      </div>
+      <div class="auth-form" id="signup-form">
+        <h2>Create account ✨</h2>
+        <p class="subtitle">Start managing your content like a pro</p>
+        <div class="error-msg" id="signup-error"></div>
+        <div class="success-msg" id="signup-success"></div>
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <div class="input-wrapper"><span class="input-icon">👤</span><input type="text" class="input-field" id="signup-name" placeholder="Your full name"/></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="input-wrapper"><span class="input-icon">✉</span><input type="email" class="input-field" id="signup-email" placeholder="you@company.com"/></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrapper"><span class="input-icon">🔒</span><input type="password" class="input-field" id="signup-password" placeholder="Min 6 characters"/><button class="password-toggle" onclick="togglePwd('signup-password',this)">👁</button></div>
+        </div>
+        <button class="auth-submit" id="signup-btn" onclick="handleSignup()">Create Account →</button>
+        <div class="features-list">
+          <div class="feature-item"><div class="feature-dot"></div>AI Copywriter</div>
+          <div class="feature-item"><div class="feature-dot" style="background:var(--accent3)"></div>Content Calendar</div>
+          <div class="feature-item"><div class="feature-dot" style="background:var(--green)"></div>Content Bank</div>
+          <div class="feature-item"><div class="feature-dot" style="background:var(--pink)"></div>Performance</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+  <script>
+    window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    (async()=>{ const {data:{session}}=await window._sb.auth.getSession(); if(session) window.location.href='dashboard.html'; })();
+    function switchTab(tab){
+      document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup')));
+      document.getElementById('login-form').classList.toggle('active',tab==='login');
+      document.getElementById('signup-form').classList.toggle('active',tab==='signup');
+    }
+    function togglePwd(id,btn){const input=document.getElementById(id);input.type=input.type==='password'?'text':'password';btn.textContent=input.type==='password'?'👁':'🙈';}
+    function showError(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),5000);}
+    function setBtn(id,loading){const b=document.getElementById(id);b.disabled=loading;b.textContent=loading?'Please wait...':(id==='login-btn'?'Sign In →':'Create Account →');}
+    async function handleLogin(){
+      const email=document.getElementById('login-email').value.trim();
+      const password=document.getElementById('login-password').value;
+      if(!email||!password)return showError('login-error','Please fill in all fields');
+      setBtn('login-btn',true);
+      const r=await Auth.login(email,password);
+      setBtn('login-btn',false);
+      if(r.success)window.location.href='dashboard.html';
+      else showError('login-error',r.error);
+    }
+    async function handleSignup(){
+      const name=document.getElementById('signup-name').value.trim();
+      const email=document.getElementById('signup-email').value.trim();
+      const password=document.getElementById('signup-password').value;
+      if(!name||!email||!password)return showError('signup-error','Please fill in all fields');
+      if(password.length<6)return showError('signup-error','Password must be at least 6 characters');
+      setBtn('signup-btn',true);
+      const r=await Auth.signup(name,email,password);
+      setBtn('signup-btn',false);
+      if(r.success){
+        if(r.needsConfirmation){const el=document.getElementById('signup-success');el.textContent='✅ Check your email to confirm your account, then sign in!';el.classList.add('show');}
+        else window.location.href='dashboard.html';
+      } else showError('signup-error',r.error);
+    }
+    document.addEventListener('keydown',e=>{if(e.key==='Enter'){document.getElementById('login-form').classList.contains('active')?handleLogin():handleSignup();}});
+  </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ContentPilot — Dashboard</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    .dash-nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+    .user-chip{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:40px;padding:6px 14px 6px 6px;cursor:pointer;transition:all 0.2s}
+    .user-chip:hover{border-color:var(--accent)}
+    .user-chip .avatar{width:28px;height:28px;font-size:12px}
+    .user-chip span{font-size:13px;font-weight:600}
+    .dashboard-body{min-height:calc(100vh - 65px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;background:radial-gradient(ellipse at 50% 0%,rgba(108,99,255,0.06) 0%,transparent 60%)}
+    .dash-header{text-align:center;margin-bottom:60px}
+    .dash-header h1{font-size:42px;font-weight:700;line-height:1.2}
+    .dash-header h1 span{background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .dash-header p{color:var(--text3);font-size:16px;margin-top:12px}
+    .widgets-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;width:100%;max-width:860px}
+    .widget-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 32px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;animation:fadeIn 0.5s ease forwards;opacity:0;text-decoration:none;display:block}
+    .widget-card:nth-child(1){animation-delay:0.05s}.widget-card:nth-child(2){animation-delay:0.1s}.widget-card:nth-child(3){animation-delay:0.15s}.widget-card:nth-child(4){animation-delay:0.2s}
+    .widget-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;border-radius:20px}
+    .widget-card:hover{transform:translateY(-4px);border-color:transparent;box-shadow:0 20px 50px rgba(0,0,0,0.3)}
+    .widget-card:hover::before{opacity:1}
+    .widget-card.purple::before{background:linear-gradient(135deg,rgba(108,99,255,0.1),rgba(139,92,246,0.05))}
+    .widget-card.blue::before{background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(99,179,237,0.05))}
+    .widget-card.green::before{background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(16,185,129,0.05))}
+    .widget-card.pink::before{background:linear-gradient(135deg,rgba(244,114,182,0.1),rgba(236,72,153,0.05))}
+    .widget-card:hover .widget-icon{transform:scale(1.1) rotate(-5deg)}
+    .widget-icon{font-size:44px;margin-bottom:20px;display:block;transition:transform 0.3s;position:relative;z-index:1}
+    .widget-title{font-size:22px;font-weight:700;margin-bottom:10px;position:relative;z-index:1}
+    .widget-desc{font-size:14px;color:var(--text3);line-height:1.6;position:relative;z-index:1}
+    .widget-arrow{position:absolute;bottom:28px;right:28px;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:0;transform:translateX(-8px);transition:all 0.3s}
+    .widget-card:hover .widget-arrow{opacity:1;transform:translateX(0)}
+    .widget-card.purple .widget-arrow{background:rgba(108,99,255,0.2);color:var(--accent2)}
+    .widget-card.blue .widget-arrow{background:rgba(56,189,248,0.2);color:var(--accent3)}
+    .widget-card.green .widget-arrow{background:rgba(52,211,153,0.2);color:var(--green)}
+    .widget-card.pink .widget-arrow{background:rgba(244,114,182,0.2);color:var(--pink)}
+    .widget-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px;position:relative;z-index:1}
+    .tag-purple-bg{background:rgba(108,99,255,0.15);color:var(--accent2)}
+    .tag-blue-bg{background:rgba(56,189,248,0.15);color:var(--accent3)}
+    .tag-green-bg{background:rgba(52,211,153,0.15);color:var(--green)}
+    .tag-pink-bg{background:rgba(244,114,182,0.15);color:var(--pink)}
+    .quick-stats{display:flex;gap:32px;margin-top:48px;color:var(--text3);font-size:13px}
+    .quick-stats span{display:flex;align-items:center;gap:6px}
+    .stat-dot{width:8px;height:8px;border-radius:50%}
+  </style>
+</head>
+<body>
+  <nav class="dash-nav">
+    <div class="nav-logo">ContentPilot</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="user-chip">
+        <div class="avatar" id="user-avatar">?</div>
+        <span id="user-name">Loading...</span>
+      </div>
+      <button class="btn-ghost" onclick="Auth.logout()">Sign Out</button>
+    </div>
+  </nav>
+  <main class="dashboard-body">
+    <div class="dash-header">
+      <h1>Hello, <span id="greeting-name">there</span> 👋</h1>
+      <p>What would you like to work on today?</p>
+    </div>
+    <div class="widgets-grid">
+      <a href="copywriter.html" class="widget-card purple">
+        <span class="widget-icon">✍️</span>
+        <div class="widget-tag tag-purple-bg">AI Powered</div>
+        <div class="widget-title">Copywriter</div>
+        <div class="widget-desc">Generate scripts, captions, and copy for any platform with AI. Set tone, format, language, and more.</div>
+        <div class="widget-arrow">→</div>
+      </a>
+      <a href="calendar.html" class="widget-card blue">
+        <span class="widget-icon">📅</span>
+        <div class="widget-tag tag-blue-bg">Planning</div>
+        <div class="widget-title">Content Calendar</div>
+        <div class="widget-desc">Plan and track all your content. Kanban, list, calendar, and block views with team collaboration.</div>
+        <div class="widget-arrow">→</div>
+      </a>
+      <a href="bank.html" class="widget-card green">
+        <span class="widget-icon">🗂️</span>
+        <div class="widget-tag tag-green-bg">Repository</div>
+        <div class="widget-title">Content Bank</div>
+        <div class="widget-desc">Store and organize your content ideas, scripts, and assets in one searchable repository.</div>
+        <div class="widget-arrow">→</div>
+      </a>
+      <a href="performance.html" class="widget-card pink">
+        <span class="widget-icon">📊</span>
+        <div class="widget-tag tag-pink-bg">Analytics</div>
+        <div class="widget-title">Performance</div>
+        <div class="widget-desc">Track KPIs and metrics for your live content. Understand what's working and what's not.</div>
+        <div class="widget-arrow">→</div>
+      </a>
+    </div>
+    <div class="quick-stats">
+      <span><div class="stat-dot" style="background:var(--accent)"></div><span id="stat-tasks">— tasks</span></span>
+      <span><div class="stat-dot" style="background:var(--green)"></div><span id="stat-live">— live</span></span>
+      <span><div class="stat-dot" style="background:var(--orange)"></div><span id="stat-progress">— in progress</span></span>
+      <span><div class="stat-dot" style="background:var(--pink)"></div><span id="stat-bank">— in bank</span></span>
+    </div>
+  </main>
+  <div id="global-toast" class="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+  <script>
+    window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    (async () => {
+      const user = await Auth.requireAuth();
+      if (!user) return;
+      document.getElementById('user-avatar').textContent = user.avatar;
+      document.getElementById('user-name').textContent = user.name;
+      document.getElementById('greeting-name').textContent = user.name.split(' ')[0];
+      // Load stats
+      const [tasks, bankItems] = await Promise.all([DB.getTasks(), DB.getBankItems()]);
+      document.getElementById('stat-tasks').textContent = tasks.length + ' tasks';
+      document.getElementById('stat-live').textContent = tasks.filter(t=>t.status==='live').length + ' live';
+      document.getElementById('stat-progress').textContent = tasks.filter(t=>t.status==='in-progress').length + ' in progress';
+      document.getElementById('stat-bank').textContent = bankItems.length + ' in bank';
+    })();
+  </script>
+</body>
+</html>

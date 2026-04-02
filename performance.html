@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ContentPilot — Performance</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    .top-nav { flex-shrink: 0; }
+    .perf-layout { display: flex; flex: 1; overflow: hidden; }
+
+    .perf-sidebar {
+      width: 220px; flex-shrink: 0; background: var(--bg2);
+      border-right: 1px solid var(--border); padding: 16px 10px;
+      overflow-y: auto; display: flex; flex-direction: column; gap: 2px;
+    }
+    .sidebar-logo { padding: 8px 10px 16px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+
+    .perf-main { flex: 1; overflow-y: auto; padding: 28px; }
+
+    /* KPI Cards */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .kpi-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px; position: relative; overflow: hidden;
+    }
+    .kpi-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    }
+    .kpi-card.purple::after { background: var(--accent); }
+    .kpi-card.blue::after { background: var(--accent3); }
+    .kpi-card.green::after { background: var(--green); }
+    .kpi-card.orange::after { background: var(--orange); }
+    .kpi-card.pink::after { background: var(--pink); }
+    .kpi-label { font-size: 12px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .kpi-value { font-size: 28px; font-family: 'Clash Display', sans-serif; font-weight: 700; }
+    .kpi-change { font-size: 12px; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+    .kpi-change.up { color: var(--green); }
+    .kpi-change.down { color: var(--red); }
+
+    /* Performance Table */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-header h3 { font-size: 18px; }
+
+    .perf-table { width: 100%; border-collapse: collapse; }
+    .perf-table th {
+      text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 700;
+      color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase;
+      border-bottom: 1px solid var(--border); background: var(--bg2);
+      white-space: nowrap;
+    }
+    .perf-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; vertical-align: middle; }
+    .perf-row { cursor: pointer; transition: background 0.15s; }
+    .perf-row:hover { background: rgba(255,255,255,0.02); }
+
+    .metric-cell { display: flex; align-items: center; gap: 8px; }
+    .metric-bar-bg { flex: 1; height: 4px; background: var(--bg3); border-radius: 2px; min-width: 60px; }
+    .metric-bar { height: 100%; border-radius: 2px; background: var(--accent); }
+    .metric-value { font-size: 13px; font-weight: 700; min-width: 40px; text-align: right; }
+
+    /* Platform breakdown */
+    .platform-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 28px; }
+    .platform-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .platform-card-header { display: flex; align-items: center; gap: 8px; }
+    .platform-name { font-size: 13px; font-weight: 700; }
+    .platform-posts { font-size: 11px; color: var(--text3); }
+    .platform-metric { display: flex; justify-content: space-between; font-size: 12px; }
+    .platform-metric-label { color: var(--text3); }
+    .platform-metric-val { font-weight: 700; }
+
+    .add-metrics-btn {
+      background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3);
+      color: var(--accent3); padding: 9px 18px; border-radius: 8px; font-size: 13px;
+      font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .add-metrics-btn:hover { background: rgba(56,189,248,0.2); }
+
+    .empty-state { text-align: center; padding: 40px; color: var(--text3); }
+    .empty-state h3 { color: var(--text2); margin-bottom: 8px; font-size: 16px; }
+
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-select { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text2); padding: 7px 12px; font-size: 13px; font-family: 'Satoshi', sans-serif; cursor: pointer; }
+
+    .score-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 50%; font-size: 12px; font-weight: 800;
+      font-family: 'Clash Display', sans-serif;
+    }
+    .score-high { background: rgba(52,211,153,0.15); color: var(--green); }
+    .score-mid { background: rgba(251,146,60,0.15); color: var(--orange); }
+    .score-low { background: rgba(248,113,113,0.15); color: var(--red); }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="dashboard.html" class="nav-logo">ContentPilot</a>
+      <span style="color:var(--text3);font-size:20px;font-weight:200">/</span>
+      <span style="font-size:14px;color:var(--text2);font-weight:600">Performance</span>
+    </div>
+    <div class="nav-actions">
+      <button class="add-metrics-btn" onclick="openAddMetrics()">+ Log Metrics</button>
+      <div class="avatar" id="nav-avatar">?</div>
+    </div>
+  </nav>
+
+  <div class="perf-layout">
+    <!-- Sidebar -->
+    <div class="perf-sidebar">
+      <div class="sidebar-logo"><h3>📊 Performance</h3></div>
+      <div class="sidebar-section">Views</div>
+      <div class="sidebar-item active" id="nav-overview" onclick="setSection('overview', this)"><span class="icon">🏠</span> Overview</div>
+      <div class="sidebar-item" id="nav-content" onclick="setSection('content', this)"><span class="icon">📋</span> By Content</div>
+      <div class="sidebar-item" id="nav-platform" onclick="setSection('platform', this)"><span class="icon">📱</span> By Platform</div>
+      <div class="sidebar-section">Tools</div>
+      <div class="sidebar-item" onclick="window.location.href='copywriter.html'"><span class="icon">✍️</span> Copywriter</div>
+      <div class="sidebar-item" onclick="window.location.href='calendar.html'"><span class="icon">📅</span> Calendar</div>
+      <div class="sidebar-item" onclick="window.location.href='bank.html'"><span class="icon">🗂️</span> Content Bank</div>
+    </div>
+
+    <!-- Main -->
+    <div class="perf-main" id="perf-main">
+      <!-- Renders here -->
+    </div>
+  </div>
+
+  <!-- Add Metrics Modal -->
+  <div class="modal-overlay" id="metrics-modal">
+    <div class="modal" style="max-width:680px">
+      <div class="modal-header">
+        <h2 id="metrics-modal-title">Log Content Metrics</h2>
+        <button class="modal-close" onclick="closeMetricsModal()">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Content (from Calendar)</label>
+        <select class="input-field" id="metrics-task-select" onchange="prefillFromTask(this.value)">
+          <option value="">Pick a live content piece...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Or Enter Manually</label>
+        <input type="text" class="input-field" id="metrics-title" placeholder="Content title..." />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Platform</label>
+          <select class="input-field" id="metrics-platform">
+            <option value="">Select platform...</option>
+            <option>Instagram Reels</option><option>Instagram Post</option><option>TikTok</option>
+            <option>YouTube Shorts</option><option>YouTube Video</option><option>LinkedIn</option>
+            <option>Twitter / X</option><option>Facebook</option><option>Google Ads</option><option>Meta Ads</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date Published</label>
+          <input type="date" class="input-field" id="metrics-date" />
+        </div>
+      </div>
+
+      <div style="background:var(--bg3);border-radius:10px;padding:16px;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px">📈 Engagement Metrics</div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Views / Impressions</label>
+            <input type="number" class="input-field" id="m-views" placeholder="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Likes</label>
+            <input type="number" class="input-field" id="m-likes" placeholder="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Comments</label>
+            <input type="number" class="input-field" id="m-comments" placeholder="0" min="0" />
+          </div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Shares / Reposts</label>
+            <input type="number" class="input-field" id="m-shares" placeholder="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Saves / Bookmarks</label>
+            <input type="number" class="input-field" id="m-saves" placeholder="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Reach</label>
+            <input type="number" class="input-field" id="m-reach" placeholder="0" min="0" />
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg3);border-radius:10px;padding:16px;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px">💰 Conversion Metrics</div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Clicks / Link Taps</label>
+            <input type="number" class="input-field" id="m-clicks" placeholder="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Leads Generated</label>
+            <input type="number" class="input-field" id="m-leads" placeholder="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Conversions / Sales</label>
+            <input type="number" class="input-field" id="m-conversions" placeholder="0" min="0" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Spend (₹ / $)</label>
+            <input type="number" class="input-field" id="m-spend" placeholder="0.00" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Revenue Generated</label>
+            <input type="number" class="input-field" id="m-revenue" placeholder="0.00" step="0.01" />
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg3);border-radius:10px;padding:16px;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px">📱 Platform-Specific KPIs</div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Watch Time (min)</label>
+            <input type="number" class="input-field" id="m-watchtime" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Avg. View Duration</label>
+            <input type="number" class="input-field" id="m-avg-duration" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Follower Gained</label>
+            <input type="number" class="input-field" id="m-followers" placeholder="0" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">CTR (%)</label>
+            <input type="number" class="input-field" id="m-ctr" placeholder="0.00" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Engagement Rate (%)</label>
+            <input type="number" class="input-field" id="m-er" placeholder="0.00" step="0.01" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="input-field" id="m-notes" rows="2" placeholder="Any observations or context..."></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn-ghost" onclick="closeMetricsModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveMetrics()">Save Metrics</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="global-toast" class="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+  <script>window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);</script>
+  <script>
+    (async()=>{window._currentUser = await Auth.requireAuth(); if(!window._currentUser) return;
+    if(window._currentUser) document.getElementById('nav-avatar').textContent = user.avatar || user.name.charAt(0);
+
+    let currentSection = 'overview';
+    let editingMetricId = null;
+
+    function setSection(s, el) {
+      currentSection = s;
+      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+      renderPerformance();
+    }
+
+    function fmt(n) {
+      if (!n) return '0';
+      if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+      return n.toString();
+    }
+
+    function calcEngagement(m) {
+      if (!m.views || m.views === 0) return 0;
+      const eng = (Number(m.likes||0) + Number(m.comments||0) + Number(m.shares||0) + Number(m.saves||0));
+      return ((eng / m.views) * 100).toFixed(2);
+    }
+
+    function calcScore(m) {
+      const er = parseFloat(calcEngagement(m));
+      const ctr = parseFloat(m.ctr || 0);
+      const score = Math.min(100, Math.round((er * 10) + (ctr * 5) + (m.conversions ? 20 : 0) + (m.leads ? 10 : 0)));
+      return score;
+    }
+
+    function renderPerformance() {
+      const container = document.getElementById('perf-main');
+      const metrics = DB.get('performance_metrics');
+
+      if (currentSection === 'overview') renderOverview(container, metrics);
+      else if (currentSection === 'content') renderByContent(container, metrics);
+      else if (currentSection === 'platform') renderByPlatform(container, metrics);
+    }
+
+    function renderOverview(container, metrics) {
+      const totalViews = metrics.reduce((s, m) => s + Number(m.views||0), 0);
+      const totalLikes = metrics.reduce((s, m) => s + Number(m.likes||0), 0);
+      const totalLeads = metrics.reduce((s, m) => s + Number(m.leads||0), 0);
+      const totalRevenue = metrics.reduce((s, m) => s + Number(m.revenue||0), 0);
+      const totalConversions = metrics.reduce((s, m) => s + Number(m.conversions||0), 0);
+      const avgEr = metrics.length ? (metrics.reduce((s,m) => s + parseFloat(calcEngagement(m)), 0) / metrics.length).toFixed(2) : 0;
+
+      container.innerHTML = `
+        <div style="margin-bottom:24px">
+          <h2 style="font-size:22px;margin-bottom:4px">Performance Overview</h2>
+          <p style="color:var(--text3);font-size:13px">${metrics.length} content pieces tracked</p>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card purple">
+            <div class="kpi-label">Total Views</div>
+            <div class="kpi-value">${fmt(totalViews)}</div>
+            <div class="kpi-change up">↑ Across ${metrics.length} posts</div>
+          </div>
+          <div class="kpi-card blue">
+            <div class="kpi-label">Total Likes</div>
+            <div class="kpi-value">${fmt(totalLikes)}</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Avg Engagement Rate</div>
+            <div class="kpi-value">${avgEr}%</div>
+          </div>
+          <div class="kpi-card orange">
+            <div class="kpi-label">Leads Generated</div>
+            <div class="kpi-value">${fmt(totalLeads)}</div>
+          </div>
+          <div class="kpi-card pink">
+            <div class="kpi-label">Conversions</div>
+            <div class="kpi-value">${fmt(totalConversions)}</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Revenue</div>
+            <div class="kpi-value">₹${fmt(totalRevenue)}</div>
+          </div>
+        </div>
+
+        ${metrics.length === 0 ? `
+          <div class="empty-state">
+            <div style="font-size:48px;margin-bottom:12px">📊</div>
+            <h3>No metrics logged yet</h3>
+            <p>Click "Log Metrics" to start tracking your content performance</p>
+            <button class="btn-primary" onclick="openAddMetrics()">+ Log First Metrics</button>
+          </div>
+        ` : `
+          <div class="section-header">
+            <h3>Top Performing Content</h3>
+          </div>
+          <table class="perf-table">
+            <thead>
+              <tr>
+                <th>Content</th><th>Platform</th>
+                <th>Views</th><th>Eng. Rate</th><th>Leads</th><th>Score</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${metrics.sort((a,b) => Number(b.views||0) - Number(a.views||0)).slice(0,10).map(m => {
+                const score = calcScore(m);
+                const scoreClass = score >= 60 ? 'score-high' : score >= 30 ? 'score-mid' : 'score-low';
+                return `<tr class="perf-row" onclick="openEditMetrics('${m.id}')">
+                  <td><strong>${m.title}</strong></td>
+                  <td><span class="tag tag-blue">${m.platform||'—'}</span></td>
+                  <td>${fmt(m.views)}</td>
+                  <td>${calcEngagement(m)}%</td>
+                  <td>${fmt(m.leads)}</td>
+                  <td><div class="score-badge ${scoreClass}">${score}</div></td>
+                  <td><button onclick="event.stopPropagation();deleteMetric('${m.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer">🗑</button></td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        `}
+      `;
+    }
+
+    function renderByContent(container, metrics) {
+      container.innerHTML = `
+        <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+          <h2 style="font-size:20px">Content Performance</h2>
+        </div>
+        <div class="filter-bar">
+          <select class="filter-select" id="pf-platform" onchange="renderPerformance()">
+            <option value="">All Platforms</option>
+            <option>Instagram Reels</option><option>TikTok</option><option>YouTube Shorts</option>
+            <option>LinkedIn</option><option>Google Ads</option><option>Meta Ads</option>
+          </select>
+        </div>
+        ${metrics.length === 0 ? '<div class="empty-state"><h3>No data yet</h3><p>Log metrics for your content</p></div>' : `
+        <table class="perf-table">
+          <thead>
+            <tr><th>Content</th><th>Platform</th><th>Date</th><th>Views</th><th>Likes</th><th>Comments</th><th>Shares</th><th>ER%</th><th>CTR%</th><th>Leads</th><th>Revenue</th><th>Score</th></tr>
+          </thead>
+          <tbody>
+            ${metrics.map(m => {
+              const score = calcScore(m);
+              const scoreClass = score >= 60 ? 'score-high' : score >= 30 ? 'score-mid' : 'score-low';
+              return `<tr class="perf-row" onclick="openEditMetrics('${m.id}')">
+                <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>${m.title}</strong></td>
+                <td><span class="tag tag-blue" style="font-size:11px">${m.platform||'—'}</span></td>
+                <td style="font-size:12px;color:var(--text3)">${formatDate(m.date)}</td>
+                <td>${fmt(m.views)}</td><td>${fmt(m.likes)}</td>
+                <td>${fmt(m.comments)}</td><td>${fmt(m.shares)}</td>
+                <td>${calcEngagement(m)}%</td>
+                <td>${m.ctr||0}%</td>
+                <td>${fmt(m.leads)}</td>
+                <td>₹${fmt(m.revenue)}</td>
+                <td><div class="score-badge ${scoreClass}">${score}</div></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>`}
+      `;
+    }
+
+    function renderByPlatform(container, metrics) {
+      const platforms = [...new Set(metrics.map(m => m.platform).filter(Boolean))];
+      container.innerHTML = `
+        <div style="margin-bottom:20px"><h2 style="font-size:20px">Platform Breakdown</h2></div>
+        ${platforms.length === 0 ? '<div class="empty-state"><h3>No platform data yet</h3></div>' : `
+        <div class="platform-grid">
+          ${platforms.map(p => {
+            const pMetrics = metrics.filter(m => m.platform === p);
+            const totalViews = pMetrics.reduce((s,m) => s + Number(m.views||0), 0);
+            const totalLikes = pMetrics.reduce((s,m) => s + Number(m.likes||0), 0);
+            const avgEr = pMetrics.length ? (pMetrics.reduce((s,m) => s + parseFloat(calcEngagement(m)), 0) / pMetrics.length).toFixed(1) : 0;
+            return `<div class="platform-card">
+              <div class="platform-card-header">
+                <div class="platform-name">${p}</div>
+              </div>
+              <div class="platform-posts">${pMetrics.length} posts tracked</div>
+              <div class="platform-metric"><span class="platform-metric-label">Views</span><span class="platform-metric-val">${fmt(totalViews)}</span></div>
+              <div class="platform-metric"><span class="platform-metric-label">Likes</span><span class="platform-metric-val">${fmt(totalLikes)}</span></div>
+              <div class="platform-metric"><span class="platform-metric-label">Avg ER</span><span class="platform-metric-val" style="color:var(--green)">${avgEr}%</span></div>
+            </div>`;
+          }).join('')}
+        </div>`}
+      `;
+    }
+
+    function openAddMetrics() {
+      editingMetricId = null;
+      document.getElementById('metrics-modal-title').textContent = 'Log Content Metrics';
+      ['metrics-title','m-views','m-likes','m-comments','m-shares','m-saves','m-reach','m-clicks','m-leads','m-conversions','m-spend','m-revenue','m-watchtime','m-avg-duration','m-followers','m-ctr','m-er','m-notes'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('metrics-platform').value = '';
+      document.getElementById('metrics-date').value = new Date().toISOString().split('T')[0];
+
+      // Load live tasks
+      const tasks = DB.get('tasks').filter(t => t.status === 'live');
+      const sel = document.getElementById('metrics-task-select');
+      sel.innerHTML = '<option value="">Pick a live content piece...</option>';
+      tasks.forEach(t => sel.innerHTML += `<option value="${t.id}">${t.title} (${t.platform||''})</option>`);
+      document.getElementById('metrics-modal').classList.add('open');
+    }
+
+    function openEditMetrics(id) {
+      const metrics = DB.get('performance_metrics');
+      const m = metrics.find(x => x.id === id);
+      if (!m) return;
+      editingMetricId = id;
+      document.getElementById('metrics-modal-title').textContent = 'Edit Metrics';
+      document.getElementById('metrics-title').value = m.title || '';
+      document.getElementById('metrics-platform').value = m.platform || '';
+      document.getElementById('metrics-date').value = m.date || '';
+      const fields = ['views','likes','comments','shares','saves','reach','clicks','leads','conversions','spend','revenue','watchtime','avg-duration','followers','ctr','er','notes'];
+      fields.forEach(f => { const el = document.getElementById('m-' + f); if (el) el.value = m[f.replace('-','_')] || ''; });
+      document.getElementById('m-avg-duration').value = m.avg_duration || '';
+      document.getElementById('metrics-modal').classList.add('open');
+    }
+
+    function prefillFromTask(taskId) {
+      if (!taskId) return;
+      const tasks = DB.get('tasks');
+      const task = tasks.find(t => t.id === taskId);
+      if (task) {
+        document.getElementById('metrics-title').value = task.title;
+        document.getElementById('metrics-platform').value = task.platform || '';
+        if (task.liveDate) document.getElementById('metrics-date').value = task.liveDate;
+      }
+    }
+
+    function closeMetricsModal() { document.getElementById('metrics-modal').classList.remove('open'); }
+
+    function saveMetrics() {
+      const title = document.getElementById('metrics-title').value.trim();
+      if (!title) return showToast('Title is required', 'error');
+      const metrics = DB.get('performance_metrics');
+      const data = {
+        id: editingMetricId || genId(),
+        title,
+        platform: document.getElementById('metrics-platform').value,
+        date: document.getElementById('metrics-date').value,
+        views: Number(document.getElementById('m-views').value) || 0,
+        likes: Number(document.getElementById('m-likes').value) || 0,
+        comments: Number(document.getElementById('m-comments').value) || 0,
+        shares: Number(document.getElementById('m-shares').value) || 0,
+        saves: Number(document.getElementById('m-saves').value) || 0,
+        reach: Number(document.getElementById('m-reach').value) || 0,
+        clicks: Number(document.getElementById('m-clicks').value) || 0,
+        leads: Number(document.getElementById('m-leads').value) || 0,
+        conversions: Number(document.getElementById('m-conversions').value) || 0,
+        spend: Number(document.getElementById('m-spend').value) || 0,
+        revenue: Number(document.getElementById('m-revenue').value) || 0,
+        watchtime: Number(document.getElementById('m-watchtime').value) || 0,
+        avg_duration: Number(document.getElementById('m-avg-duration').value) || 0,
+        followers: Number(document.getElementById('m-followers').value) || 0,
+        ctr: Number(document.getElementById('m-ctr').value) || 0,
+        er: Number(document.getElementById('m-er').value) || 0,
+        notes: document.getElementById('m-notes').value,
+        updatedAt: new Date().toISOString()
+      };
+      if (editingMetricId) {
+        const idx = metrics.findIndex(m => m.id === editingMetricId);
+        metrics[idx] = data;
+      } else {
+        metrics.push(data);
+      }
+      DB.set('performance_metrics', metrics);
+      closeMetricsModal();
+      showToast('Metrics saved!', 'success');
+      renderPerformance();
+    }
+
+    function deleteMetric(id) {
+      if (!confirm('Delete this metric?')) return;
+      DB.set('performance_metrics', DB.get('performance_metrics').filter(m => m.id !== id));
+      showToast('Deleted', 'info');
+      renderPerformance();
+    }
+
+    document.getElementById('metrics-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeMetricsModal();
+    });
+
+    renderPerformance();
+  </script>
+</body>
+</html>
