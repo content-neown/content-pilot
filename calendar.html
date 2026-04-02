@@ -1,163 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ContentPilot — Content Calendar</title>
   <link rel="stylesheet" href="shared.css"/>
   <style>
-    body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-    .top-nav { flex-shrink: 0; }
-    .cal-layout { display: flex; flex: 1; overflow: hidden; }
-
-    /* Sidebar */
-    .cal-sidebar {
-      width: 220px; flex-shrink: 0; background: var(--bg2);
-      border-right: 1px solid var(--border); padding: 16px 10px;
-      overflow-y: auto; display: flex; flex-direction: column; gap: 2px;
-    }
-    .sidebar-logo { padding: 8px 10px 16px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
-    .sidebar-logo h3 { font-size: 14px; font-weight: 700; }
-
-    /* Main */
-    .cal-main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
-    .cal-header {
-      padding: 20px 28px; border-bottom: 1px solid var(--border);
-      background: var(--bg2); flex-shrink: 0;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    }
-    .cal-header-left h2 { font-size: 20px; }
-    .cal-header-left p { font-size: 13px; color: var(--text3); margin-top: 2px; }
-    .cal-header-right { display: flex; gap: 8px; align-items: center; }
-
-    .view-tabs { display: flex; background: var(--bg3); border-radius: 8px; padding: 3px; }
-    .view-tab {
-      padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
-      color: var(--text3); cursor: pointer; transition: all 0.2s; border: none;
-      background: none; display: flex; align-items: center; gap: 5px;
-    }
-    .view-tab.active { background: var(--accent); color: #fff; }
-
-    .cal-content { flex: 1; overflow-y: auto; padding: 24px 28px; }
-
-    /* Stats bar */
-    .stats-bar {
-      display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
-    }
-    .stat-pill {
-      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-      padding: 10px 16px; display: flex; align-items: center; gap: 8px;
-      font-size: 13px;
-    }
-    .stat-pill strong { font-size: 18px; font-family: 'Clash Display', sans-serif; }
-
-    /* List View */
-    .task-table { width: 100%; border-collapse: collapse; }
-    .task-table th {
-      text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 700;
-      color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase;
-      border-bottom: 1px solid var(--border); background: var(--bg2);
-    }
-    .task-table td { padding: 13px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; vertical-align: middle; }
-    .task-row { cursor: pointer; transition: background 0.15s; }
-    .task-row:hover { background: rgba(255,255,255,0.03); }
-    .task-title-cell { display: flex; flex-direction: column; gap: 3px; }
-    .task-title-cell strong { font-size: 14px; }
-    .task-title-cell span { font-size: 12px; color: var(--text3); }
-    .assigned-avatars { display: flex; gap: -4px; }
-    .mini-avatar {
-      width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--bg);
-      background: linear-gradient(135deg, var(--accent), var(--pink));
-      display: flex; align-items: center; justify-content: center; font-size: 10px;
-      font-weight: 700; color: #fff; margin-left: -6px;
-    }
-    .mini-avatar:first-child { margin-left: 0; }
-
-    /* Kanban */
-    .kanban-board { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 16px; min-height: 500px; }
-    .kanban-col {
-      flex-shrink: 0; width: 280px; background: var(--bg2);
-      border: 1px solid var(--border); border-radius: 12px; padding: 14px;
-    }
-    .kanban-col-header {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
-    }
-    .kanban-col-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
-    .kanban-count { background: var(--bg3); border-radius: 20px; padding: 2px 8px; font-size: 11px; color: var(--text3); }
-    .kanban-cards { display: flex; flex-direction: column; gap: 10px; min-height: 200px; }
-    .kanban-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-      padding: 14px; cursor: pointer; transition: all 0.2s;
-    }
-    .kanban-card:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow); }
-    .kanban-card-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
-    .kanban-card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-    .kanban-card-date { font-size: 11px; color: var(--text3); }
-    .platform-tag { font-size: 11px; color: var(--text3); background: var(--bg3); padding: 2px 8px; border-radius: 4px; }
-
-    /* Calendar View */
-    .calendar-grid { }
-    .cal-grid-header { display: grid; grid-template-columns: repeat(7,1fr); gap: 1px; margin-bottom: 4px; }
-    .cal-day-name { text-align: center; font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; padding: 8px; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-    .cal-cell {
-      background: var(--bg2); min-height: 100px; padding: 8px;
-      transition: background 0.15s;
-    }
-    .cal-cell:hover { background: var(--bg3); }
-    .cal-cell.other-month .cal-date { color: var(--text3); opacity: 0.4; }
-    .cal-cell.today { background: rgba(108,99,255,0.08); }
-    .cal-date {
-      font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 4px; display: block;
-    }
-    .cal-cell.today .cal-date {
-      background: var(--accent); color: #fff; width: 22px; height: 22px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 11px;
-    }
-    .cal-task-dot {
-      font-size: 11px; background: rgba(108,99,255,0.15); border-left: 2px solid var(--accent);
-      padding: 2px 6px; border-radius: 0 4px 4px 0; margin-bottom: 2px;
-      color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      cursor: pointer;
-    }
-    .cal-task-dot.live { border-left-color: var(--green); background: rgba(52,211,153,0.12); }
-    .cal-task-dot.in-progress { border-left-color: var(--orange); background: rgba(251,146,60,0.12); }
-    .cal-month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .cal-month-nav h3 { font-size: 18px; }
-    .cal-nav-btn { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; color: var(--text); cursor: pointer; font-size: 14px; transition: all 0.15s; }
-    .cal-nav-btn:hover { border-color: var(--accent); }
-
-    /* Block View */
-    .block-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-    .block-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-      padding: 20px; cursor: pointer; transition: all 0.2s;
-    }
-    .block-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow); }
-    .block-card-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-    .block-card-desc { font-size: 13px; color: var(--text3); line-height: 1.5; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .block-card-footer { display: flex; align-items: center; justify-content: space-between; }
-
-    /* Empty state */
-    .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
-    .empty-state h3 { font-size: 18px; color: var(--text2); margin-bottom: 8px; }
-    .empty-state p { font-size: 14px; margin-bottom: 20px; }
-
-    /* Filter bar */
-    .filter-bar {
-      display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;
-    }
-    .filter-select {
-      background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
-      color: var(--text2); padding: 7px 12px; font-size: 13px; font-family: 'Satoshi', sans-serif;
-      cursor: pointer;
-    }
-    .search-input {
-      background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
-      color: var(--text); padding: 7px 14px; font-size: 13px; font-family: 'Satoshi', sans-serif;
-      width: 200px; outline: none;
-    }
-    .search-input:focus { border-color: var(--accent); }
+    body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+    .top-nav{flex-shrink:0}
+    .cal-layout{display:flex;flex:1;overflow:hidden}
+    .cal-sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:16px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+    .sidebar-logo{padding:8px 10px 16px;border-bottom:1px solid var(--border);margin-bottom:8px}
+    .sidebar-logo h3{font-size:14px;font-weight:700}
+    .cal-main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+    .cal-header{padding:20px 28px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .cal-header-left h2{font-size:20px}
+    .cal-header-left p{font-size:13px;color:var(--text3);margin-top:2px}
+    .view-tabs{display:flex;background:var(--bg3);border-radius:8px;padding:3px}
+    .view-tab{padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.2s;border:none;background:none}
+    .view-tab.active{background:var(--accent);color:#fff}
+    .cal-content{flex:1;overflow-y:auto;padding:24px 28px}
+    .stats-bar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+    .stat-pill{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 14px;display:flex;align-items:center;gap:8px;font-size:13px}
+    .stat-pill strong{font-size:17px;font-family:'Clash Display',sans-serif}
+    .task-table{width:100%;border-collapse:collapse}
+    .task-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg2)}
+    .task-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;vertical-align:middle}
+    .task-row{cursor:pointer;transition:background 0.15s}
+    .task-row:hover{background:rgba(255,255,255,0.03)}
+    .mini-avatar{width:24px;height:24px;border-radius:50%;border:2px solid var(--bg);background:linear-gradient(135deg,var(--accent),var(--pink));display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;margin-left:-6px}
+    .mini-avatar:first-child{margin-left:0}
+    .kanban-board{display:flex;gap:16px;overflow-x:auto;padding-bottom:16px}
+    .kanban-col{flex-shrink:0;width:260px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px}
+    .kanban-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .kanban-col-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+    .kanban-count{background:var(--bg3);border-radius:20px;padding:2px 8px;font-size:11px;color:var(--text3)}
+    .kanban-cards{display:flex;flex-direction:column;gap:8px;min-height:100px}
+    .kanban-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all 0.2s}
+    .kanban-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+    .block-view{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+    .block-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s}
+    .block-card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:var(--shadow)}
+    .cal-grid-header{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:4px}
+    .cal-day-name{text-align:center;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;padding:8px}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .cal-cell{background:var(--bg2);min-height:90px;padding:8px}
+    .cal-cell.other-month .cal-date{opacity:0.3}
+    .cal-cell.today{background:rgba(108,99,255,0.08)}
+    .cal-date{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px;display:block}
+    .cal-cell.today .cal-date{background:var(--accent);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
+    .cal-task-dot{font-size:11px;border-left:2px solid var(--accent);background:rgba(108,99,255,0.12);padding:2px 5px;border-radius:0 3px 3px 0;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:var(--text)}
+    .cal-task-dot.live{border-left-color:var(--green);background:rgba(52,211,153,0.12)}
+    .cal-task-dot.in-progress{border-left-color:var(--orange);background:rgba(251,146,60,0.12)}
+    .cal-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .cal-nav-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 14px;color:var(--text);cursor:pointer;font-size:14px}
+    .empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+    .empty-state h3{font-size:18px;color:var(--text2);margin-bottom:8px}
+    .filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+    .filter-select,.search-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);padding:7px 12px;font-size:13px;font-family:'Satoshi',sans-serif;outline:none;cursor:pointer}
+    .search-input{color:var(--text);width:200px}
+    .search-input:focus,.filter-select:focus{border-color:var(--accent)}
   </style>
 </head>
 <body>
@@ -165,696 +66,368 @@
     <div style="display:flex;align-items:center;gap:12px">
       <a href="dashboard.html" class="nav-logo">ContentPilot</a>
       <span style="color:var(--text3);font-size:20px;font-weight:200">/</span>
-      <span style="font-size:14px;color:var(--text2);font-weight:600" id="page-title">Content Calendar</span>
+      <span style="font-size:14px;color:var(--text2);font-weight:600">Content Calendar</span>
     </div>
     <div class="nav-actions">
       <button class="btn-primary" onclick="openAddTask()">+ Add Task</button>
       <div class="avatar" id="nav-avatar">?</div>
     </div>
   </nav>
-
   <div class="cal-layout">
-    <!-- Sidebar -->
     <div class="cal-sidebar">
-      <div class="sidebar-logo">
-        <h3>📅 Calendar</h3>
-      </div>
+      <div class="sidebar-logo"><h3>📅 Calendar</h3></div>
       <div class="sidebar-section">Overview</div>
-      <div class="sidebar-item active" id="nav-overview" onclick="setSection('overview')">
-        <span class="icon">🏠</span> Dashboard
-      </div>
-      <div class="sidebar-item" id="nav-all" onclick="setSection('all')">
-        <span class="icon">📋</span> All Content
-      </div>
-
+      <div class="sidebar-item active" id="nav-overview" onclick="setSection('overview',this)"><span class="icon">🏠</span> Dashboard</div>
+      <div class="sidebar-item" id="nav-all" onclick="setSection('all',this)"><span class="icon">📋</span> All Content</div>
       <div class="sidebar-section">Social Media</div>
-      <div class="sidebar-item" id="nav-social" onclick="setSection('social')">
-        <span class="icon">📱</span> Social Calendar
-      </div>
-      <div class="sidebar-item" id="nav-reels" onclick="setSection('reels')">
-        <span class="icon">🎬</span> Reels / Shorts
-      </div>
-      <div class="sidebar-item" id="nav-posts" onclick="setSection('posts')">
-        <span class="icon">🖼️</span> Posts & Stories
-      </div>
-
+      <div class="sidebar-item" id="nav-social" onclick="setSection('social',this)"><span class="icon">📱</span> Social Calendar</div>
+      <div class="sidebar-item" id="nav-reels" onclick="setSection('reels',this)"><span class="icon">🎬</span> Reels / Shorts</div>
+      <div class="sidebar-item" id="nav-posts" onclick="setSection('posts',this)"><span class="icon">🖼️</span> Posts & Stories</div>
       <div class="sidebar-section">Campaign</div>
-      <div class="sidebar-item" id="nav-campaign" onclick="setSection('campaign')">
-        <span class="icon">🎯</span> Campaign Calendar
-      </div>
-      <div class="sidebar-item" id="nav-ads" onclick="setSection('ads')">
-        <span class="icon">📢</span> Paid Ads
-      </div>
-      <div class="sidebar-item" id="nav-email" onclick="setSection('email')">
-        <span class="icon">✉️</span> Email Campaigns
-      </div>
-
+      <div class="sidebar-item" id="nav-campaign" onclick="setSection('campaign',this)"><span class="icon">🎯</span> Campaign Calendar</div>
+      <div class="sidebar-item" id="nav-ads" onclick="setSection('ads',this)"><span class="icon">📢</span> Paid Ads</div>
+      <div class="sidebar-item" id="nav-email" onclick="setSection('email',this)"><span class="icon">✉️</span> Email Campaigns</div>
       <div class="sidebar-section">Tools</div>
-      <div class="sidebar-item" onclick="window.location.href='copywriter.html'">
-        <span class="icon">✍️</span> Copywriter
-      </div>
-      <div class="sidebar-item" onclick="window.location.href='bank.html'">
-        <span class="icon">🗂️</span> Content Bank
-      </div>
-      <div class="sidebar-item" onclick="window.location.href='performance.html'">
-        <span class="icon">📊</span> Performance
-      </div>
+      <div class="sidebar-item" onclick="location.href='copywriter.html'"><span class="icon">✍️</span> Copywriter</div>
+      <div class="sidebar-item" onclick="location.href='bank.html'"><span class="icon">🗂️</span> Content Bank</div>
+      <div class="sidebar-item" onclick="location.href='performance.html'"><span class="icon">📊</span> Performance</div>
     </div>
-
-    <!-- Main Content -->
     <div class="cal-main">
       <div class="cal-header">
         <div class="cal-header-left">
           <h2 id="section-title">Overview Dashboard</h2>
           <p id="section-desc">All your content at a glance</p>
         </div>
-        <div class="cal-header-right">
+        <div style="display:flex;gap:8px;align-items:center">
           <div class="view-tabs">
-            <button class="view-tab active" onclick="setView('list')" id="tab-list">☰ List</button>
-            <button class="view-tab" onclick="setView('calendar')" id="tab-calendar">📅 Calendar</button>
-            <button class="view-tab" onclick="setView('block')" id="tab-block">⊞ Block</button>
-            <button class="view-tab" onclick="setView('kanban')" id="tab-kanban">⬜ Kanban</button>
+            <button class="view-tab active" id="tab-list" onclick="setView('list')">☰ List</button>
+            <button class="view-tab" id="tab-calendar" onclick="setView('calendar')">📅 Cal</button>
+            <button class="view-tab" id="tab-block" onclick="setView('block')">⊞ Block</button>
+            <button class="view-tab" id="tab-kanban" onclick="setView('kanban')">⬜ Kanban</button>
           </div>
         </div>
       </div>
-
-      <div class="cal-content" id="cal-content">
-        <!-- Content renders here -->
-      </div>
+      <div class="cal-content" id="cal-content"><div style="text-align:center;padding:60px;color:var(--text3)">Loading...</div></div>
     </div>
   </div>
 
-  <!-- Add Task Modal -->
+  <!-- Task Modal -->
   <div class="modal-overlay" id="task-modal">
     <div class="modal" style="max-width:760px">
       <div class="modal-header">
         <h2 id="modal-title">Add New Task</h2>
         <button class="modal-close" onclick="closeModal()">✕</button>
       </div>
-
-      <div class="form-row">
-        <div class="form-group" style="grid-column:span 2">
-          <label class="form-label">Title *</label>
-          <input type="text" class="input-field" id="task-title" placeholder="Content title..." />
-        </div>
-      </div>
-
+      <div class="form-group"><label class="form-label">Title *</label><input type="text" class="input-field" id="task-title" placeholder="Content title..."/></div>
       <div class="form-row-3">
-        <div class="form-group">
-          <label class="form-label">📋 Assigned Date</label>
-          <input type="date" class="input-field" id="task-assigned-date" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">⏰ Deadline</label>
-          <input type="date" class="input-field" id="task-deadline" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">🚀 Live Date</label>
-          <input type="date" class="input-field" id="task-live-date" />
-        </div>
+        <div class="form-group"><label class="form-label">📋 Assigned Date</label><input type="date" class="input-field" id="task-assigned-date"/></div>
+        <div class="form-group"><label class="form-label">⏰ Deadline</label><input type="date" class="input-field" id="task-deadline"/></div>
+        <div class="form-group"><label class="form-label">🚀 Live Date</label><input type="date" class="input-field" id="task-live-date"/></div>
       </div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Platform</label>
+        <div class="form-group"><label class="form-label">Platform</label>
           <select class="input-field" id="task-platform">
             <option value="">Select platform...</option>
-            <option>Instagram Reels</option>
-            <option>Instagram Post</option>
-            <option>Instagram Story</option>
-            <option>YouTube Shorts</option>
-            <option>YouTube Video</option>
-            <option>TikTok</option>
-            <option>LinkedIn</option>
-            <option>Twitter / X</option>
-            <option>Facebook</option>
-            <option>Google Ads</option>
-            <option>Meta Ads</option>
-            <option>Email</option>
-            <option>Blog</option>
+            <option>Instagram Reels</option><option>Instagram Post</option><option>Instagram Story</option>
+            <option>YouTube Shorts</option><option>YouTube Video</option><option>TikTok</option>
+            <option>LinkedIn</option><option>Twitter / X</option><option>Facebook</option>
+            <option>Google Ads</option><option>Meta Ads</option><option>Email</option><option>Blog</option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label">Status</label>
+        <div class="form-group"><label class="form-label">Status</label>
           <select class="input-field" id="task-status">
-            <option value="idea">Idea</option>
-            <option value="in-progress">In Progress</option>
-            <option value="review">Review</option>
-            <option value="ready">Ready</option>
-            <option value="live">Live</option>
-            <option value="short">Short</option>
+            <option value="idea">Idea</option><option value="in-progress">In Progress</option>
+            <option value="review">Review</option><option value="ready">Ready</option>
+            <option value="live">Live</option><option value="short">Short</option>
           </select>
         </div>
       </div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Content Pillar</label>
+        <div class="form-group"><label class="form-label">Content Pillar</label>
           <select class="input-field" id="task-pillar">
             <option value="">Select pillar...</option>
-            <option>Educational</option>
-            <option>Entertainment</option>
-            <option>Inspirational</option>
-            <option>Promotional</option>
-            <option>Behind the Scenes</option>
-            <option>User Generated Content</option>
-            <option>Product Showcase</option>
-            <option>Testimonial / Social Proof</option>
-            <option>Trend / Challenge</option>
-            <option>Community</option>
+            <option>Educational</option><option>Entertainment</option><option>Inspirational</option>
+            <option>Promotional</option><option>Behind the Scenes</option><option>User Generated Content</option>
+            <option>Product Showcase</option><option>Testimonial / Social Proof</option><option>Trend / Challenge</option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label">Content Structure</label>
+        <div class="form-group"><label class="form-label">Content Structure</label>
           <select class="input-field" id="task-structure">
             <option value="">Select structure...</option>
-            <option>Hook → Value → CTA</option>
-            <option>Problem → Solution → CTA</option>
-            <option>Story → Lesson → CTA</option>
-            <option>List / Tips Format</option>
-            <option>Before → After</option>
-            <option>Tutorial / How-To</option>
-            <option>Q&A Format</option>
-            <option>Talking Head</option>
-            <option>Voiceover + B-Roll</option>
+            <option>Hook → Value → CTA</option><option>Problem → Solution → CTA</option>
+            <option>Story → Lesson → CTA</option><option>List / Tips Format</option>
+            <option>Before → After</option><option>Tutorial / How-To</option>
+            <option>Talking Head</option><option>Voiceover + B-Roll</option>
           </select>
         </div>
       </div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Objective</label>
+        <div class="form-group"><label class="form-label">Objective</label>
           <select class="input-field" id="task-objective">
             <option value="">Select objective...</option>
-            <option>Brand Awareness</option>
-            <option>Lead Generation</option>
-            <option>Sales / Conversion</option>
-            <option>Engagement</option>
-            <option>Education</option>
-            <option>Entertainment</option>
-            <option>Community Building</option>
-            <option>Product Launch</option>
-            <option>Retargeting</option>
+            <option>Brand Awareness</option><option>Lead Generation</option><option>Sales / Conversion</option>
+            <option>Engagement</option><option>Education</option><option>Entertainment</option>
+            <option>Community Building</option><option>Product Launch</option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label">Calendar Type</label>
+        <div class="form-group"><label class="form-label">Calendar Type</label>
           <select class="input-field" id="task-cal-type">
             <option value="social">Social Media</option>
             <option value="campaign">Campaign / Performance</option>
           </select>
         </div>
       </div>
-
       <div class="form-group">
-        <label class="form-label">Assign To (tag team members)</label>
+        <label class="form-label">Assign To</label>
         <div id="assignee-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px"></div>
-        <select class="input-field" id="assignee-select" onchange="addAssignee(this.value)">
-          <option value="">+ Add team member...</option>
-        </select>
+        <select class="input-field" id="assignee-select" onchange="addAssignee(this.value)"><option value="">+ Add team member...</option></select>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Description</label>
-        <textarea class="input-field" id="task-desc" rows="3" placeholder="What is this content about?"></textarea>
-      </div>
-
+      <div class="form-group"><label class="form-label">Description</label><textarea class="input-field" id="task-desc" rows="3" placeholder="What is this content about?"></textarea></div>
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Reference / Store Link</label>
-          <input type="url" class="input-field" id="task-ref-link" placeholder="https://..." />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Live Link</label>
-          <input type="url" class="input-field" id="task-live-link" placeholder="https://..." />
-        </div>
+        <div class="form-group"><label class="form-label">Reference / Store Link</label><input type="url" class="input-field" id="task-ref-link" placeholder="https://..."/></div>
+        <div class="form-group"><label class="form-label">Live Link</label><input type="url" class="input-field" id="task-live-link" placeholder="https://..."/></div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Script / Copy</label>
-        <textarea class="input-field" id="task-script" rows="4" placeholder="Paste your script, caption, or copy here..."></textarea>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Upload Files (Document, PDF, etc.)</label>
-        <input type="file" class="input-field" id="task-files" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.png" style="padding:8px" />
-      </div>
-
+      <div class="form-group"><label class="form-label">Script / Copy</label><textarea class="input-field" id="task-script" rows="4" placeholder="Paste your script or caption here..."></textarea></div>
+      <div class="form-group"><label class="form-label">Upload Files</label><input type="file" class="input-field" id="task-files" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.png" style="padding:8px"/></div>
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
         <button class="btn-ghost" onclick="closeModal()">Cancel</button>
-        <button class="btn-primary" onclick="saveTask()">Save Task</button>
+        <button class="btn-primary" id="save-task-btn" onclick="saveTask()">Save Task</button>
       </div>
     </div>
   </div>
-
   <div id="global-toast" class="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="auth.js"></script>
-  <script>window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);</script>
   <script>
-    (async()=>{window._currentUser = await Auth.requireAuth(); if(!window._currentUser) return;
-    if(window._currentUser) document.getElementById('nav-avatar').textContent = user.avatar || user.name.charAt(0);
+    window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentView='list', currentSection='overview';
+    let currentMonth=new Date().getMonth(), currentYear=new Date().getFullYear();
+    let editingTaskId=null, selectedAssignees=[], allTasks=[];
 
-    let currentView = 'list';
-    let currentSection = 'overview';
-    let currentMonth = new Date().getMonth();
-    let currentYear = new Date().getFullYear();
-    let editingTaskId = null;
-    let selectedAssignees = [];
-
-    const SECTIONS = {
-      overview: { title: 'Overview Dashboard', desc: 'All content at a glance' },
-      all: { title: 'All Content', desc: 'Every task across all calendars' },
-      social: { title: 'Social Media Calendar', desc: 'Instagram, TikTok, YouTube, Twitter' },
-      reels: { title: 'Reels & Shorts', desc: 'Short-form video content' },
-      posts: { title: 'Posts & Stories', desc: 'Static posts and story content' },
-      campaign: { title: 'Campaign Calendar', desc: 'Paid campaigns and performance content' },
-      ads: { title: 'Paid Ads', desc: 'Google, Meta, and other paid ads' },
-      email: { title: 'Email Campaigns', desc: 'Email newsletters and sequences' }
+    const SECTIONS={
+      overview:{title:'Overview Dashboard',desc:'All your content at a glance'},
+      all:{title:'All Content',desc:'Every task across all calendars'},
+      social:{title:'Social Media Calendar',desc:'Instagram, TikTok, YouTube, Twitter'},
+      reels:{title:'Reels & Shorts',desc:'Short-form video content'},
+      posts:{title:'Posts & Stories',desc:'Static posts and story content'},
+      campaign:{title:'Campaign Calendar',desc:'Paid campaigns and performance content'},
+      ads:{title:'Paid Ads',desc:'Google, Meta, and other paid ads'},
+      email:{title:'Email Campaigns',desc:'Email newsletters and sequences'}
+    };
+    const SECTION_FILTER={
+      overview:null, all:null,
+      social:t=>t.calType==='social',
+      reels:t=>['Instagram Reels','YouTube Shorts','TikTok'].includes(t.platform),
+      posts:t=>['Instagram Post','Instagram Story','Facebook'].includes(t.platform),
+      campaign:t=>t.calType==='campaign',
+      ads:t=>['Google Ads','Meta Ads'].includes(t.platform),
+      email:t=>t.platform==='Email'
     };
 
-    const SECTION_FILTER = {
-      overview: null,
-      all: null,
-      social: t => t.calType === 'social',
-      reels: t => ['Instagram Reels','YouTube Shorts','TikTok'].includes(t.platform),
-      posts: t => ['Instagram Post','Instagram Story','Facebook'].includes(t.platform),
-      campaign: t => t.calType === 'campaign',
-      ads: t => ['Google Ads','Meta Ads'].includes(t.platform),
-      email: t => t.platform === 'Email'
-    };
+    (async()=>{
+      const user=await Auth.requireAuth();
+      if(!user) return;
+      document.getElementById('nav-avatar').textContent=user.avatar;
+      await refresh();
+    })();
 
-    function setSection(s) {
-      currentSection = s;
-      document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-      const navEl = document.getElementById('nav-' + s);
-      if (navEl) navEl.classList.add('active');
-      document.getElementById('section-title').textContent = SECTIONS[s]?.title || s;
-      document.getElementById('section-desc').textContent = SECTIONS[s]?.desc || '';
+    async function refresh(){ allTasks=await DB.getTasks(); renderContent(); }
+
+    function getFiltered(){ const f=SECTION_FILTER[currentSection]; return f?allTasks.filter(f):allTasks; }
+
+    function setSection(s,el){
+      currentSection=s;
+      document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+      if(el) el.classList.add('active');
+      document.getElementById('section-title').textContent=SECTIONS[s]?.title||s;
+      document.getElementById('section-desc').textContent=SECTIONS[s]?.desc||'';
       renderContent();
     }
 
-    function setView(v) {
-      currentView = v;
-      document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById('tab-' + v).classList.add('active');
+    function setView(v){
+      currentView=v;
+      document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('active'));
+      document.getElementById('tab-'+v).classList.add('active');
       renderContent();
     }
 
-    function getTasks() {
-      let tasks = DB.get('tasks');
-      const filter = SECTION_FILTER[currentSection];
-      if (filter) tasks = tasks.filter(filter);
-      return tasks;
+    function renderContent(){
+      const c=document.getElementById('cal-content');
+      if(currentSection==='overview'){renderOverview(c);return;}
+      if(currentView==='list') renderList(c);
+      else if(currentView==='calendar') renderCalendar(c);
+      else if(currentView==='kanban') renderKanban(c);
+      else if(currentView==='block') renderBlock(c);
     }
 
-    function renderContent() {
-      const container = document.getElementById('cal-content');
-      if (currentSection === 'overview') { renderOverview(container); return; }
-      if (currentView === 'list') renderList(container);
-      else if (currentView === 'calendar') renderCalendar(container);
-      else if (currentView === 'kanban') renderKanban(container);
-      else if (currentView === 'block') renderBlock(container);
-    }
-
-    function renderOverview(container) {
-      const all = DB.get('tasks');
-      const statuses = ['idea','in-progress','review','ready','live','short'];
-      const counts = {};
-      statuses.forEach(s => counts[s] = all.filter(t => t.status === s).length);
-      const social = all.filter(t => t.calType === 'social');
-      const campaign = all.filter(t => t.calType === 'campaign');
-
-      container.innerHTML = `
+    function renderOverview(c){
+      const st=['idea','in-progress','review','ready','live','short'];
+      const counts={};st.forEach(s=>counts[s]=allTasks.filter(t=>t.status===s).length);
+      const social=allTasks.filter(t=>t.calType==='social');
+      const campaign=allTasks.filter(t=>t.calType==='campaign');
+      c.innerHTML=`
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px">
-          ${statuses.map(s => `
-            <div class="card" style="text-align:center">
-              <div style="font-size:28px;font-weight:700;font-family:'Clash Display',sans-serif;margin-bottom:4px">${counts[s]}</div>
-              <span class="tag ${STATUS_COLORS[s]}">${STATUS_LABELS[s]}</span>
-            </div>
-          `).join('')}
+          ${st.map(s=>`<div class="card" style="text-align:center"><div style="font-size:26px;font-weight:700;font-family:'Clash Display',sans-serif;margin-bottom:4px">${counts[s]}</div><span class="tag ${STATUS_COLORS[s]}">${STATUS_LABELS[s]}</span></div>`).join('')}
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-          <div class="card">
-            <h3 style="margin-bottom:16px;font-size:16px">📱 Social Media</h3>
-            ${social.slice(0,5).map(t => renderMiniTask(t)).join('') || '<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}
-            <button class="btn-ghost" style="width:100%;margin-top:12px;font-size:12px" onclick="setSection('social')">View All →</button>
+          <div class="card"><h3 style="margin-bottom:16px;font-size:16px">📱 Social Media</h3>
+            ${social.slice(0,5).map(t=>`<div onclick="openEditTask('${t.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer"><span style="font-size:13px;font-weight:600">${t.title}</span><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></div>`).join('')||'<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}
+            <button class="btn-ghost" style="width:100%;margin-top:12px;font-size:12px" onclick="setSection('social',document.getElementById('nav-social'))">View All →</button>
           </div>
-          <div class="card">
-            <h3 style="margin-bottom:16px;font-size:16px">🎯 Campaign</h3>
-            ${campaign.slice(0,5).map(t => renderMiniTask(t)).join('') || '<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}
-            <button class="btn-ghost" style="width:100%;margin-top:12px;font-size:12px" onclick="setSection('campaign')">View All →</button>
+          <div class="card"><h3 style="margin-bottom:16px;font-size:16px">🎯 Campaign</h3>
+            ${campaign.slice(0,5).map(t=>`<div onclick="openEditTask('${t.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer"><span style="font-size:13px;font-weight:600">${t.title}</span><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></div>`).join('')||'<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}
+            <button class="btn-ghost" style="width:100%;margin-top:12px;font-size:12px" onclick="setSection('campaign',document.getElementById('nav-campaign'))">View All →</button>
           </div>
-        </div>
-      `;
+        </div>`;
     }
 
-    function renderMiniTask(t) {
-      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)" onclick="openEditTask('${t.id}')" style="cursor:pointer">
-        <span style="font-size:13px;font-weight:600">${t.title}</span>
-        <span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span>
-      </div>`;
+    function statsBar(tasks){return`<div class="stats-bar">${['idea','in-progress','ready','live','short'].map(s=>`<div class="stat-pill"><span class="tag ${STATUS_COLORS[s]}">${STATUS_LABELS[s]}</span><strong>${tasks.filter(t=>t.status===s).length}</strong></div>`).join('')}<div class="stat-pill" style="margin-left:auto"><strong>${tasks.length}</strong> total</div></div>`;}
+
+    function emptyEl(){return`<div class="empty-state"><div style="font-size:48px;margin-bottom:12px">📋</div><h3>No tasks yet</h3><p>Add your first content task</p><button class="btn-primary" onclick="openAddTask()">+ Add Task</button></div>`;}
+
+    function renderList(c){
+      const tasks=getFiltered();
+      c.innerHTML=`${statsBar(tasks)}<div class="filter-bar"><input class="search-input" id="s-search" placeholder="🔍 Search..." oninput="filterTable()"/><select class="filter-select" id="s-status" onchange="filterTable()"><option value="">All Status</option><option value="idea">Idea</option><option value="in-progress">In Progress</option><option value="review">Review</option><option value="ready">Ready</option><option value="live">Live</option><option value="short">Short</option></select><select class="filter-select" id="s-platform" onchange="filterTable()"><option value="">All Platforms</option><option>Instagram Reels</option><option>TikTok</option><option>YouTube Shorts</option><option>LinkedIn</option><option>Twitter / X</option><option>Google Ads</option><option>Meta Ads</option></select></div>${tasks.length===0?emptyEl():`<table class="task-table"><thead><tr><th>Title</th><th>Platform</th><th>Status</th><th>Live Date</th><th>Deadline</th><th>Pillar</th><th></th></tr></thead><tbody id="task-tbody">${tasks.map(taskRow).join('')}</tbody></table>`}`;
     }
 
-    function renderList(container) {
-      const tasks = getTasks();
-      const statsHTML = renderStatsBar(tasks);
-      if (!tasks.length) { container.innerHTML = statsHTML + emptyState(); return; }
-      container.innerHTML = `
-        ${statsHTML}
-        <div class="filter-bar">
-          <input class="search-input" id="search-input" placeholder="🔍 Search tasks..." oninput="filterTasks()" />
-          <select class="filter-select" id="filter-status" onchange="filterTasks()">
-            <option value="">All Status</option>
-            <option value="idea">Idea</option>
-            <option value="in-progress">In Progress</option>
-            <option value="review">Review</option>
-            <option value="ready">Ready</option>
-            <option value="live">Live</option>
-            <option value="short">Short</option>
-          </select>
-          <select class="filter-select" id="filter-platform" onchange="filterTasks()">
-            <option value="">All Platforms</option>
-            <option>Instagram Reels</option><option>TikTok</option><option>YouTube Shorts</option>
-            <option>LinkedIn</option><option>Twitter / X</option><option>Google Ads</option><option>Meta Ads</option>
-          </select>
-        </div>
-        <table class="task-table" id="task-list-table">
-          <thead>
-            <tr>
-              <th>Title</th><th>Platform</th><th>Status</th>
-              <th>Live Date</th><th>Deadline</th><th>Assignees</th><th>Pillar</th><th></th>
-            </tr>
-          </thead>
-          <tbody id="task-tbody">
-            ${tasks.map(t => renderTaskRow(t)).join('')}
-          </tbody>
-        </table>
-      `;
+    function taskRow(t){return`<tr class="task-row" onclick="openEditTask('${t.id}')"><td><strong>${t.title}</strong></td><td><span class="tag tag-blue" style="font-size:11px">${t.platform||'—'}</span></td><td><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></td><td>${formatDate(t.liveDate)}</td><td>${formatDate(t.deadline)}</td><td>${t.pillar||'—'}</td><td><button onclick="event.stopPropagation();delTask('${t.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px">🗑</button></td></tr>`;}
+
+    function filterTable(){
+      const q=(document.getElementById('s-search')?.value||'').toLowerCase();
+      const st=document.getElementById('s-status')?.value||'';
+      const pl=document.getElementById('s-platform')?.value||'';
+      let tasks=getFiltered();
+      if(q) tasks=tasks.filter(t=>t.title.toLowerCase().includes(q));
+      if(st) tasks=tasks.filter(t=>t.status===st);
+      if(pl) tasks=tasks.filter(t=>t.platform===pl);
+      const tb=document.getElementById('task-tbody');
+      if(tb) tb.innerHTML=tasks.map(taskRow).join('');
     }
 
-    function renderTaskRow(t) {
-      const assigneeHTML = (t.assignees||[]).slice(0,3).map(a =>
-        `<div class="mini-avatar" title="${a.name}">${a.avatar||a.name.charAt(0)}</div>`
-      ).join('');
-      return `<tr class="task-row" onclick="openEditTask('${t.id}')">
-        <td><div class="task-title-cell"><strong>${t.title}</strong><span>${t.platform||''}</span></div></td>
-        <td><span class="tag tag-blue">${t.platform||'—'}</span></td>
-        <td><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></td>
-        <td>${formatDate(t.liveDate)}</td>
-        <td>${formatDate(t.deadline)}</td>
-        <td><div class="assigned-avatars">${assigneeHTML}</div></td>
-        <td>${t.pillar||'—'}</td>
-        <td><button onclick="event.stopPropagation();deleteTask('${t.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px" title="Delete">🗑</button></td>
-      </tr>`;
+    function renderKanban(c){
+      const tasks=getFiltered();
+      const cols=['idea','in-progress','review','ready','live','short'];
+      const clr={idea:'var(--accent3)','in-progress':'var(--orange)',review:'var(--pink)',ready:'var(--green)',live:'var(--accent)',short:'var(--red)'};
+      c.innerHTML=`<div class="kanban-board">${cols.map(s=>{const ct=tasks.filter(t=>t.status===s);return`<div class="kanban-col"><div class="kanban-col-header"><div class="kanban-col-title"><div style="width:8px;height:8px;border-radius:50%;background:${clr[s]}"></div>${STATUS_LABELS[s]}</div><div class="kanban-count">${ct.length}</div></div><div class="kanban-cards">${ct.map(t=>`<div class="kanban-card" onclick="openEditTask('${t.id}')"><div style="font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.4">${t.title}</div>${t.pillar?`<span class="tag tag-purple" style="font-size:11px">${t.pillar}</span>`:''}<div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:11px;color:var(--text3)">${formatDate(t.liveDate)}</span><span style="font-size:11px;color:var(--text3);background:var(--bg3);padding:2px 6px;border-radius:4px">${t.platform||''}</span></div></div>`).join('')}</div></div>`}).join('')}</div>`;
     }
 
-    function filterTasks() {
-      const q = document.getElementById('search-input')?.value.toLowerCase() || '';
-      const status = document.getElementById('filter-status')?.value || '';
-      const platform = document.getElementById('filter-platform')?.value || '';
-      let tasks = getTasks();
-      if (q) tasks = tasks.filter(t => t.title.toLowerCase().includes(q));
-      if (status) tasks = tasks.filter(t => t.status === status);
-      if (platform) tasks = tasks.filter(t => t.platform === platform);
-      const tbody = document.getElementById('task-tbody');
-      if (tbody) tbody.innerHTML = tasks.map(t => renderTaskRow(t)).join('');
+    function renderBlock(c){
+      const tasks=getFiltered();
+      if(!tasks.length){c.innerHTML=emptyEl();return;}
+      c.innerHTML=`<div class="block-view">${tasks.map(t=>`<div class="block-card" onclick="openEditTask('${t.id}')"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span><span style="font-size:11px;color:var(--text3)">${t.platform||''}</span></div><div style="font-size:15px;font-weight:700;margin-bottom:8px">${t.title}</div><div style="font-size:13px;color:var(--text3);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${t.description||'No description'}</div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;color:var(--text3)">🚀 ${formatDate(t.liveDate)}</span>${t.pillar?`<span class="tag tag-purple" style="font-size:11px">${t.pillar}</span>`:''}</div></div>`).join('')}</div>`;
     }
 
-    function renderKanban(container) {
-      const tasks = getTasks();
-      const statuses = ['idea','in-progress','review','ready','live','short'];
-      const colors = { idea: 'var(--accent3)', 'in-progress': 'var(--orange)', review: 'var(--pink)', ready: 'var(--green)', live: 'var(--accent)', short: 'var(--red)' };
-      container.innerHTML = `<div class="kanban-board">
-        ${statuses.map(s => {
-          const cols = tasks.filter(t => t.status === s);
-          return `<div class="kanban-col">
-            <div class="kanban-col-header">
-              <div class="kanban-col-title">
-                <div style="width:8px;height:8px;border-radius:50%;background:${colors[s]}"></div>
-                ${STATUS_LABELS[s]}
-              </div>
-              <div class="kanban-count">${cols.length}</div>
-            </div>
-            <div class="kanban-cards">
-              ${cols.map(t => `
-                <div class="kanban-card" onclick="openEditTask('${t.id}')">
-                  <div class="kanban-card-title">${t.title}</div>
-                  ${t.pillar ? `<span class="tag tag-purple" style="font-size:11px">${t.pillar}</span>` : ''}
-                  <div class="kanban-card-meta">
-                    <div class="kanban-card-date">${formatDate(t.liveDate)}</div>
-                    <div class="platform-tag">${t.platform||''}</div>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          </div>`;
-        }).join('')}
-      </div>`;
+    function renderCalendar(c){
+      const fd=new Date(currentYear,currentMonth,1).getDay();
+      const dim=new Date(currentYear,currentMonth+1,0).getDate();
+      const pd=new Date(currentYear,currentMonth,0).getDate();
+      const today=new Date();
+      const mn=['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      let cells=[];
+      for(let i=fd-1;i>=0;i--) cells.push({day:pd-i,curr:false});
+      for(let d=1;d<=dim;d++) cells.push({day:d,curr:true});
+      while(cells.length%7!==0) cells.push({day:cells.length-fd-dim+1,curr:false});
+      const gd=d=>allTasks.filter(t=>{if(!t.liveDate)return false;const td=new Date(t.liveDate);return td.getFullYear()===currentYear&&td.getMonth()===currentMonth&&td.getDate()===d;});
+      c.innerHTML=`<div class="cal-month-nav"><button class="cal-nav-btn" onclick="changeMonth(-1)">← Prev</button><h3>${mn[currentMonth]} ${currentYear}</h3><button class="cal-nav-btn" onclick="changeMonth(1)">Next →</button></div><div class="cal-grid-header">${dn.map(d=>`<div class="cal-day-name">${d}</div>`).join('')}</div><div class="cal-grid">${cells.map(cell=>{const isT=cell.curr&&cell.day===today.getDate()&&currentMonth===today.getMonth()&&currentYear===today.getFullYear();const dt=cell.curr?gd(cell.day):[];return`<div class="cal-cell ${!cell.curr?'other-month':''} ${isT?'today':''}"><span class="cal-date">${cell.day}</span>${dt.slice(0,3).map(t=>`<div class="cal-task-dot ${t.status}" onclick="openEditTask('${t.id}')">${t.title}</div>`).join('')}${dt.length>3?`<div style="font-size:10px;color:var(--text3)">+${dt.length-3} more</div>`:''}</div>`;}).join('')}</div>`;
     }
 
-    function renderBlock(container) {
-      const tasks = getTasks();
-      if (!tasks.length) { container.innerHTML = emptyState(); return; }
-      container.innerHTML = `<div class="block-view">
-        ${tasks.map(t => `
-          <div class="block-card" onclick="openEditTask('${t.id}')">
-            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-              <span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span>
-              <span style="font-size:11px;color:var(--text3)">${t.platform||''}</span>
-            </div>
-            <div class="block-card-title">${t.title}</div>
-            <div class="block-card-desc">${t.description||'No description'}</div>
-            <div class="block-card-footer">
-              <span style="font-size:12px;color:var(--text3)">🚀 ${formatDate(t.liveDate)}</span>
-              ${t.pillar ? `<span class="tag tag-purple" style="font-size:11px">${t.pillar}</span>` : ''}
-            </div>
-          </div>
-        `).join('')}
-      </div>`;
-    }
-
-    function renderCalendar(container) {
-      const tasks = DB.get('tasks');
-      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const prevDays = new Date(currentYear, currentMonth, 0).getDate();
-      const today = new Date();
-      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-      const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-
-      let cells = [];
-      for (let i = firstDay - 1; i >= 0; i--) cells.push({ day: prevDays - i, curr: false });
-      for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, curr: true });
-      while (cells.length % 7 !== 0) cells.push({ day: cells.length - firstDay - daysInMonth + 1, curr: false });
-
-      const getTasksForDay = (d) => tasks.filter(t => {
-        if (!t.liveDate) return false;
-        const td = new Date(t.liveDate);
-        return td.getFullYear() === currentYear && td.getMonth() === currentMonth && td.getDate() === d;
-      });
-
-      container.innerHTML = `
-        <div class="cal-month-nav">
-          <button class="cal-nav-btn" onclick="changeMonth(-1)">← Prev</button>
-          <h3>${monthNames[currentMonth]} ${currentYear}</h3>
-          <button class="cal-nav-btn" onclick="changeMonth(1)">Next →</button>
-        </div>
-        <div class="cal-grid-header">${dayNames.map(d=>`<div class="cal-day-name">${d}</div>`).join('')}</div>
-        <div class="cal-grid">
-          ${cells.map(c => {
-            const isToday = c.curr && c.day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-            const dayTasks = c.curr ? getTasksForDay(c.day) : [];
-            return `<div class="cal-cell ${!c.curr?'other-month':''} ${isToday?'today':''}">
-              <span class="cal-date">${c.day}</span>
-              ${dayTasks.slice(0,3).map(t => `<div class="cal-task-dot ${t.status}" onclick="openEditTask('${t.id}')" title="${t.title}">${t.title}</div>`).join('')}
-              ${dayTasks.length > 3 ? `<div style="font-size:10px;color:var(--text3)">+${dayTasks.length-3} more</div>` : ''}
-            </div>`;
-          }).join('')}
-        </div>
-      `;
-    }
-
-    function changeMonth(dir) {
-      currentMonth += dir;
-      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-      renderContent();
-    }
-
-    function renderStatsBar(tasks) {
-      const statuses = ['idea','in-progress','ready','live','short'];
-      return `<div class="stats-bar">${statuses.map(s => `
-        <div class="stat-pill">
-          <span class="tag ${STATUS_COLORS[s]}">${STATUS_LABELS[s]}</span>
-          <strong>${tasks.filter(t=>t.status===s).length}</strong>
-        </div>`).join('')}
-        <div class="stat-pill" style="margin-left:auto">
-          <strong>${tasks.length}</strong> total tasks
-        </div>
-      </div>`;
-    }
-
-    function emptyState() {
-      return `<div class="empty-state">
-        <div style="font-size:48px;margin-bottom:12px">📋</div>
-        <h3>No tasks yet</h3>
-        <p>Start adding content tasks to your calendar</p>
-        <button class="btn-primary" onclick="openAddTask()">+ Add First Task</button>
-      </div>`;
-    }
+    function changeMonth(d){currentMonth+=d;if(currentMonth>11){currentMonth=0;currentYear++;}if(currentMonth<0){currentMonth=11;currentYear--;}renderContent();}
 
     // MODAL
-    function openAddTask() {
-      editingTaskId = null;
-      document.getElementById('modal-title').textContent = 'Add New Task';
-      document.getElementById('task-title').value = '';
-      document.getElementById('task-assigned-date').value = '';
-      document.getElementById('task-deadline').value = '';
-      document.getElementById('task-live-date').value = '';
-      document.getElementById('task-platform').value = '';
-      document.getElementById('task-status').value = 'idea';
-      document.getElementById('task-pillar').value = '';
-      document.getElementById('task-structure').value = '';
-      document.getElementById('task-objective').value = '';
-      document.getElementById('task-cal-type').value = 'social';
-      document.getElementById('task-desc').value = '';
-      document.getElementById('task-ref-link').value = '';
-      document.getElementById('task-live-link').value = '';
-      document.getElementById('task-script').value = '';
-      selectedAssignees = [];
-      renderAssignees();
-      loadAssigneeOptions();
-
-      // Check for pending item from copywriter
-      const pending = DB.getOne('pending_calendar_item');
-      if (pending) {
-        document.getElementById('task-title').value = pending.title || '';
-        document.getElementById('task-script').value = pending.script || '';
-        if (pending.platform) document.getElementById('task-platform').value = pending.platform;
-        DB.setOne('pending_calendar_item', null);
-      }
-
+    function openAddTask(){
+      editingTaskId=null;
+      document.getElementById('modal-title').textContent='Add New Task';
+      ['task-title','task-desc','task-ref-link','task-live-link','task-script','task-assigned-date','task-deadline','task-live-date'].forEach(id=>document.getElementById(id).value='');
+      ['task-platform','task-pillar','task-structure','task-objective'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('task-status').value='idea';
+      document.getElementById('task-cal-type').value='social';
+      selectedAssignees=[];renderAssignees();loadAssignees();
+      const p=DB.getPending('calendar_item');
+      if(p){document.getElementById('task-title').value=p.title||'';document.getElementById('task-script').value=p.script||'';if(p.platform)document.getElementById('task-platform').value=p.platform;}
       document.getElementById('task-modal').classList.add('open');
     }
 
-    function openEditTask(id) {
-      const tasks = DB.get('tasks');
-      const task = tasks.find(t => t.id === id);
-      if (!task) return;
-      editingTaskId = id;
-      document.getElementById('modal-title').textContent = 'Edit Task';
-      document.getElementById('task-title').value = task.title || '';
-      document.getElementById('task-assigned-date').value = task.assignedDate || '';
-      document.getElementById('task-deadline').value = task.deadline || '';
-      document.getElementById('task-live-date').value = task.liveDate || '';
-      document.getElementById('task-platform').value = task.platform || '';
-      document.getElementById('task-status').value = task.status || 'idea';
-      document.getElementById('task-pillar').value = task.pillar || '';
-      document.getElementById('task-structure').value = task.structure || '';
-      document.getElementById('task-objective').value = task.objective || '';
-      document.getElementById('task-cal-type').value = task.calType || 'social';
-      document.getElementById('task-desc').value = task.description || '';
-      document.getElementById('task-ref-link').value = task.refLink || '';
-      document.getElementById('task-live-link').value = task.liveLink || '';
-      document.getElementById('task-script').value = task.script || '';
-      selectedAssignees = task.assignees || [];
-      renderAssignees();
-      loadAssigneeOptions();
+    function openEditTask(id){
+      const t=allTasks.find(x=>x.id===id);if(!t)return;
+      editingTaskId=id;
+      document.getElementById('modal-title').textContent='Edit Task';
+      document.getElementById('task-title').value=t.title||'';
+      document.getElementById('task-assigned-date').value=t.assignedDate||'';
+      document.getElementById('task-deadline').value=t.deadline||'';
+      document.getElementById('task-live-date').value=t.liveDate||'';
+      document.getElementById('task-platform').value=t.platform||'';
+      document.getElementById('task-status').value=t.status||'idea';
+      document.getElementById('task-pillar').value=t.pillar||'';
+      document.getElementById('task-structure').value=t.structure||'';
+      document.getElementById('task-objective').value=t.objective||'';
+      document.getElementById('task-cal-type').value=t.calType||'social';
+      document.getElementById('task-desc').value=t.description||'';
+      document.getElementById('task-ref-link').value=t.refLink||'';
+      document.getElementById('task-live-link').value=t.liveLink||'';
+      document.getElementById('task-script').value=t.script||'';
+      selectedAssignees=t.assignees||[];renderAssignees();loadAssignees();
       document.getElementById('task-modal').classList.add('open');
     }
 
-    function closeModal() { document.getElementById('task-modal').classList.remove('open'); }
+    function closeModal(){document.getElementById('task-modal').classList.remove('open');}
 
-    function loadAssigneeOptions() {
-      const sel = document.getElementById('assignee-select');
-      const users = Auth.getAllUsers();
-      sel.innerHTML = '<option value="">+ Add team member...</option>';
-      users.forEach(u => {
-        if (!selectedAssignees.find(a => a.id === u.id)) {
-          sel.innerHTML += `<option value="${u.id}">${u.name}</option>`;
-        }
+    async function loadAssignees(){
+      const sel=document.getElementById('assignee-select');
+      const users=await Auth.getAllUsers();
+      sel.innerHTML='<option value="">+ Add team member...</option>';
+      users.forEach(u=>{if(!selectedAssignees.find(a=>a.id===u.id))sel.innerHTML+=`<option value="${u.id}">${u.name}</option>`;});
+    }
+
+    async function addAssignee(uid){
+      if(!uid)return;
+      const users=await Auth.getAllUsers();
+      const u=users.find(x=>x.id===uid);
+      if(u&&!selectedAssignees.find(a=>a.id===u.id)){selectedAssignees.push(u);renderAssignees();loadAssignees();}
+      document.getElementById('assignee-select').value='';
+    }
+
+    function renderAssignees(){
+      document.getElementById('assignee-list').innerHTML=selectedAssignees.map(u=>`<div class="tag tag-purple" style="display:flex;align-items:center;gap:6px">${u.avatar||u.name.charAt(0)} ${u.name}<span onclick="removeAssignee('${u.id}')" style="cursor:pointer;opacity:0.7">✕</span></div>`).join('');
+    }
+
+    function removeAssignee(id){selectedAssignees=selectedAssignees.filter(a=>a.id!==id);renderAssignees();loadAssignees();}
+
+    async function saveTask(){
+      const title=document.getElementById('task-title').value.trim();
+      if(!title)return showToast('Title is required','error');
+      const btn=document.getElementById('save-task-btn');
+      btn.disabled=true;btn.textContent='Saving...';
+      const saved=await DB.saveTask({
+        id:editingTaskId||null,title,
+        assignedDate:document.getElementById('task-assigned-date').value,
+        deadline:document.getElementById('task-deadline').value,
+        liveDate:document.getElementById('task-live-date').value,
+        platform:document.getElementById('task-platform').value,
+        status:document.getElementById('task-status').value,
+        pillar:document.getElementById('task-pillar').value,
+        structure:document.getElementById('task-structure').value,
+        objective:document.getElementById('task-objective').value,
+        calType:document.getElementById('task-cal-type').value,
+        description:document.getElementById('task-desc').value,
+        refLink:document.getElementById('task-ref-link').value,
+        liveLink:document.getElementById('task-live-link').value,
+        script:document.getElementById('task-script').value,
+        assignees:selectedAssignees
       });
+      btn.disabled=false;btn.textContent='Save Task';
+      if(!saved){showToast('Error saving. Check console.','error');return;}
+      showToast(editingTaskId?'Task updated!':'Task added!','success');
+      closeModal();await refresh();
     }
 
-    function addAssignee(userId) {
-      if (!userId) return;
-      const users = Auth.getAllUsers();
-      const u = users.find(u => u.id === userId);
-      if (u && !selectedAssignees.find(a => a.id === u.id)) {
-        selectedAssignees.push(u);
-        renderAssignees();
-        loadAssigneeOptions();
-      }
-      document.getElementById('assignee-select').value = '';
+    async function delTask(id){
+      if(!confirm('Delete this task?'))return;
+      await DB.deleteTask(id);showToast('Deleted','info');await refresh();
     }
 
-    function renderAssignees() {
-      document.getElementById('assignee-list').innerHTML = selectedAssignees.map(u =>
-        `<div class="tag tag-purple" style="display:flex;align-items:center;gap:6px">
-          ${u.avatar||u.name.charAt(0)} ${u.name}
-          <span onclick="removeAssignee('${u.id}')" style="cursor:pointer;opacity:0.7">✕</span>
-        </div>`
-      ).join('');
-    }
-
-    function removeAssignee(id) {
-      selectedAssignees = selectedAssignees.filter(a => a.id !== id);
-      renderAssignees(); loadAssigneeOptions();
-    }
-
-    function saveTask() {
-      const title = document.getElementById('task-title').value.trim();
-      if (!title) return showToast('Title is required', 'error');
-      const tasks = DB.get('tasks');
-      const taskData = {
-        id: editingTaskId || genId(),
-        title,
-        assignedDate: document.getElementById('task-assigned-date').value,
-        deadline: document.getElementById('task-deadline').value,
-        liveDate: document.getElementById('task-live-date').value,
-        platform: document.getElementById('task-platform').value,
-        status: document.getElementById('task-status').value,
-        pillar: document.getElementById('task-pillar').value,
-        structure: document.getElementById('task-structure').value,
-        objective: document.getElementById('task-objective').value,
-        calType: document.getElementById('task-cal-type').value,
-        description: document.getElementById('task-desc').value,
-        refLink: document.getElementById('task-ref-link').value,
-        liveLink: document.getElementById('task-live-link').value,
-        script: document.getElementById('task-script').value,
-        assignees: selectedAssignees,
-        updatedAt: new Date().toISOString(),
-        createdAt: editingTaskId ? (tasks.find(t => t.id === editingTaskId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
-      };
-      if (editingTaskId) {
-        const idx = tasks.findIndex(t => t.id === editingTaskId);
-        tasks[idx] = taskData;
-      } else {
-        tasks.push(taskData);
-      }
-      DB.set('tasks', tasks);
-      closeModal();
-      showToast(editingTaskId ? 'Task updated!' : 'Task added!', 'success');
-      renderContent();
-    }
-
-    function deleteTask(id) {
-      if (!confirm('Delete this task?')) return;
-      const tasks = DB.get('tasks').filter(t => t.id !== id);
-      DB.set('tasks', tasks);
-      showToast('Task deleted', 'info');
-      renderContent();
-    }
-
-    // Close modal on overlay click
-    document.getElementById('task-modal').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
-    });
-
-    // Init
-    renderContent();
+    document.getElementById('task-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
   </script>
 </body>
 </html>
