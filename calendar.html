@@ -6,6 +6,11 @@
 <link rel="stylesheet" href="shared.css"/>
 <style>
 body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+/* force nav to single row always */
+.top-nav{flex-shrink:0 !important;display:flex !important;align-items:center !important;justify-content:space-between !important;height:56px !important;min-height:56px !important;padding:0 20px !important;flex-wrap:nowrap !important;overflow:hidden !important}
+.top-nav .nav-brand{flex:1;min-width:0;overflow:hidden;white-space:nowrap;display:flex;align-items:center;gap:10px}
+.top-nav .nav-brand span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top-nav .nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:12px}
 .cal-layout{display:flex;flex:1;overflow:hidden}
 .cal-sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:16px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
 .sidebar-logo{padding:8px 10px 16px;border-bottom:1px solid var(--border);margin-bottom:8px}
@@ -75,7 +80,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .sp-short{background:rgba(255,77,77,0.12);color:var(--red);border:1px solid rgba(255,77,77,0.25)}
 
 /* ── DETAIL CARD ── */
-.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.2s}
 .detail-overlay.open{opacity:1;pointer-events:all}
 .detail-card{background:var(--card);border:1px solid var(--border);border-radius:18px;width:100%;max-width:680px;max-height:88vh;overflow-y:auto;padding:28px;box-shadow:0 24px 60px rgba(0,0,0,0.5)}
 .detail-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px}
@@ -94,7 +99,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .detail-sec-val{font-size:14px;color:var(--text2);line-height:1.6}
 .detail-link{color:#FF66C0;text-decoration:none;word-break:break-all;font-size:13px}
 .detail-link:hover{text-decoration:underline}
-.detail-script{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13px;line-height:1.7;color:var(--text2);white-space:pre-wrap;max-height:200px;overflow-y:auto;font-family:var(--mono)}
+.detail-script{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13px;line-height:1.8;color:var(--text2);word-break:break-word;max-height:200px;overflow-y:auto;font-family:var(--mono)}
 .detail-assignee-chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 10px 4px 4px;font-size:12px;font-weight:600;margin:0 4px 4px 0}
 .detail-avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--indigo));display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff}
 </style>
@@ -328,7 +333,15 @@ function statusPill(s) {
 async function refresh() {
   const { data, error } = await window._sb.from('tasks').select('*').order('created_at', { ascending: false });
   if (error) { console.error('tasks fetch error', error); allTasks = []; }
-  else allTasks = (data || []).map(mapTask);
+  else allTasks = (data || []).map(t => ({
+    id: t.id, title: t.title, description: t.description, script: t.script,
+    platform: t.platform, status: t.status, calType: t.cal_type,
+    pillar: t.pillar, structure: t.structure, objective: t.objective,
+    assignedDate: t.assigned_date, deadline: t.deadline, liveDate: t.live_date,
+    refLink: t.ref_link, liveLink: t.live_link,
+    assignees: t.assignees || [], tags: t.tags || [],
+    createdAt: t.created_at, updatedAt: t.updated_at
+  }));
   renderContent();
 }
 
@@ -599,16 +612,30 @@ function openDetail(id) {
   if (links.length) { document.getElementById('d-links').innerHTML = links.join(''); lw.style.display = ''; }
   else lw.style.display = 'none';
 
-  // Script
+  // Script — detect URLs and make them clickable
   const sw = document.getElementById('d-script-wrap');
-  if (t.script) { document.getElementById('d-script').textContent = t.script; sw.style.display = ''; }
-  else sw.style.display = 'none';
+  if (t.script) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const scriptHtml = t.script.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(urlRegex, url => `<a href="${url}" target="_blank" class="detail-link" style="word-break:break-all">${url} ↗</a>`);
+    document.getElementById('d-script').innerHTML = scriptHtml;
+    sw.style.display = '';
+  } else sw.style.display = 'none';
 
   document.getElementById('detail-overlay').classList.add('open');
 }
 
-function closeDetail() { document.getElementById('detail-overlay').classList.remove('open'); currentDetailTask = null; }
-function openEditFromDetail() { if (!currentDetailTask) return; closeDetail(); openEditTask(currentDetailTask.id); }
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('open');
+  currentDetailTask = null;
+}
+function openEditFromDetail() {
+  if (!currentDetailTask) return;
+  const id = currentDetailTask.id;
+  // close detail first, then open edit modal after transition
+  document.getElementById('detail-overlay').classList.remove('open');
+  setTimeout(() => { currentDetailTask = null; openEditTask(id); }, 220);
+}
 document.getElementById('detail-overlay').addEventListener('click', function(e) { if (e.target===this) closeDetail(); });
 
 // ── ADD MODAL ──
