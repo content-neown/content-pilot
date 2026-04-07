@@ -284,10 +284,47 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 <script>
 window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Self-contained constants — do not rely on auth.js for these
+const STATUS_COLORS = {
+  'idea':        'tag-purple',
+  'in-progress': 'tag-orange',
+  'review':      'tag-pink',
+  'ready':       'tag-green',
+  'live':        'tag-blue',
+  'short':       'tag-red'
+};
+const STATUS_LABELS = {
+  'idea':        'Idea',
+  'in-progress': 'In Progress',
+  'review':      'Review',
+  'ready':       'Ready',
+  'live':        'Live',
+  'short':       'Short'
+};
+
 let currentView='list', currentSection='overview';
 let currentMonth=new Date().getMonth(), currentYear=new Date().getFullYear();
 let editingTaskId=null, selectedAssignees=[], allTasks=[];
 let currentDetailTask=null;
+
+// Safe date formatter — works even if auth.js doesn't define one
+function formatDate(d){
+  if(!d) return '—';
+  try{
+    const dt=new Date(d+'T00:00:00');
+    return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  }catch(e){return d;}
+}
+
+// Safe showToast fallback
+if(typeof showToast==='undefined'){
+  window.showToast=function(msg,type){
+    const t=document.getElementById('global-toast');
+    if(!t)return;
+    t.textContent=msg;t.className='toast '+(type||'');t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3000);
+  };
+}
 
 const SECTIONS={
   overview:{title:'Overview Dashboard',desc:'All your content at a glance'},
