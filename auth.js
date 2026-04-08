@@ -82,7 +82,8 @@ const DB = {
 
   // TASKS
   async getTasks(filters = {}) {
-    let q = this.sb().from('tasks').select('*').eq('user_id', this._uid()).order('created_at', { ascending: false });
+    // FIX: removed .eq('user_id', this._uid()) — all team members see all tasks
+    let q = this.sb().from('tasks').select('*').order('created_at', { ascending: false });
     if (filters.status) q = q.eq('status', filters.status);
     if (filters.calType) q = q.eq('cal_type', filters.calType);
     if (filters.platform) q = q.eq('platform', filters.platform);
@@ -94,7 +95,7 @@ const DB = {
   async saveTask(task) {
     const uid = this._uid();
     const payload = {
-      user_id: uid, title: task.title,
+      title: task.title,
       description: task.description || null, script: task.script || null,
       platform: task.platform || null, status: task.status || 'idea',
       cal_type: task.calType || 'social', pillar: task.pillar || null,
@@ -104,10 +105,13 @@ const DB = {
       live_link: task.liveLink || null, assignees: task.assignees || [], tags: task.tags || []
     };
     if (task.id) {
-      const { data, error } = await this.sb().from('tasks').update(payload).eq('id', task.id).eq('user_id', uid).select().single();
+      // FIX: removed .eq('user_id', uid) — any team member can update any task
+      const { data, error } = await this.sb().from('tasks').update(payload).eq('id', task.id).select().single();
       if (error) { console.error(error); return null; }
       return mapTask(data);
     } else {
+      // New task — stamp the creator's user_id
+      payload.user_id = uid;
       const { data, error } = await this.sb().from('tasks').insert(payload).select().single();
       if (error) { console.error(error); return null; }
       return mapTask(data);
@@ -115,7 +119,8 @@ const DB = {
   },
 
   async deleteTask(id) {
-    const { error } = await this.sb().from('tasks').delete().eq('id', id).eq('user_id', this._uid());
+    // FIX: removed .eq('user_id', this._uid()) — any team member can delete any task
+    const { error } = await this.sb().from('tasks').delete().eq('id', id);
     return !error;
   },
 
