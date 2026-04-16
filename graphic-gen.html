@@ -171,7 +171,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
   <div class="gg-panel">
     <div class="panel-header">
       <h3>🎨 Graphic Generator</h3>
-      <p>Imagen 3 · Static &amp; Carousel</p>
+      <p>Imagen 4 · Static & Carousel</p>
     </div>
 
     <!-- FORMAT -->
@@ -411,7 +411,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
     <div class="gg-header">
       <div class="gg-header-left">
         <h2 id="mode-title">Static Graphic</h2>
-        <p id="mode-desc">Generate ad creatives &amp; social media visuals with Imagen 3</p>
+        <p id="mode-desc">Generate ad creatives & social media visuals with Imagen 4</p>
       </div>
       <div style="display:flex;gap:10px;align-items:center">
         <div class="mode-tabs">
@@ -424,9 +424,9 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
     <div class="imagen-notice" id="imagen-notice">
       <div class="imagen-notice-icon">🔑</div>
       <div class="imagen-notice-text">
-        Uses <strong>Google Imagen 3</strong> via Vertex AI — same setup as Text to Video.
+        Uses <strong>Google Imagen 4</strong> via Google AI Studio — requires <code>GEMINI_API_KEY</code>.
         Requires <strong>VEO_PROJECT_ID</strong> and <strong>GOOGLE_SERVICE_ACCOUNT_KEY</strong> in Vercel env vars.
-        <a href="https://console.cloud.google.com/vertex-ai" target="_blank">Enable Vertex AI →</a>
+        <a href="https://aistudio.google.com/apikey" target="_blank">Get API Key →</a>
       </div>
     </div>
 
@@ -784,7 +784,7 @@ async function saveToCalendar(genId) {
   DB.setPending('calendar_item', {
     title: gen.basePrompt.substring(0,80),
     platform: gen.platforms?.[0] || '',
-    description: `Graphic generated via Imagen 3. Format: ${gen.format} (${gen.aspect}). Slides: ${gen.numSlides||1}.`
+    description: `Graphic generated via Imagen 4. Format: ${gen.format} (${gen.aspect}). Slides: ${gen.numSlides||1}.`
   });
   showToast('Saved! Opening Calendar...', 'success');
   setTimeout(() => window.location.href = 'calendar.html', 800);
@@ -801,10 +801,10 @@ async function enhancePrompt() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system: 'You are an expert at writing Imagen 3 image generation prompts for marketing creatives. Return ONLY the enhanced prompt, no preamble or explanation.',
+        system: 'You are an expert at writing Imagen 4 image generation prompts for marketing creatives. Return ONLY the enhanced prompt, no preamble or explanation.',
         messages: [{
           role: 'user',
-          content: `Enhance this image prompt for Imagen 3, making it richer, more specific, and more likely to produce a professional marketing/ad creative. Keep it under 200 words. Original: "${base}"`
+          content: `Enhance this image prompt for Imagen 4, making it richer, more specific, and more likely to produce a professional marketing/ad creative. Keep it under 200 words. Original: "${base}"`
         }]
       })
     });

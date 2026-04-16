@@ -196,7 +196,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
     <div class="veo-notice">
       <div class="veo-notice-icon">⚠️</div>
       <div class="veo-notice-text">
-        <strong>Veo API Key Required.</strong> This tool calls Google's Veo 2 API via Vertex AI. Add your
+        <strong>Veo API Key Required.</strong> This tool calls Google's Veo 3.1 API via AI Studio. Add your
         <code>VEO_API_KEY</code> and <code>VEO_PROJECT_ID</code> to your Vercel environment variables.
         See <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/video/generate-videos" target="_blank">Veo documentation →</a>
       </div>
@@ -286,8 +286,8 @@ async function enhancePrompt() {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
-        messages: [{role:'user', content:`Enhance this video generation prompt for Veo 2 to be more cinematic, detailed and specific. Keep it under 120 words. Only return the enhanced prompt, nothing else.\n\nOriginal: ${raw}`}],
-        system: 'You are an expert AI video prompt engineer. Enhance prompts for Google Veo 2 video generation. Focus on visual details, camera, lighting, mood, style. Never include text overlays, logos, or children\'s faces in prompts.'
+        messages: [{role:'user', content:`Enhance this video generation prompt for Veo 3.1 to be more cinematic, detailed and specific. Keep it under 120 words. Only return the enhanced prompt, nothing else.\n\nOriginal: ${raw}`}],
+        system: 'You are an expert AI video prompt engineer. Enhance prompts for Google Veo 3.1 video generation. Focus on visual details, camera, lighting, mood, style. Never include text overlays, logos, or children\'s faces in prompts.'
       })
     });
     const data = await resp.json();
