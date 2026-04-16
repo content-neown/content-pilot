@@ -108,13 +108,13 @@ const DB = {
     if (task.id) {
       // FIX: removed .eq('user_id', uid) — any team member can update any task
       const { data, error } = await this.sb().from('tasks').update(payload).eq('id', task.id).select().single();
-      if (error) { console.error(error); return null; }
+      if (error) { console.error("saveTask UPDATE error:", error.message, error.details, error.hint, error.code); return null; }
       return mapTask(data);
     } else {
       // New task — stamp the creator's user_id
       payload.user_id = uid;
       const { data, error } = await this.sb().from('tasks').insert(payload).select().single();
-      if (error) { console.error(error); return null; }
+      if (error) { console.error('saveTask INSERT error:', error.message, error.details, error.hint, error.code); return null; }
       return mapTask(data);
     }
   },
