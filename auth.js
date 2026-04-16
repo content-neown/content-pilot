@@ -84,7 +84,7 @@ const DB = {
   async getTasks(filters = {}) {
     // FIX: removed .eq('user_id', this._uid()) — all team members see all tasks
     let q = this.sb().from('tasks').select('*').order('created_at', { ascending: false });
-    if (filters.status) q = q.eq('status', filters.status);
+    if (filters.status) { const statuses = filters.status.split(','); if(statuses.length>1) q=q.in('status',statuses); else q=q.eq('status',filters.status); }
     if (filters.calType) q = q.eq('cal_type', filters.calType);
     if (filters.platform) q = q.eq('platform', filters.platform);
     const { data, error } = await q;
@@ -97,7 +97,8 @@ const DB = {
     const payload = {
       title: task.title,
       description: task.description || null, script: task.script || null,
-      platform: task.platform || null, status: task.status || 'idea',
+      platform: Array.isArray(task.platform) ? JSON.stringify(task.platform) : (task.platform || null),
+      status: task.status || 'idea',
       cal_type: task.calType || 'social', pillar: task.pillar || null,
       structure: task.structure || null, objective: task.objective || null,
       assigned_date: task.assignedDate || null, deadline: task.deadline || null,
@@ -215,9 +216,14 @@ const DB = {
 // ============================================
 function mapTask(t) {
   if (!t) return null;
+  let platform = t.platform;
+  if (platform) {
+    try { const p = JSON.parse(platform); platform = Array.isArray(p) ? p : [platform]; }
+    catch { platform = [platform]; }
+  } else { platform = []; }
   return {
     id: t.id, title: t.title, description: t.description, script: t.script,
-    platform: t.platform, status: t.status, calType: t.cal_type,
+    platform, status: t.status, calType: t.cal_type,
     pillar: t.pillar, structure: t.structure, objective: t.objective,
     assignedDate: t.assigned_date, deadline: t.deadline, liveDate: t.live_date,
     refLink: t.ref_link, liveLink: t.live_link,
@@ -296,11 +302,63 @@ function hideLoading() {
 }
 
 const STATUS_COLORS = {
-  'idea': 'tag-blue', 'in-progress': 'tag-orange', 'review': 'tag-pink',
-  'ready': 'tag-green', 'live': 'tag-purple', 'short': 'tag-red'
+  // Pre-Production
+  'idea': 'tag-blue',
+  'script-research': 'tag-indigo',
+  'script-in-progress': 'tag-orange',
+  'script-done': 'tag-teal',
+  // Production
+  'shoot-ready': 'tag-green',
+  'shoot-in-progress': 'tag-orange',
+  'shoot-done': 'tag-teal',
+  'edit-in-progress': 'tag-orange',
+  'edit-done': 'tag-green',
+  // Post-Production
+  'content-ready': 'tag-purple',
+  'content-live': 'tag-pink',
+  // Legacy / retained
+  'review': 'tag-pink',
+  'in-progress': 'tag-orange',
+  'ready': 'tag-green',
+  'live': 'tag-purple',
+  'short': 'tag-red'
 };
 
 const STATUS_LABELS = {
-  'idea': 'Idea', 'in-progress': 'In Progress', 'review': 'Review',
-  'ready': 'Ready', 'live': 'Live', 'short': 'Short'
+  // Pre-Production
+  'idea': 'Idea',
+  'script-research': 'Script Research',
+  'script-in-progress': 'Script In Progress',
+  'script-done': 'Script Done',
+  // Production
+  'shoot-ready': 'Shoot Ready',
+  'shoot-in-progress': 'Shoot In Progress',
+  'shoot-done': 'Shoot Done',
+  'edit-in-progress': 'Edit In Progress',
+  'edit-done': 'Edit Done',
+  // Post-Production
+  'content-ready': 'Content Ready',
+  'content-live': 'Content Live',
+  // Legacy / retained
+  'review': 'Review',
+  'in-progress': 'In Progress',
+  'ready': 'Ready',
+  'live': 'Live',
+  'short': 'Short'
 };
+
+// Grouped statuses for UI rendering
+const STATUS_GROUPS = [
+  {
+    label: '🎬 Pre-Production',
+    statuses: ['idea','script-research','script-in-progress','script-done']
+  },
+  {
+    label: '🎥 Production',
+    statuses: ['shoot-ready','shoot-in-progress','shoot-done','edit-in-progress','edit-done']
+  },
+  {
+    label: '🚀 Post-Production',
+    statuses: ['content-ready','content-live']
+  }
+];
