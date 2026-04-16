@@ -18,6 +18,7 @@
 .widgets-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;width:100%;max-width:860px}
 .widget-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 32px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;animation:fadeIn 0.5s ease forwards;opacity:0;text-decoration:none;display:block}
 .widget-card:nth-child(1){animation-delay:0.05s}.widget-card:nth-child(2){animation-delay:0.1s}.widget-card:nth-child(3){animation-delay:0.15s}.widget-card:nth-child(4){animation-delay:0.2s}.widget-card:nth-child(5){animation-delay:0.25s}.widget-card:nth-child(6){animation-delay:0.3s}.widget-card:nth-child(7){animation-delay:0.35s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .widget-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;border-radius:20px}
 .widget-card:hover{transform:translateY(-4px);border-color:transparent;box-shadow:0 20px 50px rgba(0,0,0,0.3)}
 .widget-card:hover::before{opacity:1}
@@ -149,17 +150,31 @@
 <script src="auth.js"></script>
 <script>
 window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Step 1: Auth — fast, blocks redirect only
 (async () => {
-  const user = await Auth.requireAuth();
-  if (!user) return;
-  document.getElementById('user-avatar').textContent = user.avatar;
-  document.getElementById('user-name').textContent = user.name;
-  document.getElementById('greeting-name').textContent = user.name.split(' ')[0];
-  const [tasks, bankItems] = await Promise.all([DB.getTasks(), DB.getBankItems()]);
-  document.getElementById('stat-tasks').textContent = tasks.length + ' tasks';
-  document.getElementById('stat-live').textContent = tasks.filter(t=>t.status==='live').length + ' live';
-  document.getElementById('stat-progress').textContent = tasks.filter(t=>t.status==='in-progress').length + ' in progress';
-  document.getElementById('stat-bank').textContent = bankItems.length + ' in bank';
+  try {
+    const user = await Auth.requireAuth();
+    if (!user) return;
+    document.getElementById('user-avatar').textContent = user.avatar || user.email?.[0]?.toUpperCase() || '?';
+    document.getElementById('user-name').textContent = user.name || user.email || 'User';
+    document.getElementById('greeting-name').textContent = (user.name || user.email || 'there').split(' ')[0];
+  } catch(e) {
+    document.getElementById('greeting-name').textContent = 'there';
+  }
+})();
+
+// Step 2: Stats — non-blocking, fills in after cards already visible
+(async () => {
+  try {
+    const [tasks, bankItems] = await Promise.all([DB.getTasks(), DB.getBankItems()]);
+    document.getElementById('stat-tasks').textContent = tasks.length + ' tasks';
+    document.getElementById('stat-live').textContent = tasks.filter(t=>t.status==='live').length + ' live';
+    document.getElementById('stat-progress').textContent = tasks.filter(t=>t.status==='in-progress').length + ' in progress';
+    document.getElementById('stat-bank').textContent = bankItems.length + ' in bank';
+  } catch(e) {
+    // Stats are cosmetic — silent fail is fine
+  }
 })();
 </script>
 </body>
