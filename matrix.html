@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ContentPilot — Weekly Matrix</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.top-nav{flex-shrink:0}
+.matrix-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* Toolbar */
+.matrix-toolbar{display:flex;align-items:center;gap:12px;padding:12px 24px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
+.toolbar-group{display:flex;align-items:center;gap:8px}
+.toolbar-sep{width:1px;height:24px;background:var(--border)}
+.toolbar-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.toolbar-btn:hover{border-color:var(--accent);color:var(--text)}
+.toolbar-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.toolbar-btn.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+.toolbar-btn.danger{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#ef4444}
+.toolbar-btn.danger:hover{background:rgba(239,68,68,0.2)}
+.sheet-select{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:6px 28px 6px 12px;font-size:13px;font-weight:600;font-family:'Satoshi',sans-serif;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2360607a' d='M5 7L0 2h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;cursor:pointer;outline:none}
+.week-label{font-size:13px;font-weight:700;color:var(--text2)}
+.week-nav{display:flex;align-items:center;gap:4px}
+.week-nav-btn{background:var(--bg3);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:all 0.15s;font-size:14px}
+.week-nav-btn:hover{border-color:var(--accent);color:var(--text)}
+.save-indicator{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px;margin-left:auto}
+.save-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.save-dot.saving{background:#fbbf24;animation:pulse 1s infinite}
+
+/* Table container */
+.table-container{flex:1;overflow:auto;position:relative}
+table{border-collapse:collapse;width:100%;min-width:1200px;font-size:13px}
+thead{position:sticky;top:0;z-index:20}
+thead tr th{background:var(--bg2);border:1px solid var(--border);padding:0;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.6px;color:var(--text3);white-space:nowrap;user-select:none}
+thead tr th .th-inner{padding:10px 14px;display:flex;align-items:center;gap:6px}
+thead tr th.col-num{width:42px;text-align:center}
+thead tr th.col-num .th-inner{justify-content:center}
+thead tr th .sort-icon{opacity:0.4;cursor:pointer;transition:opacity 0.15s}
+thead tr th .sort-icon:hover{opacity:1}
+
+/* Rows */
+tbody tr{transition:background 0.1s}
+tbody tr:hover{background:rgba(108,99,255,0.04)}
+tbody tr.selected-row{background:rgba(108,99,255,0.08)}
+td{border:1px solid var(--border);padding:0;position:relative;vertical-align:top}
+td.col-num{text-align:center;color:var(--text3);font-size:11px;font-weight:600;background:var(--bg2);width:42px;vertical-align:middle;cursor:pointer;user-select:none}
+td.col-num:hover{background:rgba(108,99,255,0.08)}
+
+/* Editable cell */
+.cell-input{width:100%;height:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;font-family:'Satoshi',sans-serif;padding:8px 12px;resize:none;line-height:1.4;min-height:36px}
+.cell-input:focus{background:rgba(108,99,255,0.05);box-shadow:inset 0 0 0 2px var(--accent)}
+td.focused{box-shadow:inset 0 0 0 2px var(--accent)}
+.cell-select{width:100%;height:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:12px;font-family:'Satoshi',sans-serif;padding:8px 10px;cursor:pointer;appearance:none;font-weight:600}
+.cell-select:focus{background:rgba(108,99,255,0.05)}
+
+/* Status colors */
+.status-draft{color:#fbbf24}.status-planned{color:#38bdf8}.status-in-review{color:#a78bfa}.status-live{color:#34d399}.status-paused{color:#f87171}
+.priority-high{color:#f87171}.priority-medium{color:#fbbf24}.priority-low{color:#60a5fa}
+
+/* Add row btn */
+.add-row-row td{background:var(--bg2);padding:0}
+.add-row-btn{width:100%;padding:10px;background:transparent;border:none;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;text-align:left;padding-left:20px;display:flex;align-items:center;gap:8px}
+.add-row-btn:hover{background:rgba(108,99,255,0.05);color:var(--accent2)}
+
+/* Tabs (sheets) */
+.sheet-tabs{display:flex;gap:4px;padding:8px 24px 0;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
+.sheet-tab{padding:7px 18px;border-radius:8px 8px 0 0;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.15s;border:1px solid transparent;border-bottom:none;white-space:nowrap}
+.sheet-tab:hover{color:var(--text);background:var(--bg3)}
+.sheet-tab.active{background:var(--bg);color:var(--text);border-color:var(--border)}
+.sheet-tab-add{padding:7px 14px;font-size:18px;color:var(--text3);cursor:pointer;border-radius:8px;transition:all 0.15s;align-self:center}
+.sheet-tab-add:hover{color:var(--accent2);background:rgba(108,99,255,0.08)}
+
+/* Formula bar */
+.formula-bar{display:flex;align-items:center;gap:10px;padding:6px 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
+.cell-ref{font-size:12px;font-weight:700;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 10px;min-width:60px;text-align:center;font-family:monospace}
+.formula-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;font-family:monospace;padding:4px 8px}
+
+/* Context menu */
+.ctx-menu{position:fixed;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px;z-index:1000;box-shadow:0 8px 30px rgba(0,0,0,0.4);min-width:180px;display:none}
+.ctx-menu.visible{display:block}
+.ctx-item{padding:8px 14px;font-size:13px;color:var(--text2);cursor:pointer;border-radius:6px;display:flex;align-items:center;gap:10px;transition:all 0.1s}
+.ctx-item:hover{background:rgba(108,99,255,0.1);color:var(--text)}
+.ctx-item.danger{color:#ef4444}
+.ctx-item.danger:hover{background:rgba(239,68,68,0.1)}
+.ctx-sep{height:1px;background:var(--border);margin:4px 0}
+
+/* Download confirm */
+.dl-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:none;align-items:center;justify-content:center}
+.dl-overlay.visible{display:flex}
+.dl-modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:380px;text-align:center}
+.dl-modal h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.dl-modal p{color:var(--text3);font-size:14px;margin-bottom:22px}
+.dl-actions{display:flex;gap:10px}
+.dl-actions button{flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all 0.2s}
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="dashboard.html" class="nav-logo">ContentPilot</a>
+    <span style="color:var(--text3);font-size:20px;font-weight:200">/</span>
+    <span style="font-size:14px;color:var(--text2);font-weight:600">Weekly Matrix</span>
+  </div>
+  <div class="nav-actions">
+    <div class="avatar" id="nav-avatar">?</div>
+  </div>
+</nav>
+
+<!-- Sheet tabs -->
+<div class="sheet-tabs" id="sheet-tabs">
+  <div class="sheet-tab active" data-sheet="planning" onclick="switchSheet('planning')">📋 Master Planning Matrix</div>
+  <div class="sheet-tab" data-sheet="quota" onclick="switchSheet('quota')">📊 Quota Tracker</div>
+  <div class="sheet-tab" data-sheet="library" onclick="switchSheet('library')">📚 Book Library</div>
+  <div class="sheet-tab" data-sheet="performance" onclick="switchSheet('performance')">🎯 Performance Scorecard</div>
+  <div class="sheet-tab-add" onclick="addSheet()" title="Add sheet">＋</div>
+</div>
+
+<div class="matrix-wrap">
+  <!-- Toolbar -->
+  <div class="matrix-toolbar">
+    <div class="toolbar-group">
+      <button class="toolbar-btn primary" onclick="addRow()">＋ Add Row</button>
+      <button class="toolbar-btn" onclick="addColumn()">＋ Column</button>
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-group">
+      <div class="week-nav">
+        <div class="week-nav-btn" onclick="changeWeek(-1)">‹</div>
+        <span class="week-label" id="week-label">Week 1 — Apr 14–20, 2026</span>
+        <div class="week-nav-btn" onclick="changeWeek(1)">›</div>
+      </div>
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-group">
+      <button class="toolbar-btn" onclick="exportXLSX()">⬇️ Export XLSX</button>
+      <button class="toolbar-btn" onclick="importCSV()">⬆️ Import CSV</button>
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-group">
+      <input type="text" id="search-input" placeholder="🔍 Search cells..." style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--text);outline:none;width:180px;font-family:'Satoshi',sans-serif" oninput="searchCells(this.value)"/>
+    </div>
+    <div class="save-indicator">
+      <div class="save-dot" id="save-dot"></div>
+      <span id="save-label">Saved</span>
+    </div>
+  </div>
+
+  <!-- Formula bar -->
+  <div class="formula-bar">
+    <div class="cell-ref" id="cell-ref">A1</div>
+    <span style="color:var(--text3);font-size:14px">fx</span>
+    <input type="text" class="formula-input" id="formula-input" placeholder="Cell value" oninput="onFormulaInput(this.value)"/>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container" id="table-container">
+    <table id="matrix-table">
+      <thead id="table-head"></thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Context menu -->
+<div class="ctx-menu" id="ctx-menu">
+  <div class="ctx-item" onclick="ctxInsertAbove()">↑ Insert row above</div>
+  <div class="ctx-item" onclick="ctxInsertBelow()">↓ Insert row below</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxDuplicateRow()">⎘ Duplicate row</div>
+  <div class="ctx-item" onclick="ctxClearRow()">🧹 Clear row</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item danger" onclick="ctxDeleteRow()">🗑 Delete row</div>
+</div>
+
+<!-- Download overlay -->
+<div class="dl-overlay" id="dl-overlay">
+  <div class="dl-modal">
+    <div style="font-size:40px;margin-bottom:12px">📥</div>
+    <h3>Export as XLSX?</h3>
+    <p>This will download all sheets as a single Excel file, matching the neOwn planning matrix format.</p>
+    <div class="dl-actions">
+      <button style="background:var(--bg3);color:var(--text2)" onclick="closeDownload()">Cancel</button>
+      <button style="background:var(--accent);color:#fff" onclick="confirmDownload()">Download</button>
+    </div>
+  </div>
+</div>
+
+<div id="global-toast" class="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="auth.js"></script>
+<script>
+window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let currentSheet = 'planning';
+let ctxRowIndex = -1;
+let activeCell = {r:0,c:0};
+let saveTimer = null;
+let weekOffset = 0;
+
+// ── Sheet definitions ──────────────────────────────────────────
+const SHEET_DEFS = {
+  planning: {
+    label: 'Master Planning Matrix',
+    columns: [
+      {key:'id',label:'#',w:42,type:'num'},
+      {key:'adId',label:'Ad ID',w:130,type:'text'},
+      {key:'product',label:'Product',w:110,type:'select',opts:['Renewal','Referral','Mini Pack']},
+      {key:'pillar',label:'Funnel Pillar',w:110,type:'select',opts:['Meme','Clickbait','Educational','Brand']},
+      {key:'adType',label:'Ad Type',w:80,type:'select',opts:['EGC','UGC','FGC']},
+      {key:'format',label:'Format',w:90,type:'select',opts:['Video','Carousel','Static','Reel','Story']},
+      {key:'concept',label:'Hook / Concept',w:260,type:'text'},
+      {key:'platform',label:'Platform',w:140,type:'select',opts:['Instagram Reels','Instagram Feed','YouTube Shorts','Meta Ads']},
+      {key:'cta',label:'CTA',w:130,type:'text'},
+      {key:'audience',label:'Audience Segment',w:170,type:'text'},
+      {key:'status',label:'Status',w:100,type:'select',opts:['Draft','Planned','In Review','Live','Paused']},
+      {key:'shootType',label:'Shoot Type',w:100,type:'select',opts:['Self-shoot','Studio','Designed','Animation']},
+      {key:'assignedTo',label:'Assigned To',w:120,type:'text'},
+      {key:'dueDate',label:'Due Date',w:100,type:'date'},
+      {key:'spend',label:'Spend (₹)',w:90,type:'num'},
+      {key:'impressions',label:'Impressions',w:100,type:'num'},
+      {key:'ctr',label:'CTR %',w:70,type:'num'},
+      {key:'cpr',label:'CPR (₹)',w:80,type:'num'},
+      {key:'notes',label:'Notes / Priority',w:140,type:'select',opts:['High','Medium','Low','—']},
+    ],
+    defaultRows: [
+      {adId:'NEO-REN-VID-01',product:'Renewal',pillar:'Meme',adType:'UGC',format:'Video',concept:"Mom finds old books piling up — neOwn ka time aa gaya",platform:'Instagram Reels',cta:'Subscribe karo',audience:'Lapsed subscribers',status:'Draft',shootType:'Self-shoot',notes:'High'},
+      {adId:'NEO-REN-VID-02',product:'Renewal',pillar:'Meme',adType:'EGC',format:'Video',concept:"Book subscription reminder — relatable mom humor",platform:'Instagram Reels',cta:'Renew now',audience:'Active subscribers',status:'Planned',shootType:'Self-shoot',notes:'High'},
+      {adId:'NEO-REN-VID-03',product:'Renewal',pillar:'Clickbait',adType:'UGC',format:'Video',concept:"'My child read 12 books this month — here's how'",platform:'Instagram Reels',cta:'Subscribe karo',audience:'New moms 25–35',status:'Planned',shootType:'Self-shoot',notes:'High'},
+      {adId:'NEO-REF-VID-05',product:'Referral',pillar:'Meme',adType:'UGC',format:'Video',concept:"Tag a mom who needs this in her life",platform:'Instagram Reels',cta:'Share with a friend',audience:'Existing subscribers',status:'Draft',shootType:'Self-shoot',notes:'High'},
+      {adId:'NEO-MNP-VID-09',product:'Mini Pack',pillar:'Meme',adType:'UGC',format:'Video',concept:"First box unboxing — mini pack surprise reaction",platform:'Instagram Reels',cta:'Try the mini pack',audience:'First-time visitors',status:'Draft',shootType:'Self-shoot',notes:'High'},
+      {adId:'NEO-MNP-CAR-18',product:'Mini Pack',pillar:'Meme',adType:'FGC',format:'Carousel',concept:"Before neOwn vs. After neOwn — a mom's bookshelf story",platform:'Instagram Feed',cta:'Try the mini pack',audience:'First-time visitors',status:'Planned',shootType:'Designed',notes:'High'},
+    ]
+  },
+  quota: {
+    label: 'Quota Tracker',
+    columns: [
+      {key:'category',label:'Category',w:180,type:'text'},
+      {key:'metric',label:'Metric / Format',w:160,type:'text'},
+      {key:'target',label:'Target',w:90,type:'num'},
+      {key:'produced',label:'Produced',w:90,type:'num'},
+      {key:'remaining',label:'Remaining',w:90,type:'num'},
+      {key:'pctDone',label:'% Done',w:80,type:'num'},
+      {key:'notes',label:'Notes',w:200,type:'text'},
+    ],
+    defaultRows: [
+      {category:'Format Quota',metric:'Video',target:'15',produced:'0',remaining:'15',pctDone:'0%',notes:''},
+      {category:'Format Quota',metric:'Carousel',target:'4',produced:'0',remaining:'4',pctDone:'0%',notes:''},
+      {category:'Format Quota',metric:'Static',target:'4',produced:'0',remaining:'4',pctDone:'0%',notes:''},
+      {category:'Ad Type Distribution',metric:'EGC',target:'6',produced:'0',remaining:'6',pctDone:'0%',notes:'Employee / Expert Generated'},
+      {category:'Ad Type Distribution',metric:'UGC',target:'11',produced:'0',remaining:'11',pctDone:'0%',notes:'Real mom creators'},
+      {category:'Ad Type Distribution',metric:'FGC',target:'6',produced:'0',remaining:'6',pctDone:'0%',notes:'Founder / Brand Generated'},
+      {category:'Product Distribution',metric:'Renewal',target:'8',produced:'0',remaining:'8',pctDone:'0%',notes:''},
+      {category:'Product Distribution',metric:'Referral',target:'8',produced:'0',remaining:'8',pctDone:'0%',notes:''},
+      {category:'Product Distribution',metric:'Mini Pack',target:'7',produced:'0',remaining:'7',pctDone:'0%',notes:''},
+    ]
+  },
+  library: {
+    label: 'Book Library',
+    columns: [
+      {key:'category',label:'Book Category',w:160,type:'text'},
+      {key:'description',label:'Category Description',w:230,type:'text'},
+      {key:'ageGroup',label:'Age Group',w:90,type:'text'},
+      {key:'qty',label:'Avg Qty/Box',w:90,type:'num'},
+      {key:'language',label:'Language',w:110,type:'select',opts:['English','Hindi','Bilingual','Hindi / English']},
+      {key:'format',label:'Format',w:100,type:'select',opts:['Hardcover','Paperback','Board Book']},
+      {key:'adUse',label:'Best For (Ad Use)',w:190,type:'text'},
+      {key:'testimonial',label:'Testimonial Angle',w:200,type:'text'},
+      {key:'examples',label:'Example Titles',w:220,type:'text'},
+    ],
+    defaultRows: [
+      {category:'Picture Books',description:'Illustrated stories for early readers',ageGroup:'0–3 yrs',qty:'3–4',language:'Hindi / English',format:'Hardcover',adUse:'Mini pack unboxing, UGC',testimonial:"Child's first reaction",examples:'Goodnight Moon, Pat the Bunny'},
+      {category:'Story Books',description:'Short narrative fiction for toddlers',ageGroup:'2–5 yrs',qty:'3–4',language:'Hindi / English',format:'Paperback',adUse:'Renewal, screen guilt angle',testimonial:'Bedtime routine testimonial',examples:'Panchatantra, Tenali Raman'},
+      {category:'Concept Books',description:'Numbers, colors, shapes, ABCs',ageGroup:'1–4 yrs',qty:'2–3',language:'Bilingual',format:'Board Book',adUse:'EGC expert curation content',testimonial:'Learning milestone hook',examples:'My First ABC, Counting with Chhota Bheem'},
+      {category:'Early Readers',description:'Simple text, growing vocabulary',ageGroup:'4–6 yrs',qty:'3–4',language:'English',format:'Paperback',adUse:'Clickbait performance angle',testimonial:'Parent surprise at progress',examples:'Fly Guy, Elephant & Piggie'},
+      {category:'Chapter Books',description:'Longer stories, building attention span',ageGroup:'6–9 yrs',qty:'2–3',language:'English',format:'Paperback',adUse:'Renewal — older child angle',testimonial:'Child reading independently',examples:'Magic Tree House, Geronimo Stilton'},
+      {category:'Activity Books',description:'Puzzles, mazes, creative exercises',ageGroup:'3–7 yrs',qty:'1–2',language:'Hindi / English',format:'Paperback',adUse:'Screen-free angle, meme',testimonial:'Off-screen engagement proof',examples:'Wipe-Clean books, Sticker activity'},
+    ]
+  },
+  performance: {
+    label: 'Performance Scorecard',
+    columns: [
+      {key:'product',label:'Product',w:100,type:'select',opts:['Renewal','Referral','Mini Pack']},
+      {key:'kpi',label:'KPI',w:140,type:'text'},
+      {key:'target',label:'Target',w:90,type:'text'},
+      {key:'week1',label:'Week 1',w:90,type:'text'},
+      {key:'week2',label:'Week 2',w:90,type:'text'},
+      {key:'week3',label:'Week 3',w:90,type:'text'},
+      {key:'week4',label:'Week 4',w:90,type:'text'},
+      {key:'notes',label:'Notes',w:200,type:'text'},
+    ],
+    defaultRows: [
+      {product:'Renewal',kpi:'Impressions',target:'50,000',week1:'',week2:'',week3:'',week4:'',notes:''},
+      {product:'Renewal',kpi:'Reach',target:'35,000',week1:'',week2:'',week3:'',week4:'',notes:''},
+      {product:'Renewal',kpi:'CTR %',target:'2.5%',week1:'',week2:'',week3:'',week4:'',notes:''},
+      {product:'Renewal',kpi:'CPR (₹)',target:'₹8',week1:'',week2:'',week3:'',week4:'',notes:''},
+      {product:'Renewal',kpi:'New Signups',target:'50',week1:'',week2:'',week3:'',week4:'',notes:''},
+      {product:'Renewal',kpi:'Save Rate',target:'3%',week1:'',week2:'',week3:'',week4:'',notes:'★ Primary signal'},
+      {product:'Referral',kpi:'Impressions',target:'50,000',week1:'',week2:'',week3:'',week4:'',notes:''},
+      {product:'Referral',kpi:'CTR %',target:'2.5%',week1:'',week2:'',week3:'',week4:'',notes:''},
+      {product:'Referral',kpi:'New Signups',target:'50',week1:'',week2:'',week3:'',week4:'',notes:''},
+      {product:'Mini Pack',kpi:'Impressions',target:'50,000',week1:'',week2:'',week3:'',week4:'',notes:''},
+      {product:'Mini Pack',kpi:'CTR %',target:'2.5%',week1:'',week2:'',week3:'',week4:'',notes:''},
+      {product:'Mini Pack',kpi:'New Signups',target:'50',week1:'',week2:'',week3:'',week4:'',notes:''},
+    ]
+  }
+};
+
+// ── Data store per sheet ────────────────────────────────────────
+const sheetData = {};
+Object.keys(SHEET_DEFS).forEach(k => {
+  sheetData[k] = SHEET_DEFS[k].defaultRows.map((row, i) => ({
+    _id: Date.now() + i + Math.random(),
+    id: String(i+1),
+    ...row
+  }));
+});
+
+// Custom sheets added by user
+const customSheets = [];
+
+// ── Init ──────────────────────────────────────────────────────
+(async () => {
+  currentUser = await Auth.requireAuth();
+  if (currentUser) document.getElementById('nav-avatar').textContent = currentUser.avatar;
+  await loadFromSupabase();
+  renderTable();
+  updateWeekLabel();
+})();
+
+async function loadFromSupabase() {
+  try {
+    const sb = getSB();
+    const { data, error } = await sb.from('matrix_data').select('*').eq('user_id', currentUser.id).order('created_at');
+    if (error || !data?.length) return;
+    // Restore saved data
+    data.forEach(row => {
+      const s = row.sheet_key;
+      if (!sheetData[s]) sheetData[s] = [];
+      const existing = sheetData[s].find(r => r._id == row.row_id);
+      if (existing) Object.assign(existing, row.row_data);
+    });
+  } catch(e) { /* silent — will use defaults */ }
+}
+
+async function saveToSupabase() {
+  markSaving();
+  try {
+    const sb = getSB();
+    const rows = sheetData[currentSheet].map(row => ({
+      user_id: currentUser.id,
+      sheet_key: currentSheet,
+      row_id: row._id,
+      row_data: row
+    }));
+    // Upsert
+    await sb.from('matrix_data').upsert(rows, {onConflict:'user_id,sheet_key,row_id'});
+    markSaved();
+  } catch(e) {
+    markSaved();
+  }
+}
+
+function markSaving() {
+  document.getElementById('save-dot').className = 'save-dot saving';
+  document.getElementById('save-label').textContent = 'Saving...';
+}
+function markSaved() {
+  document.getElementById('save-dot').className = 'save-dot';
+  document.getElementById('save-label').textContent = 'Saved';
+}
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveToSupabase, 1200);
+}
+
+// ── Render ──────────────────────────────────────────────────────
+function renderTable() {
+  const def = SHEET_DEFS[currentSheet];
+  if (!def) return;
+  const cols = def.columns;
+  const rows = sheetData[currentSheet];
+
+  // Head
+  const thead = document.getElementById('table-head');
+  thead.innerHTML = `<tr>
+    <th class="col-num"><div class="th-inner">#</div></th>
+    ${cols.filter(c=>c.key!=='id').map((col,ci) =>
+      `<th style="min-width:${col.w}px;max-width:${col.w+80}px">
+        <div class="th-inner">${col.label}</div>
+      </th>`
+    ).join('')}
+  </tr>`;
+
+  // Body
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = rows.map((row, ri) => `
+    <tr id="row-${ri}" oncontextmenu="showCtx(event,${ri})">
+      <td class="col-num" onclick="toggleRowSelect(${ri})">${ri+1}</td>
+      ${cols.filter(c=>c.key!=='id').map((col,ci) => {
+        const val = row[col.key] ?? '';
+        if (col.type === 'select') {
+          const colorClass = col.key==='status' ? 'status-'+val.toLowerCase().replace(/\s+/g,'-') :
+                             col.key==='notes' ? 'priority-'+val.toLowerCase() : '';
+          return `<td>
+            <select class="cell-select ${colorClass}" data-row="${ri}" data-col="${col.key}"
+              onchange="onCellChange(${ri},'${col.key}',this.value)" onfocus="onCellFocus(${ri},${ci+1})">
+              <option value="">—</option>
+              ${col.opts.map(o=>`<option value="${o}" ${o===val?'selected':''}>${o}</option>`).join('')}
+            </select>
+          </td>`;
+        } else if (col.type === 'num') {
+          return `<td><input type="text" class="cell-input" value="${escHtml(String(val))}"
+            data-row="${ri}" data-col="${col.key}"
+            onchange="onCellChange(${ri},'${col.key}',this.value)"
+            onfocus="onCellFocus(${ri},${ci+1})"
+            style="text-align:right"/></td>`;
+        } else {
+          return `<td><input type="${col.type==='date'?'date':'text'}" class="cell-input" value="${escHtml(String(val))}"
+            data-row="${ri}" data-col="${col.key}"
+            onchange="onCellChange(${ri},'${col.key}',this.value)"
+            onfocus="onCellFocus(${ri},${ci+1})"/></td>`;
+        }
+      }).join('')}
+    </tr>
+  `).join('') + `
+  <tr class="add-row-row">
+    <td colspan="${cols.length}">
+      <button class="add-row-btn" onclick="addRow()">＋ Add row</button>
+    </td>
+  </tr>`;
+}
+
+function onCellChange(ri, key, val) {
+  sheetData[currentSheet][ri][key] = val;
+  scheduleSave();
+  // Update formula bar
+  document.getElementById('formula-input').value = val;
+}
+
+function onCellFocus(ri, ci) {
+  activeCell = {r:ri, c:ci};
+  const colLetter = String.fromCharCode(65+ci);
+  document.getElementById('cell-ref').textContent = `${colLetter}${ri+1}`;
+  const val = sheetData[currentSheet][ri]?.[SHEET_DEFS[currentSheet].columns[ci]?.key] ?? '';
+  document.getElementById('formula-input').value = String(val);
+}
+
+function onFormulaInput(val) {
+  const cols = SHEET_DEFS[currentSheet].columns.filter(c=>c.key!=='id');
+  const col = cols[activeCell.c];
+  if (!col) return;
+  if (sheetData[currentSheet][activeCell.r]) {
+    sheetData[currentSheet][activeCell.r][col.key] = val;
+    // Update input in table
+    const inp = document.querySelector(`[data-row="${activeCell.r}"][data-col="${col.key}"]`);
+    if (inp) inp.value = val;
+    scheduleSave();
+  }
+}
+
+// ── Row ops ──────────────────────────────────────────────────────
+function addRow() {
+  const rows = sheetData[currentSheet];
+  rows.push({ _id: Date.now()+Math.random(), id: String(rows.length+1) });
+  renderTable();
+  scheduleSave();
+  // Scroll to bottom
+  setTimeout(() => {
+    const tb = document.getElementById('table-container');
+    tb.scrollTop = tb.scrollHeight;
+  }, 50);
+}
+
+function addColumn() {
+  const name = prompt('Column name:');
+  if (!name) return;
+  SHEET_DEFS[currentSheet].columns.push({key:'custom_'+Date.now(),label:name,w:120,type:'text'});
+  renderTable();
+  showToast('Column added','success');
+}
+
+function toggleRowSelect(ri) {
+  const row = document.getElementById(`row-${ri}`);
+  row.classList.toggle('selected-row');
+}
+
+function showCtx(e, ri) {
+  e.preventDefault();
+  ctxRowIndex = ri;
+  const menu = document.getElementById('ctx-menu');
+  menu.style.left = e.clientX + 'px';
+  menu.style.top = e.clientY + 'px';
+  menu.classList.add('visible');
+}
+document.addEventListener('click', () => document.getElementById('ctx-menu').classList.remove('visible'));
+
+function ctxInsertAbove() {
+  sheetData[currentSheet].splice(ctxRowIndex, 0, {_id:Date.now()+Math.random(),id:''});
+  renderTable(); scheduleSave();
+}
+function ctxInsertBelow() {
+  sheetData[currentSheet].splice(ctxRowIndex+1, 0, {_id:Date.now()+Math.random(),id:''});
+  renderTable(); scheduleSave();
+}
+function ctxDuplicateRow() {
+  const orig = sheetData[currentSheet][ctxRowIndex];
+  sheetData[currentSheet].splice(ctxRowIndex+1, 0, {...orig, _id:Date.now()+Math.random()});
+  renderTable(); scheduleSave();
+}
+function ctxClearRow() {
+  const row = sheetData[currentSheet][ctxRowIndex];
+  const id = row._id;
+  sheetData[currentSheet][ctxRowIndex] = {_id:id, id:String(ctxRowIndex+1)};
+  renderTable(); scheduleSave();
+}
+function ctxDeleteRow() {
+  sheetData[currentSheet].splice(ctxRowIndex, 1);
+  renderTable(); scheduleSave();
+}
+
+// ── Sheet switching ─────────────────────────────────────────────
+function switchSheet(key) {
+  currentSheet = key;
+  document.querySelectorAll('.sheet-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.sheet===key);
+  });
+  renderTable();
+}
+
+function addSheet() {
+  const name = prompt('New sheet name:');
+  if (!name) return;
+  const key = 'custom_' + Date.now();
+  SHEET_DEFS[key] = {
+    label: name,
+    columns: [
+      {key:'col1',label:'Column 1',w:180,type:'text'},
+      {key:'col2',label:'Column 2',w:180,type:'text'},
+      {key:'col3',label:'Column 3',w:180,type:'text'},
+    ]
+  };
+  sheetData[key] = [];
+  const tabs = document.getElementById('sheet-tabs');
+  const addBtn = tabs.querySelector('.sheet-tab-add');
+  const tab = document.createElement('div');
+  tab.className = 'sheet-tab';
+  tab.dataset.sheet = key;
+  tab.textContent = '📄 ' + name;
+  tab.onclick = () => switchSheet(key);
+  tabs.insertBefore(tab, addBtn);
+  switchSheet(key);
+}
+
+// ── Week nav ─────────────────────────────────────────────────────
+function updateWeekLabel() {
+  const baseDate = new Date('2026-04-14');
+  baseDate.setDate(baseDate.getDate() + weekOffset*7);
+  const end = new Date(baseDate);
+  end.setDate(end.getDate() + 6);
+  const opts = {month:'short',day:'numeric'};
+  const weekNum = Math.ceil((weekOffset+1));
+  document.getElementById('week-label').textContent =
+    `Week ${Math.abs(weekOffset)+1} — ${baseDate.toLocaleDateString('en',opts)}–${end.toLocaleDateString('en',opts)}, ${end.getFullYear()}`;
+}
+function changeWeek(dir) {
+  weekOffset += dir;
+  updateWeekLabel();
+}
+
+// ── Search ──────────────────────────────────────────────────────
+function searchCells(q) {
+  if (!q) { document.querySelectorAll('.cell-input,.cell-select').forEach(el=>el.style.background=''); return; }
+  const lq = q.toLowerCase();
+  document.querySelectorAll('.cell-input').forEach(el => {
+    el.style.background = el.value.toLowerCase().includes(lq) ? 'rgba(251,191,36,0.15)' : '';
+  });
+}
+
+// ── Export ──────────────────────────────────────────────────────
+function exportXLSX() { document.getElementById('dl-overlay').classList.add('visible'); }
+function closeDownload() { document.getElementById('dl-overlay').classList.remove('visible'); }
+function confirmDownload() {
+  closeDownload();
+  try {
+    const wb = XLSX.utils.book_new();
+    Object.keys(SHEET_DEFS).forEach(key => {
+      const def = SHEET_DEFS[key];
+      if (!def || !sheetData[key]) return;
+      const cols = def.columns.filter(c=>c.key!=='id');
+      const header = cols.map(c=>c.label);
+      const dataRows = sheetData[key].map(row => cols.map(c => row[c.key]??''));
+      const ws = XLSX.utils.aoa_to_sheet([header, ...dataRows]);
+      XLSX.utils.book_append_sheet(wb, ws, def.label.substring(0,31));
+    });
+    XLSX.writeFile(wb, 'neOwn_Weekly_Matrix.xlsx');
+    showToast('XLSX downloaded!','success');
+  } catch(e) {
+    showToast('Export failed: ' + e.message,'error');
+  }
+}
+
+function importCSV() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.csv,.xlsx';
+  inp.onchange = async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const ab = await file.arrayBuffer();
+    const wb = XLSX.read(ab);
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(ws, {header:1});
+    if (!data.length) return;
+    const cols = SHEET_DEFS[currentSheet].columns.filter(c=>c.key!=='id');
+    const headers = data[0];
+    const newRows = data.slice(1).map((r,i) => {
+      const obj = {_id:Date.now()+i+Math.random(),id:String(i+1)};
+      headers.forEach((h,hi) => {
+        const col = cols.find(c=>c.label.toLowerCase()===String(h).toLowerCase());
+        if (col) obj[col.key] = r[hi] ?? '';
+      });
+      return obj;
+    });
+    sheetData[currentSheet].push(...newRows);
+    renderTable(); scheduleSave();
+    showToast(`Imported ${newRows.length} rows!`,'success');
+  };
+  inp.click();
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>

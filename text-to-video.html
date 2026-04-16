@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ContentPilot — Text to Video</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.top-nav{flex-shrink:0}
+.t2v-layout{display:flex;flex:1;overflow:hidden}
+
+/* Left Panel */
+.t2v-panel{width:320px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:4px}
+.panel-header{padding:4px 8px 16px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.panel-header h3{font-size:15px;font-weight:700}
+.panel-header p{font-size:12px;color:var(--text3);margin-top:3px}
+.param-group{margin-bottom:14px}
+.param-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;display:block;padding:0 4px}
+.param-select,.param-input,.param-textarea{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;width:100%;font-family:'Satoshi',sans-serif;transition:all 0.2s;outline:none}
+.param-select:focus,.param-input:focus,.param-textarea:focus{border-color:var(--accent)}
+.param-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2360607a' d='M5 7L0 2h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.param-select option{background:var(--bg3)}
+.param-textarea{resize:vertical;min-height:80px;line-height:1.5}
+.param-chips{display:flex;flex-wrap:wrap;gap:6px}
+.param-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all 0.15s}
+.param-chip.active{background:rgba(251,146,60,0.2);border-color:#fb923c;color:#fb923c}
+.generate-btn{background:linear-gradient(135deg,#fb923c,#f97316);color:#fff;border:none;border-radius:10px;padding:13px 20px;font-size:14px;font-weight:700;width:100%;cursor:pointer;transition:all 0.2s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.generate-btn:hover{opacity:0.9;transform:translateY(-1px)}
+.generate-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.enhance-btn{background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.3);color:var(--accent2);padding:9px;border-radius:8px;font-size:12px;font-weight:700;width:100%;cursor:pointer;transition:all 0.2s;margin-top:6px}
+.enhance-btn:hover{background:rgba(108,99,255,0.2)}
+
+/* Right Area */
+.t2v-main{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow-y:auto}
+.t2v-header{padding:28px 36px 0;border-bottom:1px solid var(--border);padding-bottom:24px}
+.t2v-header h2{font-size:22px;font-weight:700}
+.t2v-header p{color:var(--text3);font-size:13px;margin-top:6px}
+
+/* Veo notice */
+.veo-notice{margin:24px 36px 0;background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.25);border-radius:14px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+.veo-notice-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.veo-notice-text{font-size:13px;color:var(--text2);line-height:1.6}
+.veo-notice-text strong{color:#fb923c}
+.veo-notice-text a{color:#fb923c;text-decoration:underline}
+
+/* Empty state */
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;color:var(--text3);padding:60px}
+.empty-icon{font-size:64px;opacity:0.6}
+.empty-state h3{font-size:20px;color:var(--text);font-weight:700}
+.empty-state p{font-size:14px;max-width:360px;line-height:1.6}
+.example-prompts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.example-prompt{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 16px;font-size:13px;color:var(--text2);cursor:pointer;transition:all 0.15s}
+.example-prompt:hover{border-color:#fb923c;color:#fb923c}
+
+/* Request log */
+.requests-area{padding:24px 36px;display:flex;flex-direction:column;gap:16px}
+.request-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeIn 0.4s ease}
+.request-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.request-prompt{font-size:14px;font-weight:600;flex:1;margin-right:12px;color:var(--text)}
+.request-meta{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.status-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px}
+.status-badge.pending{background:rgba(251,191,36,0.15);color:#fbbf24}
+.status-badge.processing{background:rgba(56,189,248,0.15);color:#38bdf8;animation:pulse 1.5s infinite}
+.status-badge.done{background:rgba(52,211,153,0.15);color:var(--green)}
+.status-badge.error{background:rgba(239,68,68,0.15);color:#ef4444}
+.request-body{padding:16px 20px}
+.request-params{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.req-param{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:3px 10px;font-size:12px;color:var(--text3)}
+.video-placeholder{background:var(--bg3);border:2px dashed var(--border);border-radius:12px;height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text3);font-size:13px}
+.video-placeholder.loading{border-color:rgba(56,189,248,0.4);animation:pulse 1.5s infinite}
+.video-placeholder .pl-icon{font-size:36px}
+.video-frame{border-radius:12px;overflow:hidden;background:#000;aspect-ratio:9/16;max-height:340px;display:flex;align-items:center;justify-content:center}
+.video-frame video{width:100%;height:100%;object-fit:contain}
+.request-actions{display:flex;gap:8px;margin-top:12px}
+.req-action{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.15s;font-weight:600}
+.req-action:hover{border-color:var(--accent);color:var(--text)}
+
+/* Config info sidebar */
+.config-info{margin:16px 36px 0;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.config-info h4{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:10px}
+.config-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.config-item{text-align:center}
+.config-val{font-size:16px;font-weight:700;color:#fb923c}
+.config-key{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* Prompt enhancer output */
+.enhanced-output{background:rgba(108,99,255,0.06);border:1px solid rgba(108,99,255,0.2);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--text2);line-height:1.6;margin-top:8px;display:none}
+.enhanced-output.visible{display:block}
+.use-enhanced-btn{margin-top:8px;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--accent2);cursor:pointer;transition:all 0.15s;display:none}
+.use-enhanced-btn:hover{background:rgba(108,99,255,0.25)}
+.use-enhanced-btn.visible{display:inline-block}
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="dashboard.html" class="nav-logo">ContentPilot</a>
+    <span style="color:var(--text3);font-size:20px;font-weight:200">/</span>
+    <span style="font-size:14px;color:var(--text2);font-weight:600">Text to Video</span>
+  </div>
+  <div class="nav-actions">
+    <div class="avatar" id="nav-avatar">?</div>
+  </div>
+</nav>
+
+<div class="t2v-layout">
+  <!-- Left params -->
+  <div class="t2v-panel">
+    <div class="panel-header">
+      <h3>🎬 Video Settings</h3>
+      <p>Configure your generation parameters</p>
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">Prompt</label>
+      <textarea class="param-textarea" id="video-prompt" placeholder="A mother reading a book with her child by a warm lamp, cinematic, 4K..."></textarea>
+      <button class="enhance-btn" onclick="enhancePrompt()">✨ AI Enhance Prompt</button>
+      <div class="enhanced-output" id="enhanced-output"></div>
+      <button class="use-enhanced-btn" id="use-enhanced-btn" onclick="useEnhanced()">Use This Prompt</button>
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">Aspect Ratio</label>
+      <div class="param-chips" id="chips-ratio">
+        <div class="param-chip active" data-val="9:16" onclick="toggleChip(this,'chips-ratio')">9:16 Vertical</div>
+        <div class="param-chip" data-val="16:9" onclick="toggleChip(this,'chips-ratio')">16:9 Wide</div>
+        <div class="param-chip" data-val="1:1" onclick="toggleChip(this,'chips-ratio')">1:1 Square</div>
+      </div>
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">Duration</label>
+      <div class="param-chips" id="chips-dur">
+        <div class="param-chip active" data-val="5s" onclick="toggleChip(this,'chips-dur')">5s</div>
+        <div class="param-chip" data-val="8s" onclick="toggleChip(this,'chips-dur')">8s</div>
+      </div>
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">Style</label>
+      <div class="param-chips" id="chips-style">
+        <div class="param-chip active" data-val="cinematic" onclick="toggleChip(this,'chips-style')">Cinematic</div>
+        <div class="param-chip" data-val="realistic" onclick="toggleChip(this,'chips-style')">Realistic</div>
+        <div class="param-chip" data-val="animated" onclick="toggleChip(this,'chips-style')">Animated</div>
+        <div class="param-chip" data-val="documentary" onclick="toggleChip(this,'chips-style')">Documentary</div>
+      </div>
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">Camera Movement</label>
+      <select class="param-select" id="param-camera">
+        <option value="">None / Static</option>
+        <option value="slow zoom in">Slow Zoom In</option>
+        <option value="slow zoom out">Slow Zoom Out</option>
+        <option value="pan left">Pan Left</option>
+        <option value="pan right">Pan Right</option>
+        <option value="tilt up">Tilt Up</option>
+        <option value="orbit around subject">Orbit Around Subject</option>
+        <option value="handheld">Handheld</option>
+        <option value="aerial drone">Aerial Drone</option>
+      </select>
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">Lighting</label>
+      <div class="param-chips" id="chips-light">
+        <div class="param-chip active" data-val="natural" onclick="toggleChip(this,'chips-light')">Natural</div>
+        <div class="param-chip" data-val="golden hour" onclick="toggleChip(this,'chips-light')">Golden Hour</div>
+        <div class="param-chip" data-val="studio" onclick="toggleChip(this,'chips-light')">Studio</div>
+        <div class="param-chip" data-val="moody" onclick="toggleChip(this,'chips-light')">Moody</div>
+      </div>
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">Negative Prompt (avoid)</label>
+      <input type="text" class="param-input" id="neg-prompt" placeholder="blurry, text overlays, faces, logos..."/>
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">Reference Image URL (optional)</label>
+      <input type="text" class="param-input" id="ref-image" placeholder="https://..."/>
+    </div>
+
+    <button class="generate-btn" id="gen-btn" onclick="generateVideo()">
+      🎬 Generate with Veo
+    </button>
+  </div>
+
+  <!-- Right main -->
+  <div class="t2v-main" id="t2v-main">
+    <div class="t2v-header">
+      <h2>🎬 Text to Video — Powered by Veo</h2>
+      <p>Generate short-form videos from text prompts for neOwn ads, Reels, and Shorts</p>
+    </div>
+
+    <div class="veo-notice">
+      <div class="veo-notice-icon">⚠️</div>
+      <div class="veo-notice-text">
+        <strong>Veo API Key Required.</strong> This tool calls Google's Veo 2 API via Vertex AI. Add your
+        <code>VEO_API_KEY</code> and <code>VEO_PROJECT_ID</code> to your Vercel environment variables.
+        See <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/video/generate-videos" target="_blank">Veo documentation →</a>
+      </div>
+    </div>
+
+    <div class="config-info">
+      <h4>Current Config</h4>
+      <div class="config-grid">
+        <div class="config-item"><div class="config-val" id="cfg-ratio">9:16</div><div class="config-key">Aspect Ratio</div></div>
+        <div class="config-item"><div class="config-val" id="cfg-dur">5s</div><div class="config-key">Duration</div></div>
+        <div class="config-item"><div class="config-val" id="cfg-style">Cinematic</div><div class="config-key">Style</div></div>
+      </div>
+    </div>
+
+    <div id="requests-container">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">🎬</div>
+        <h3>No videos yet</h3>
+        <p>Write a prompt on the left and click Generate. Each request will appear here with its status.</p>
+        <div class="example-prompts">
+          <div class="example-prompt" onclick="useExamplePrompt(this)">A child discovering a new book, warm light, cinematic</div>
+          <div class="example-prompt" onclick="useExamplePrompt(this)">Books being delivered to a doorstep, time-lapse, golden hour</div>
+          <div class="example-prompt" onclick="useExamplePrompt(this)">Cozy family reading corner, slow zoom, bokeh background</div>
+          <div class="example-prompt" onclick="useExamplePrompt(this)">Stack of colorful children's books, minimal, white studio</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="global-toast" class="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script>
+window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let requests = [];
+let enhancedPromptText = '';
+
+(async () => {
+  const user = await Auth.requireAuth();
+  if (user) document.getElementById('nav-avatar').textContent = user.avatar;
+  updateConfig();
+})();
+
+function toggleChip(el, groupId) {
+  document.querySelectorAll('#'+groupId+' .param-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  updateConfig();
+}
+
+function getParams() {
+  const gc = id => document.querySelector('#'+id+' .param-chip.active')?.dataset.val || '';
+  return {
+    prompt: document.getElementById('video-prompt').value.trim(),
+    ratio: gc('chips-ratio'),
+    duration: gc('chips-dur'),
+    style: gc('chips-style'),
+    camera: document.getElementById('param-camera').value,
+    lighting: gc('chips-light'),
+    negPrompt: document.getElementById('neg-prompt').value.trim(),
+    refImage: document.getElementById('ref-image').value.trim()
+  };
+}
+
+function updateConfig() {
+  const p = getParams();
+  document.getElementById('cfg-ratio').textContent = p.ratio || '9:16';
+  document.getElementById('cfg-dur').textContent = p.duration || '5s';
+  document.getElementById('cfg-style').textContent = p.style ? (p.style.charAt(0).toUpperCase()+p.style.slice(1)) : 'Cinematic';
+}
+
+document.querySelectorAll('.param-chip').forEach(c => {
+  c.addEventListener('click', updateConfig);
+});
+
+async function enhancePrompt() {
+  const raw = document.getElementById('video-prompt').value.trim();
+  if (!raw) return showToast('Write a base prompt first','warning');
+
+  const btn = document.querySelector('.enhance-btn');
+  btn.textContent = '⏳ Enhancing...';
+  btn.disabled = true;
+
+  try {
+    const resp = await fetch('/api/copywriter', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        messages: [{role:'user', content:`Enhance this video generation prompt for Veo 2 to be more cinematic, detailed and specific. Keep it under 120 words. Only return the enhanced prompt, nothing else.\n\nOriginal: ${raw}`}],
+        system: 'You are an expert AI video prompt engineer. Enhance prompts for Google Veo 2 video generation. Focus on visual details, camera, lighting, mood, style. Never include text overlays, logos, or children\'s faces in prompts.'
+      })
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    enhancedPromptText = data.content;
+    const out = document.getElementById('enhanced-output');
+    const useBtn = document.getElementById('use-enhanced-btn');
+    out.textContent = enhancedPromptText;
+    out.classList.add('visible');
+    useBtn.classList.add('visible');
+  } catch(e) {
+    showToast('Enhancement failed: ' + e.message, 'error');
+  } finally {
+    btn.textContent = '✨ AI Enhance Prompt';
+    btn.disabled = false;
+  }
+}
+
+function useEnhanced() {
+  document.getElementById('video-prompt').value = enhancedPromptText;
+  document.getElementById('enhanced-output').classList.remove('visible');
+  document.getElementById('use-enhanced-btn').classList.remove('visible');
+  showToast('Enhanced prompt applied!', 'success');
+}
+
+function useExamplePrompt(el) {
+  document.getElementById('video-prompt').value = el.textContent;
+}
+
+async function generateVideo() {
+  const p = getParams();
+  if (!p.prompt) return showToast('Please enter a video prompt','warning');
+
+  // Remove empty state
+  document.getElementById('empty-state')?.remove();
+
+  const reqId = Date.now();
+  const req = { id: reqId, ...p, status: 'processing', createdAt: new Date() };
+  requests.unshift(req);
+  renderRequest(req);
+
+  document.getElementById('gen-btn').disabled = true;
+
+  try {
+    const resp = await fetch('/api/text-to-video', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        prompt: buildVeoPrompt(p),
+        aspectRatio: p.ratio,
+        durationSeconds: parseInt(p.duration),
+        negativePrompt: p.negPrompt || undefined,
+        referenceImageUri: p.refImage || undefined
+      })
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok) throw new Error(data.error || 'Generation failed');
+
+    // Veo returns an operation — poll for completion
+    if (data.operationName) {
+      pollOperation(reqId, data.operationName);
+    } else if (data.videoUrl) {
+      updateRequestStatus(reqId, 'done', data.videoUrl);
+    } else {
+      throw new Error('Unexpected response from Veo API');
+    }
+
+  } catch(err) {
+    updateRequestStatus(reqId, 'error', null, err.message);
+    showToast('Generation failed: ' + err.message, 'error');
+  } finally {
+    document.getElementById('gen-btn').disabled = false;
+  }
+}
+
+function buildVeoPrompt(p) {
+  let prompt = p.prompt;
+  if (p.style) prompt += `, ${p.style} style`;
+  if (p.camera) prompt += `, ${p.camera} camera movement`;
+  if (p.lighting) prompt += `, ${p.lighting} lighting`;
+  return prompt;
+}
+
+async function pollOperation(reqId, operationName) {
+  const MAX_POLLS = 30;
+  let polls = 0;
+  const interval = setInterval(async () => {
+    polls++;
+    if (polls > MAX_POLLS) {
+      clearInterval(interval);
+      updateRequestStatus(reqId, 'error', null, 'Timed out waiting for video');
+      return;
+    }
+    try {
+      const resp = await fetch('/api/text-to-video', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ pollOperation: operationName })
+      });
+      const data = await resp.json();
+      if (data.done && data.videoUrl) {
+        clearInterval(interval);
+        updateRequestStatus(reqId, 'done', data.videoUrl);
+      } else if (data.error) {
+        clearInterval(interval);
+        updateRequestStatus(reqId, 'error', null, data.error);
+      }
+    } catch(e) { /* keep polling */ }
+  }, 8000);
+}
+
+function renderRequest(req) {
+  const container = document.getElementById('requests-container');
+  const div = document.createElement('div');
+  div.className = 'requests-area';
+  div.id = `req-area-${req.id}`;
+  div.innerHTML = `
+    <div class="request-card" id="req-${req.id}">
+      <div class="request-header">
+        <div class="request-prompt">${escHtml(req.prompt.substring(0,100))}${req.prompt.length>100?'...':''}</div>
+        <div class="request-meta">
+          <span class="status-badge processing" id="badge-${req.id}">⏳ Processing</span>
+        </div>
+      </div>
+      <div class="request-body">
+        <div class="request-params">
+          <span class="req-param">${req.ratio}</span>
+          <span class="req-param">${req.duration}</span>
+          <span class="req-param">${req.style}</span>
+          ${req.camera ? `<span class="req-param">${req.camera}</span>` : ''}
+          <span class="req-param">${new Date(req.createdAt).toLocaleTimeString()}</span>
+        </div>
+        <div class="video-placeholder loading" id="video-area-${req.id}">
+          <div class="pl-icon">🎬</div>
+          <div>Generating with Veo... this takes 1–3 minutes</div>
+        </div>
+        <div class="request-actions" id="actions-${req.id}" style="display:none">
+          <button class="req-action" onclick="downloadVideo(${req.id})">⬇️ Download</button>
+          <button class="req-action" onclick="copyPrompt(${req.id})">📋 Copy Prompt</button>
+          <button class="req-action" onclick="saveToBankFromVideo(${req.id})">💾 Save to Bank</button>
+        </div>
+      </div>
+    </div>
+  `;
+  // Insert before other requests
+  const firstArea = container.querySelector('.requests-area');
+  if (firstArea) container.insertBefore(div, firstArea);
+  else container.appendChild(div);
+}
+
+function updateRequestStatus(reqId, status, videoUrl, errorMsg) {
+  const req = requests.find(r => r.id === reqId);
+  if (req) { req.status = status; req.videoUrl = videoUrl; }
+
+  const badge = document.getElementById(`badge-${reqId}`);
+  const videoArea = document.getElementById(`video-area-${reqId}`);
+  const actionsEl = document.getElementById(`actions-${reqId}`);
+
+  if (status === 'done' && videoUrl) {
+    badge.className = 'status-badge done';
+    badge.textContent = '✅ Done';
+    videoArea.classList.remove('loading');
+    videoArea.innerHTML = `<video controls autoplay muted loop src="${videoUrl}" style="width:100%;border-radius:12px;max-height:340px"></video>`;
+    actionsEl.style.display = 'flex';
+    showToast('Video generated!', 'success');
+  } else if (status === 'error') {
+    badge.className = 'status-badge error';
+    badge.textContent = '❌ Error';
+    videoArea.classList.remove('loading');
+    videoArea.innerHTML = `<div class="pl-icon">⚠️</div><div style="color:#ef4444;font-size:13px">${escHtml(errorMsg||'Generation failed')}</div>`;
+  }
+}
+
+function downloadVideo(reqId) {
+  const req = requests.find(r => r.id === reqId);
+  if (req?.videoUrl) {
+    const a = document.createElement('a');
+    a.href = req.videoUrl;
+    a.download = `neown-video-${reqId}.mp4`;
+    a.click();
+  }
+}
+
+function copyPrompt(reqId) {
+  const req = requests.find(r => r.id === reqId);
+  if (req) { navigator.clipboard.writeText(buildVeoPrompt(req)); showToast('Prompt copied!','success'); }
+}
+
+async function saveToBankFromVideo(reqId) {
+  const req = requests.find(r => r.id === reqId);
+  if (!req) return;
+  await DB.saveBankItem({
+    title: `Video — ${req.style} ${req.ratio}`,
+    description: req.prompt,
+    script: buildVeoPrompt(req),
+    platform: req.ratio === '9:16' ? 'Instagram Reels' : 'YouTube',
+    status: 'idea',
+    source: 'text-to-video',
+    tags: [req.style, req.ratio, req.duration].filter(Boolean)
+  });
+  showToast('Saved to Content Bank!','success');
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>

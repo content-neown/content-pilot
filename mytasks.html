@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ContentPilot — My Tasks</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.top-nav{flex-shrink:0}
+.tasks-layout{flex:1;display:flex;overflow:hidden}
+
+/* Sidebar */
+.tasks-sidebar{width:240px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0}
+.sidebar-section{padding:0 16px;margin-bottom:24px}
+.sidebar-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:10px;padding:0 4px}
+.sidebar-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all 0.15s;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:2px}
+.sidebar-item:hover{background:rgba(108,99,255,0.08);color:var(--text)}
+.sidebar-item.active{background:rgba(99,102,241,0.15);color:#818cf8}
+.sidebar-count{font-size:11px;font-weight:700;background:var(--bg3);border-radius:10px;padding:2px 7px;color:var(--text3)}
+.sidebar-item.active .sidebar-count{background:rgba(99,102,241,0.2);color:#818cf8}
+
+/* Priority filter labels */
+.prio-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-right:2px}
+
+/* Main area */
+.tasks-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* Header */
+.tasks-header{padding:24px 32px 0;flex-shrink:0}
+.tasks-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.tasks-title{font-size:22px;font-weight:800}
+.tasks-date{font-size:13px;color:var(--text3);margin-top:3px}
+.header-actions{display:flex;gap:8px;align-items:center}
+.view-toggle{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:3px}
+.view-btn{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;color:var(--text3)}
+.view-btn.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+
+/* Add task */
+.add-task-area{padding:0 32px 20px;flex-shrink:0;border-bottom:1px solid var(--border)}
+.add-task-row{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;transition:all 0.2s}
+.add-task-row:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.add-task-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14px;font-family:'Satoshi',sans-serif;font-weight:500}
+.add-task-input::placeholder{color:var(--text3)}
+.add-task-meta{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.meta-select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px;font-weight:600;color:var(--text2);font-family:'Satoshi',sans-serif;outline:none;cursor:pointer}
+.add-task-btn{background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;color:#818cf8;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.add-task-btn:hover{background:rgba(99,102,241,0.3)}
+
+/* Progress bar */
+.progress-area{padding:16px 32px;flex-shrink:0}
+.progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-size:13px;font-weight:600;color:var(--text2)}
+.progress-num{font-size:13px;font-weight:700;color:#818cf8}
+.progress-bar-bg{height:6px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,#818cf8,#a78bfa);border-radius:4px;transition:width 0.5s ease}
+
+/* Task list */
+.task-scroll{flex:1;overflow-y:auto;padding:12px 32px 32px}
+.task-group{margin-bottom:28px}
+.task-group-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.task-group-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.task-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;transition:all 0.2s;animation:fadeIn 0.3s ease;position:relative;cursor:default}
+.task-item:hover{border-color:rgba(99,102,241,0.3);box-shadow:0 2px 12px rgba(0,0,0,0.15)}
+.task-item.done{opacity:0.55}
+.task-item.done .task-text{text-decoration:line-through;color:var(--text3)}
+
+/* Checkbox */
+.task-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px}
+.task-check:hover{border-color:#818cf8}
+.task-check.checked{background:linear-gradient(135deg,#818cf8,#6366f1);border-color:#818cf8}
+.task-check.checked::after{content:'✓';color:#fff;font-size:11px;font-weight:700}
+
+/* Task content */
+.task-content{flex:1;min-width:0}
+.task-text{font-size:14px;font-weight:500;color:var(--text);line-height:1.4;word-break:break-word}
+.task-text-edit{background:transparent;border:none;outline:none;color:var(--text);font-size:14px;font-weight:500;font-family:'Satoshi',sans-serif;width:100%;line-height:1.4}
+.task-text-edit:focus{border-bottom:1px solid var(--accent)}
+.task-meta-row{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.task-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
+.tag-high{background:rgba(248,113,113,0.15);color:#f87171}
+.tag-medium{background:rgba(251,191,36,0.15);color:#fbbf24}
+.tag-low{background:rgba(96,165,250,0.15);color:#60a5fa}
+.task-due{font-size:11px;color:var(--text3)}
+.task-due.overdue{color:#f87171}
+.task-category{font-size:11px;color:var(--text3);background:var(--bg3);padding:2px 8px;border-radius:6px}
+
+/* Actions */
+.task-actions{display:flex;gap:4px;opacity:0;transition:opacity 0.15s;flex-shrink:0}
+.task-item:hover .task-actions{opacity:1}
+.task-act-btn{background:var(--bg3);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all 0.15s}
+.task-act-btn:hover{border-color:var(--accent)}
+.task-act-btn.delete:hover{border-color:#ef4444;background:rgba(239,68,68,0.1)}
+
+/* Empty */
+.empty-tasks{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-tasks .ei{font-size:52px;opacity:0.5;margin-bottom:12px}
+.empty-tasks h3{font-size:18px;color:var(--text);margin-bottom:6px}
+
+/* Kanban */
+.kanban-board{display:flex;gap:16px;padding:12px 32px;overflow-x:auto;flex:1}
+.kanban-col{min-width:250px;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+.kanban-col-header{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
+.kanban-col-count{font-size:11px;background:var(--bg3);padding:2px 8px;border-radius:10px;color:var(--text3)}
+.kanban-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;transition:all 0.2s;cursor:default}
+.kanban-card:hover{border-color:rgba(99,102,241,0.3);transform:translateY(-1px)}
+
+/* Stats chips */
+.stats-chips{display:flex;gap:10px;padding:12px 32px 0;flex-shrink:0}
+.stat-chip{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:12px;text-align:center}
+.stat-chip-num{font-size:20px;font-weight:800;display:block}
+.stat-chip-label{color:var(--text3);margin-top:2px}
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="dashboard.html" class="nav-logo">ContentPilot</a>
+    <span style="color:var(--text3);font-size:20px;font-weight:200">/</span>
+    <span style="font-size:14px;color:var(--text2);font-weight:600">My Tasks</span>
+  </div>
+  <div class="nav-actions">
+    <div class="avatar" id="nav-avatar">?</div>
+  </div>
+</nav>
+
+<div class="tasks-layout">
+  <!-- Sidebar -->
+  <div class="tasks-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Views</div>
+      <div class="sidebar-item active" onclick="setFilter('all',this)" id="filter-all">
+        <span>📋 All Tasks</span>
+        <span class="sidebar-count" id="cnt-all">0</span>
+      </div>
+      <div class="sidebar-item" onclick="setFilter('today',this)" id="filter-today">
+        <span>📅 Today</span>
+        <span class="sidebar-count" id="cnt-today">0</span>
+      </div>
+      <div class="sidebar-item" onclick="setFilter('upcoming',this)" id="filter-upcoming">
+        <span>🔜 Upcoming</span>
+        <span class="sidebar-count" id="cnt-upcoming">0</span>
+      </div>
+      <div class="sidebar-item" onclick="setFilter('done',this)" id="filter-done">
+        <span>✅ Completed</span>
+        <span class="sidebar-count" id="cnt-done">0</span>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Priority</div>
+      <div class="sidebar-item" onclick="setFilter('high',this)">
+        <span style="display:flex;align-items:center;gap:8px"><span class="prio-dot" style="background:#f87171"></span>High</span>
+        <span class="sidebar-count" id="cnt-high">0</span>
+      </div>
+      <div class="sidebar-item" onclick="setFilter('medium',this)">
+        <span style="display:flex;align-items:center;gap:8px"><span class="prio-dot" style="background:#fbbf24"></span>Medium</span>
+        <span class="sidebar-count" id="cnt-medium">0</span>
+      </div>
+      <div class="sidebar-item" onclick="setFilter('low',this)">
+        <span style="display:flex;align-items:center;gap:8px"><span class="prio-dot" style="background:#60a5fa"></span>Low</span>
+        <span class="sidebar-count" id="cnt-low">0</span>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Category</div>
+      <div id="category-list">
+        <!-- populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="tasks-main" id="tasks-main">
+    <div class="tasks-header">
+      <div class="tasks-header-row">
+        <div>
+          <div class="tasks-title" id="view-title">All Tasks</div>
+          <div class="tasks-date" id="today-date"></div>
+        </div>
+        <div class="header-actions">
+          <div class="view-toggle">
+            <div class="view-btn active" onclick="setView('list',this)">☰ List</div>
+            <div class="view-btn" onclick="setView('kanban',this)">⊞ Board</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add task -->
+    <div class="add-task-area">
+      <div class="add-task-row">
+        <span style="font-size:16px;color:var(--text3)">＋</span>
+        <input type="text" class="add-task-input" id="new-task-input" placeholder="Add a task… press Enter to save"
+          onkeydown="if(event.key==='Enter') addTask()"/>
+        <div class="add-task-meta">
+          <select class="meta-select" id="new-priority">
+            <option value="medium">⚡ Medium</option>
+            <option value="high">🔴 High</option>
+            <option value="low">🔵 Low</option>
+          </select>
+          <select class="meta-select" id="new-category">
+            <option value="Content">Content</option>
+            <option value="Performance">Performance</option>
+            <option value="Creative">Creative</option>
+            <option value="Influencer">Influencer</option>
+            <option value="Admin">Admin</option>
+            <option value="Other">Other</option>
+          </select>
+          <input type="date" class="meta-select" id="new-due" style="width:130px"/>
+        </div>
+        <button class="add-task-btn" onclick="addTask()">Add Task</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-chips" id="stats-chips">
+      <div class="stat-chip"><span class="stat-chip-num" id="stat-total" style="color:#818cf8">0</span><div class="stat-chip-label">Total</div></div>
+      <div class="stat-chip"><span class="stat-chip-num" id="stat-done-n" style="color:#34d399">0</span><div class="stat-chip-label">Done</div></div>
+      <div class="stat-chip"><span class="stat-chip-num" id="stat-high-n" style="color:#f87171">0</span><div class="stat-chip-label">High Priority</div></div>
+      <div class="stat-chip"><span class="stat-chip-num" id="stat-overdue-n" style="color:#fbbf24">0</span><div class="stat-chip-label">Overdue</div></div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-area">
+      <div class="progress-row">
+        <span class="progress-label">Today's Progress</span>
+        <span class="progress-num" id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- List view -->
+    <div class="task-scroll" id="list-view">
+      <div class="empty-tasks" id="empty-state">
+        <div class="ei">✅</div>
+        <h3>No tasks yet</h3>
+        <p>Add your first task above. Only you can see these — completely private.</p>
+      </div>
+    </div>
+
+    <!-- Kanban view (hidden by default) -->
+    <div class="kanban-board" id="kanban-view" style="display:none">
+    </div>
+  </div>
+</div>
+
+<div id="global-toast" class="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script>
+window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let tasks = [];
+let currentFilter = 'all';
+let currentView = 'list';
+let saveTimer = null;
+
+(async () => {
+  currentUser = await Auth.requireAuth();
+  if (!currentUser) return;
+  document.getElementById('nav-avatar').textContent = currentUser.avatar;
+  // Set today's date in header
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  // Set default due to today
+  document.getElementById('new-due').value = new Date().toISOString().split('T')[0];
+  await loadTasks();
+  renderAll();
+})();
+
+// ── Supabase ──────────────────────────────────────────────────────
+async function loadTasks() {
+  try {
+    const sb = getSB();
+    const { data, error } = await sb
+      .from('user_tasks')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', {ascending: false});
+    if (error) throw error;
+    tasks = (data || []).map(r => ({...r.task_data, _dbId: r.id}));
+  } catch(e) {
+    // Fall back to localStorage
+    const stored = localStorage.getItem(`cp_tasks_${currentUser.id}`);
+    if (stored) tasks = JSON.parse(stored);
+  }
+}
+
+async function saveTasks() {
+  // Save to localStorage immediately
+  localStorage.setItem(`cp_tasks_${currentUser.id}`, JSON.stringify(tasks));
+  // Then sync to Supabase (per-user RLS)
+  try {
+    const sb = getSB();
+    for (const task of tasks) {
+      const row = { user_id: currentUser.id, task_id: task.id, task_data: task };
+      await sb.from('user_tasks').upsert(row, {onConflict: 'user_id,task_id'});
+    }
+  } catch(e) { /* silent — localStorage is backup */ }
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveTasks, 800);
+}
+
+// ── Task CRUD ──────────────────────────────────────────────────────
+function addTask() {
+  const text = document.getElementById('new-task-input').value.trim();
+  if (!text) return;
+  const task = {
+    id: 'task_' + Date.now(),
+    text,
+    priority: document.getElementById('new-priority').value,
+    category: document.getElementById('new-category').value,
+    due: document.getElementById('new-due').value,
+    done: false,
+    createdAt: new Date().toISOString(),
+    notes: ''
+  };
+  tasks.unshift(task);
+  document.getElementById('new-task-input').value = '';
+  document.getElementById('new-due').value = new Date().toISOString().split('T')[0];
+  renderAll();
+  scheduleSave();
+  showToast('Task added','success');
+}
+
+function toggleDone(id) {
+  const t = tasks.find(t=>t.id===id);
+  if (t) { t.done = !t.done; t.doneAt = t.done ? new Date().toISOString() : null; }
+  renderAll();
+  scheduleSave();
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(t=>t.id!==id);
+  renderAll();
+  scheduleSave();
+  showToast('Task removed','success');
+}
+
+function startEdit(id) {
+  const el = document.getElementById('task-text-' + id);
+  if (!el) return;
+  el.contentEditable = 'true';
+  el.focus();
+  el.classList.add('editing');
+}
+
+function finishEdit(id, el) {
+  const newText = el.textContent.trim();
+  const t = tasks.find(t=>t.id===id);
+  if (t && newText) { t.text = newText; scheduleSave(); }
+  el.contentEditable = 'false';
+  el.classList.remove('editing');
+}
+
+// ── Filters ──────────────────────────────────────────────────────
+function setFilter(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const titles = {all:'All Tasks',today:"Today's Tasks",upcoming:'Upcoming',done:'Completed',high:'High Priority',medium:'Medium Priority',low:'Low Priority'};
+  document.getElementById('view-title').textContent = titles[filter] || filter.charAt(0).toUpperCase()+filter.slice(1);
+  renderAll();
+}
+
+function getFilteredTasks() {
+  const today = new Date().toISOString().split('T')[0];
+  switch(currentFilter) {
+    case 'today': return tasks.filter(t=>t.due===today);
+    case 'upcoming': return tasks.filter(t=>t.due && t.due>today && !t.done);
+    case 'done': return tasks.filter(t=>t.done);
+    case 'high': return tasks.filter(t=>t.priority==='high' && !t.done);
+    case 'medium': return tasks.filter(t=>t.priority==='medium' && !t.done);
+    case 'low': return tasks.filter(t=>t.priority==='low' && !t.done);
+    default: return tasks;
+  }
+}
+
+// ── Render ──────────────────────────────────────────────────────
+function renderAll() {
+  updateCounts();
+  updateStats();
+  updateCategories();
+  if (currentView === 'list') renderList();
+  else renderKanban();
+}
+
+function updateCounts() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('cnt-all').textContent = tasks.length;
+  document.getElementById('cnt-today').textContent = tasks.filter(t=>t.due===today).length;
+  document.getElementById('cnt-upcoming').textContent = tasks.filter(t=>t.due&&t.due>today&&!t.done).length;
+  document.getElementById('cnt-done').textContent = tasks.filter(t=>t.done).length;
+  document.getElementById('cnt-high').textContent = tasks.filter(t=>t.priority==='high'&&!t.done).length;
+  document.getElementById('cnt-medium').textContent = tasks.filter(t=>t.priority==='medium'&&!t.done).length;
+  document.getElementById('cnt-low').textContent = tasks.filter(t=>t.priority==='low'&&!t.done).length;
+}
+
+function updateStats() {
+  const today = new Date().toISOString().split('T')[0];
+  const todayTasks = tasks.filter(t=>t.due===today);
+  const doneTodayCount = todayTasks.filter(t=>t.done).length;
+  const pct = todayTasks.length ? Math.round(doneTodayCount/todayTasks.length*100) : 0;
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  document.getElementById('stat-total').textContent = tasks.filter(t=>!t.done).length;
+  document.getElementById('stat-done-n').textContent = tasks.filter(t=>t.done).length;
+  document.getElementById('stat-high-n').textContent = tasks.filter(t=>t.priority==='high'&&!t.done).length;
+  const now = today;
+  document.getElementById('stat-overdue-n').textContent = tasks.filter(t=>t.due&&t.due<now&&!t.done).length;
+}
+
+function updateCategories() {
+  const cats = [...new Set(tasks.map(t=>t.category).filter(Boolean))];
+  const html = cats.map(c => `
+    <div class="sidebar-item" onclick="setFilter('cat_${c}',this)">
+      <span>📁 ${c}</span>
+      <span class="sidebar-count">${tasks.filter(t=>t.category===c&&!t.done).length}</span>
+    </div>
+  `).join('');
+  document.getElementById('category-list').innerHTML = html;
+}
+
+function renderList() {
+  const filtered = getFilteredTasks();
+  const container = document.getElementById('list-view');
+
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty-tasks"><div class="ei">✅</div><h3>All clear!</h3><p>No tasks here. Add one above.</p></div>`;
+    return;
+  }
+
+  // Group by due date
+  const groups = {};
+  const today = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0];
+  filtered.forEach(t => {
+    let group = 'No Due Date';
+    if (t.due) {
+      if (t.due < today) group = '⚠️ Overdue';
+      else if (t.due === today) group = '📅 Today';
+      else if (t.due === tomorrow) group = '🔜 Tomorrow';
+      else group = '📆 ' + new Date(t.due).toLocaleDateString('en-IN',{weekday:'short',month:'short',day:'numeric'});
+    }
+    if (!groups[group]) groups[group] = [];
+    groups[group].push(t);
+  });
+
+  // Overdue first, then today, then rest
+  const orderedKeys = Object.keys(groups).sort((a,b) => {
+    const order = {'⚠️ Overdue':0,'📅 Today':1,'🔜 Tomorrow':2};
+    return (order[a]??99) - (order[b]??99);
+  });
+
+  container.innerHTML = orderedKeys.map(g => `
+    <div class="task-group">
+      <div class="task-group-label">${g} <span style="font-weight:400;font-size:11px;opacity:0.7">${groups[g].length} task${groups[g].length>1?'s':''}</span></div>
+      ${groups[g].map(t => renderTaskCard(t)).join('')}
+    </div>
+  `).join('');
+}
+
+function renderTaskCard(t) {
+  const today = new Date().toISOString().split('T')[0];
+  const isOverdue = t.due && t.due < today && !t.done;
+  return `
+    <div class="task-item ${t.done?'done':''}" id="task-${t.id}">
+      <div class="task-check ${t.done?'checked':''}" onclick="toggleDone('${t.id}')"></div>
+      <div class="task-content">
+        <div class="task-text" id="task-text-${t.id}" onblur="finishEdit('${t.id}',this)" ondblclick="startEdit('${t.id}')" contenteditable="false">${escHtml(t.text)}</div>
+        <div class="task-meta-row">
+          <span class="task-tag tag-${t.priority||'medium'}">${t.priority||'medium'}</span>
+          ${t.category ? `<span class="task-category">${t.category}</span>` : ''}
+          ${t.due ? `<span class="task-due ${isOverdue?'overdue':''}">📅 ${new Date(t.due+'T00:00:00').toLocaleDateString('en-IN',{month:'short',day:'numeric'})}</span>` : ''}
+        </div>
+      </div>
+      <div class="task-actions">
+        <div class="task-act-btn" onclick="startEdit('${t.id}')" title="Edit">✏️</div>
+        <div class="task-act-btn delete" onclick="deleteTask('${t.id}')" title="Delete">🗑</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderKanban() {
+  const board = document.getElementById('kanban-view');
+  const cols = [
+    {key:'todo', label:'📋 To Do', filter: t=>!t.done&&(!t.priority||t.priority!=='high')},
+    {key:'high', label:'🔴 High Priority', filter: t=>!t.done&&t.priority==='high'},
+    {key:'done', label:'✅ Done', filter: t=>t.done}
+  ];
+  board.innerHTML = cols.map(col => {
+    const colTasks = tasks.filter(col.filter);
+    return `
+      <div class="kanban-col">
+        <div class="kanban-col-header">${col.label}<span class="kanban-col-count">${colTasks.length}</span></div>
+        ${colTasks.map(t=>`
+          <div class="kanban-card">
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">${escHtml(t.text)}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span class="task-tag tag-${t.priority||'medium'}">${t.priority||'medium'}</span>
+              ${t.category?`<span class="task-category">${t.category}</span>`:''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+function setView(view, el) {
+  currentView = view;
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('list-view').style.display = view==='list' ? 'block' : 'none';
+  document.getElementById('kanban-view').style.display = view==='kanban' ? 'flex' : 'none';
+  document.getElementById('stats-chips').style.display = view==='list' ? 'flex' : 'none';
+  document.querySelector('.progress-area').style.display = view==='list' ? 'block' : 'none';
+  renderAll();
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>
