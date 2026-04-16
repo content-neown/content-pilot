@@ -377,11 +377,11 @@ const SECTIONS={
 const SECTION_FILTER={
   overview:null, all:null,
   social:t=>t.calType==='social',
-  reels:t=>['Instagram Reels','YouTube Shorts','TikTok'].includes(t.platform),
-  posts:t=>['Instagram Post','Instagram Story','Facebook'].includes(t.platform),
+  reels:t=>(t.platform||[]).some(p=>['Instagram Reels','YouTube Shorts','TikTok'].includes(p)),
+  posts:t=>(t.platform||[]).some(p=>['Instagram Post','Instagram Story','Facebook'].includes(p)),
   campaign:t=>t.calType==='campaign',
-  ads:t=>['Google Ads','Meta Ads'].includes(t.platform),
-  email:t=>t.platform==='Email'
+  ads:t=>(t.platform||[]).some(p=>['Google Ads','Meta Ads'].includes(p)),
+  email:t=>(t.platform||[]).includes('Email')
 };
 
 (async()=>{
@@ -501,7 +501,7 @@ function filterTable(){
   let tasks=getFiltered();
   if(q) tasks=tasks.filter(t=>t.title.toLowerCase().includes(q));
   if(st) tasks=tasks.filter(t=>t.status===st);
-  if(pl) tasks=tasks.filter(t=>t.platform===pl);
+  if(pl) tasks=tasks.filter(t=>(t.platform||[]).includes(pl));
   const tb=document.getElementById('task-tbody');
   if(tb) tb.innerHTML=tasks.map(taskRow).join('');
 }

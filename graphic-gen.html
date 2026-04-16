@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ContentPilot — Graphic Generator</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.top-nav{flex-shrink:0}
+.gg-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── Left Panel ── */
+.gg-panel{width:340px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:0}
+.panel-header{padding:4px 8px 16px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.panel-header h3{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.panel-header p{font-size:12px;color:var(--text3);margin-top:3px}
+
+.param-section{margin-bottom:4px}
+.param-section-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.09em;text-transform:uppercase;padding:10px 4px 6px;display:flex;align-items:center;gap:6px}
+.param-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.param-group{margin-bottom:12px;padding:0 2px}
+.param-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.param-label span{font-weight:400;color:var(--text3);text-transform:none;letter-spacing:0;font-size:10px}
+.param-select,.param-input,.param-textarea{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;width:100%;font-family:var(--font);transition:all 0.2s;outline:none;-webkit-appearance:none}
+.param-select:focus,.param-input:focus,.param-textarea:focus{border-color:var(--pink)}
+.param-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2360607a' d='M5 7L0 2h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer}
+.param-select option{background:var(--bg3)}
+.param-textarea{resize:vertical;min-height:90px;line-height:1.5}
+.param-chips{display:flex;flex-wrap:wrap;gap:6px}
+.param-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.param-chip:hover{border-color:var(--pink);color:var(--text)}
+.param-chip.active{background:var(--pink-dim);border-color:var(--border-bright);color:#FF66C0}
+
+/* Format selector with preview icons */
+.format-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.format-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;transition:all 0.15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px}
+.format-card:hover{border-color:var(--pink)}
+.format-card.active{background:var(--pink-dim);border-color:var(--border-bright)}
+.format-icon{display:flex;align-items:center;justify-content:center}
+.format-icon svg{fill:currentColor}
+.format-card.active .format-icon{color:#FF66C0}
+.format-card .format-label{font-size:11px;font-weight:700;color:var(--text2)}
+.format-card.active .format-label{color:#FF66C0}
+.format-card .format-dim{font-size:10px;color:var(--text3)}
+
+/* Slide count for carousel */
+.slide-counter{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px}
+.slide-counter button{width:26px;height:26px;border-radius:6px;background:var(--card2);border:1px solid var(--border);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;line-height:1}
+.slide-counter button:hover{border-color:var(--pink);color:#FF66C0}
+.slide-counter span{font-size:13px;font-weight:700;flex:1;text-align:center}
+.slide-counter small{font-size:11px;color:var(--text3)}
+
+/* Color palette */
+.palette-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.color-dot{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.15s;flex-shrink:0}
+.color-dot.active{border-color:#fff;transform:scale(1.15)}
+.color-input{width:36px;height:26px;border-radius:6px;border:1px solid var(--border);cursor:pointer;padding:0;background:none}
+
+/* Generate button */
+.generate-btn{background:linear-gradient(135deg,var(--pink),#B8006E);border:none;border-radius:10px;padding:13px 20px;font-size:14px;font-weight:700;width:100%;color:#fff;cursor:pointer;transition:all 0.2s;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px var(--pink-glow)}
+.generate-btn:hover{opacity:0.9;transform:translateY(-1px)}
+.generate-btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;box-shadow:none}
+.enhance-btn{background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.3);color:var(--accent2);padding:9px;border-radius:8px;font-size:12px;font-weight:700;width:100%;cursor:pointer;transition:all 0.2s;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px}
+.enhance-btn:hover{background:rgba(108,99,255,0.2)}
+
+/* ── Right main ── */
+.gg-main{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+.gg-header{padding:24px 32px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.gg-header-left h2{font-size:20px;font-weight:700}
+.gg-header-left p{color:var(--text3);font-size:13px;margin-top:3px}
+.mode-tabs{display:flex;background:var(--bg3);border-radius:8px;padding:3px;gap:2px}
+.mode-tab{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.2s;border:none;background:none}
+.mode-tab.active{background:var(--pink);color:#fff}
+
+/* Canvas / output area */
+.gg-canvas{flex:1;overflow-y:auto;padding:24px 32px}
+
+/* Empty state */
+.empty-state-gg{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;color:var(--text3);padding:60px 20px;min-height:400px}
+.empty-icon{font-size:64px;opacity:0.5}
+.empty-state-gg h3{font-size:20px;color:var(--text2);font-weight:700}
+.empty-state-gg p{font-size:14px;max-width:380px;line-height:1.6}
+.example-prompts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.example-prompt{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 16px;font-size:13px;color:var(--text2);cursor:pointer;transition:all 0.15s}
+.example-prompt:hover{border-color:var(--pink);color:#FF66C0}
+
+/* Generation cards */
+.gen-stack{display:flex;flex-direction:column;gap:20px}
+.gen-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeInUp 0.4s ease}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.gen-card-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);gap:12px}
+.gen-card-title{font-size:14px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gen-card-meta{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.gen-status{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px}
+.gen-status.generating{background:rgba(56,189,248,0.15);color:#38bdf8;animation:pulse 1.5s infinite}
+.gen-status.done{background:rgba(0,208,132,0.15);color:var(--green)}
+.gen-status.error{background:rgba(255,77,77,0.15);color:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.gen-card-params{padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--bg2)}
+.gen-param-tag{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:2px 9px;font-size:11px;color:var(--text3)}
+
+/* Image grid for carousel */
+.gen-images{padding:20px;display:grid;gap:12px}
+.gen-images.single{grid-template-columns:1fr;max-width:480px;margin:0 auto;width:100%}
+.gen-images.carousel{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.gen-img-wrap{position:relative;border-radius:10px;overflow:hidden;background:var(--bg3);border:1px solid var(--border);aspect-ratio:var(--img-ratio,1)}
+.gen-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.gen-img-wrap.loading{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--text3)}
+.gen-img-wrap.loading .spin{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--pink);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gen-img-wrap .img-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:all 0.2s;display:flex;align-items:flex-end;justify-content:flex-end;padding:10px}
+.gen-img-wrap:hover .img-overlay{background:rgba(0,0,0,0.45)}
+.gen-img-wrap .img-actions{display:flex;gap:6px;opacity:0;transition:opacity 0.2s}
+.gen-img-wrap:hover .img-actions{opacity:1}
+.img-action-btn{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:all 0.15s}
+.img-action-btn:hover{background:rgba(255,255,255,0.25)}
+.img-slide-num{position:absolute;top:8px;left:10px;font-size:11px;font-weight:700;background:rgba(0,0,0,0.55);color:#fff;padding:2px 8px;border-radius:20px;backdrop-filter:blur(4px)}
+
+/* Carousel slide editor */
+.carousel-slides{padding:0 20px 20px;display:flex;flex-direction:column;gap:10px}
+.slide-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.slide-item-header{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background 0.15s}
+.slide-item-header:hover{background:var(--bg3)}
+.slide-num-badge{width:22px;height:22px;border-radius:50%;background:var(--pink-dim);border:1px solid var(--border-bright);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#FF66C0;flex-shrink:0}
+.slide-item-title{flex:1;font-size:13px;font-weight:600}
+.slide-item-body{padding:10px 14px;border-top:1px solid var(--border)}
+.slide-item-body textarea{background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:8px 10px;font-size:13px;width:100%;font-family:var(--font);resize:none;outline:none;line-height:1.5;transition:border-color 0.15s}
+.slide-item-body textarea:focus{border-color:var(--pink)}
+
+/* Card actions footer */
+.gen-card-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.gen-actions-left{display:flex;gap:8px}
+.gen-actions-right{display:flex;gap:8px}
+.gen-action{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:5px}
+.gen-action:hover{border-color:var(--pink);color:var(--text)}
+.gen-action.primary{background:var(--pink-dim);border-color:var(--border-bright);color:#FF66C0}
+.gen-action.primary:hover{background:rgba(240,0,140,0.2)}
+.gen-action.danger{color:var(--red)}.gen-action.danger:hover{border-color:var(--red);background:rgba(255,77,77,0.08)}
+
+/* Imagen notice */
+.imagen-notice{margin:0 32px 20px;background:rgba(240,0,140,0.06);border:1px solid rgba(240,0,140,0.2);border-radius:12px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start}
+.imagen-notice-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.imagen-notice-text{font-size:12px;color:var(--text2);line-height:1.6}
+.imagen-notice-text strong{color:#FF66C0}
+.imagen-notice-text a{color:#FF66C0;text-decoration:underline}
+
+/* Save to calendar CTA */
+.save-cal-btn{background:rgba(0,208,132,0.1);border:1px solid rgba(0,208,132,0.3);color:var(--green);padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:5px}
+.save-cal-btn:hover{background:rgba(0,208,132,0.2)}
+
+/* Quality/style chips */
+.chips-scroll{display:flex;flex-wrap:wrap;gap:6px;max-height:none}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div style="display:flex;align-items:center;gap:12px;min-width:0">
+    <a href="dashboard.html" class="nav-logo">ContentPilot</a>
+    <span style="color:var(--text3);font-size:20px;font-weight:200;flex-shrink:0">/</span>
+    <span style="font-size:14px;color:var(--text2);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Graphic Generator</span>
+  </div>
+  <div class="nav-actions">
+    <div class="avatar" id="nav-avatar">?</div>
+  </div>
+</nav>
+
+<div class="gg-layout">
+
+  <!-- ── Left Panel ── -->
+  <div class="gg-panel">
+    <div class="panel-header">
+      <h3>🎨 Graphic Generator</h3>
+      <p>Imagen 3 · Static &amp; Carousel</p>
+    </div>
+
+    <!-- FORMAT -->
+    <div class="param-section">
+      <div class="param-section-title">Format &amp; Dimensions</div>
+      <div class="param-group">
+        <div class="param-label">Canvas Format</div>
+        <div class="format-grid">
+          <div class="format-card active" id="fmt-square" onclick="setFormat('square','1:1','1024x1024')">
+            <div class="format-icon" style="color:var(--text3)">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="4" y="4" width="20" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            </div>
+            <div class="format-label">Square</div>
+            <div class="format-dim">1:1 · 1024px</div>
+          </div>
+          <div class="format-card" id="fmt-portrait" onclick="setFormat('portrait','9:16','768x1344')">
+            <div class="format-icon" style="color:var(--text3)">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="7" y="2" width="14" height="24" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            </div>
+            <div class="format-label">Portrait</div>
+            <div class="format-dim">9:16 · Reels</div>
+          </div>
+          <div class="format-card" id="fmt-landscape" onclick="setFormat('landscape','16:9','1344x768')">
+            <div class="format-icon" style="color:var(--text3)">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="2" y="7" width="24" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            </div>
+            <div class="format-label">Landscape</div>
+            <div class="format-dim">16:9 · YouTube</div>
+          </div>
+          <div class="format-card" id="fmt-story" onclick="setFormat('story','4:5','896x1120')">
+            <div class="format-icon" style="color:var(--text3)">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="6" y="3" width="16" height="22" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            </div>
+            <div class="format-label">Story/Feed</div>
+            <div class="format-dim">4:5 · IG Feed</div>
+          </div>
+          <div class="format-card" id="fmt-banner" onclick="setFormat('banner','1.91:1','1200x628')">
+            <div class="format-icon" style="color:var(--text3)">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="1" y="8" width="26" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            </div>
+            <div class="format-label">Banner</div>
+            <div class="format-dim">1.91:1 · Ads</div>
+          </div>
+          <div class="format-card" id="fmt-carousel" onclick="setFormat('carousel','1:1','1080x1080')">
+            <div class="format-icon" style="color:var(--text3)">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="1" y="6" width="11" height="16" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="15" y="6" width="11" height="16" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.5"/></svg>
+            </div>
+            <div class="format-label">Carousel</div>
+            <div class="format-dim">Multi-slide</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide count - only for carousel -->
+      <div class="param-group" id="slide-count-group" style="display:none">
+        <div class="param-label">Number of Slides <span>2–10</span></div>
+        <div class="slide-counter">
+          <button onclick="changeSlides(-1)">−</button>
+          <span id="slide-count-display">5</span>
+          <small>slides</small>
+          <button onclick="changeSlides(1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="param-section">
+      <div class="param-section-title">Content &amp; Prompt</div>
+      <div class="param-group">
+        <div class="param-label">Main Prompt <span>describe the visual</span></div>
+        <textarea class="param-textarea" id="main-prompt" rows="4"
+          placeholder="e.g. Indian mom smiling with child reading a book, warm living room, soft lighting, minimal text space..."></textarea>
+        <button class="enhance-btn" onclick="enhancePrompt()">✨ Enhance with AI</button>
+      </div>
+      <div class="param-group" id="carousel-prompts-group" style="display:none">
+        <div class="param-label">Per-Slide Prompts <span>optional overrides</span></div>
+        <div id="per-slide-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+      <div class="param-group">
+        <div class="param-label">Negative Prompt <span>what to avoid</span></div>
+        <textarea class="param-textarea" id="neg-prompt" rows="2"
+          placeholder="blurry, text, watermark, low quality, distorted faces...">blurry, text overlaid, watermark, logo, low quality, distorted, oversaturated</textarea>
+      </div>
+    </div>
+
+    <!-- STYLE -->
+    <div class="param-section">
+      <div class="param-section-title">Visual Style</div>
+      <div class="param-group">
+        <div class="param-label">Art Style</div>
+        <select class="param-select" id="art-style">
+          <option value="">— None / Photorealistic —</option>
+          <option value="photorealistic, professional photography">Photorealistic</option>
+          <option value="lifestyle photography, candid">Lifestyle Photo</option>
+          <option value="flat design illustration">Flat Design</option>
+          <option value="minimalist vector illustration">Minimalist Vector</option>
+          <option value="bold graphic design, high contrast">Bold Graphic</option>
+          <option value="3D render, soft lighting">3D Render</option>
+          <option value="watercolor painting, soft edges">Watercolor</option>
+          <option value="editorial magazine style">Editorial / Magazine</option>
+          <option value="cinematic, film grain, moody">Cinematic</option>
+          <option value="clean product photography, white background">Product Photography</option>
+          <option value="isometric illustration">Isometric</option>
+          <option value="hand-drawn sketch, doodle style">Hand-Drawn</option>
+        </select>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Mood / Tone</div>
+        <div class="param-chips" id="mood-chips">
+          <div class="param-chip" onclick="toggleChip(this,'mood')">Warm &amp; Cozy</div>
+          <div class="param-chip active" onclick="toggleChip(this,'mood')">Bright &amp; Cheerful</div>
+          <div class="param-chip" onclick="toggleChip(this,'mood')">Minimal &amp; Clean</div>
+          <div class="param-chip" onclick="toggleChip(this,'mood')">Bold &amp; Energetic</div>
+          <div class="param-chip" onclick="toggleChip(this,'mood')">Soft &amp; Pastel</div>
+          <div class="param-chip" onclick="toggleChip(this,'mood')">Dramatic &amp; Moody</div>
+          <div class="param-chip" onclick="toggleChip(this,'mood')">Playful</div>
+          <div class="param-chip" onclick="toggleChip(this,'mood')">Luxury</div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Lighting</div>
+        <select class="param-select" id="lighting">
+          <option value="">— Auto —</option>
+          <option value="natural soft window light">Natural Window Light</option>
+          <option value="golden hour warm sunlight">Golden Hour</option>
+          <option value="studio lighting, soft box">Studio Soft-Box</option>
+          <option value="bright outdoor daylight">Bright Outdoor</option>
+          <option value="dramatic side lighting">Dramatic Side Light</option>
+          <option value="flat even lighting, shadowless">Flat / Shadowless</option>
+          <option value="bokeh background blur">Bokeh Background</option>
+        </select>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Color Palette</div>
+        <div class="param-chips" id="palette-chips">
+          <div class="param-chip active" onclick="toggleChip(this,'palette')">Vibrant</div>
+          <div class="param-chip" onclick="toggleChip(this,'palette')">Pastel</div>
+          <div class="param-chip" onclick="toggleChip(this,'palette')">Monochrome</div>
+          <div class="param-chip" onclick="toggleChip(this,'palette')">Earthy</div>
+          <div class="param-chip" onclick="toggleChip(this,'palette')">Neon</div>
+          <div class="param-chip" onclick="toggleChip(this,'palette')">Muted</div>
+          <div class="param-chip" onclick="toggleChip(this,'palette')">Brand Colors</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AD / CONTENT PARAMETERS -->
+    <div class="param-section">
+      <div class="param-section-title">Ad &amp; Content Parameters</div>
+
+      <div class="param-group">
+        <div class="param-label">Content Objective</div>
+        <select class="param-select" id="content-objective">
+          <option value="">— None —</option>
+          <option value="brand awareness">Brand Awareness</option>
+          <option value="lead generation, call to action">Lead Generation</option>
+          <option value="product showcase, highlight features">Product Showcase</option>
+          <option value="testimonial, social proof">Testimonial / Social Proof</option>
+          <option value="educational, informative">Educational</option>
+          <option value="promotional offer, discount">Promotional / Offer</option>
+          <option value="community, relatable moment">Community / Relatable</option>
+          <option value="before and after comparison">Before &amp; After</option>
+        </select>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Target Platform</div>
+        <div class="param-chips" id="platform-chips">
+          <div class="param-chip active" onclick="toggleChip(this,'platform')">Instagram</div>
+          <div class="param-chip" onclick="toggleChip(this,'platform')">Meta Ads</div>
+          <div class="param-chip" onclick="toggleChip(this,'platform')">YouTube</div>
+          <div class="param-chip" onclick="toggleChip(this,'platform')">LinkedIn</div>
+          <div class="param-chip" onclick="toggleChip(this,'platform')">WhatsApp</div>
+          <div class="param-chip" onclick="toggleChip(this,'platform')">Google Ads</div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Text Space <span>leave room for copy</span></div>
+        <select class="param-select" id="text-space">
+          <option value="no text space needed">None (full visual)</option>
+          <option value="leave subtle space at bottom for text overlay">Bottom Strip</option>
+          <option value="leave clean space at top for headline text">Top Headline</option>
+          <option value="leave left third clean and minimal for text">Left Third</option>
+          <option value="leave right third clean and minimal for text">Right Third</option>
+          <option value="leave generous centered space for headline and subtext">Center Overlay</option>
+        </select>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">People / Subject</div>
+        <select class="param-select" id="people-type">
+          <option value="">— None specified —</option>
+          <option value="Indian mother and young child, relatable">Indian Mom + Child</option>
+          <option value="young Indian child reading a book">Child Reading</option>
+          <option value="Indian family, warm and happy">Indian Family</option>
+          <option value="Indian woman, 28-35 years old, urban">Indian Woman</option>
+          <option value="diverse group of children playing">Group of Kids</option>
+          <option value="no people, product focused">No People</option>
+          <option value="hands only, close-up">Hands Only</option>
+        </select>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Quality Boosters</div>
+        <div class="param-chips chips-scroll" id="quality-chips">
+          <div class="param-chip active" onclick="toggleChip(this,'quality')">High Resolution</div>
+          <div class="param-chip active" onclick="toggleChip(this,'quality')">Sharp Focus</div>
+          <div class="param-chip" onclick="toggleChip(this,'quality')">4K Quality</div>
+          <div class="param-chip" onclick="toggleChip(this,'quality')">Professional</div>
+          <div class="param-chip" onclick="toggleChip(this,'quality')">Award-Winning</div>
+          <div class="param-chip" onclick="toggleChip(this,'quality')">Hyper-Detailed</div>
+          <div class="param-chip" onclick="toggleChip(this,'quality')">Trending</div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Number of Variations <span>per generation</span></div>
+        <select class="param-select" id="num-images">
+          <option value="1">1 image</option>
+          <option value="2">2 images</option>
+          <option value="4" selected>4 images</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="generate-btn" id="gen-btn" onclick="generate()">
+      <span>✨</span> <span id="gen-btn-text">Generate</span>
+    </button>
+  </div>
+
+  <!-- ── Right Main ── -->
+  <div class="gg-main">
+    <div class="gg-header">
+      <div class="gg-header-left">
+        <h2 id="mode-title">Static Graphic</h2>
+        <p id="mode-desc">Generate ad creatives &amp; social media visuals with Imagen 3</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="mode-tabs">
+          <button class="mode-tab active" id="tab-single" onclick="setMode('single')">🖼️ Static</button>
+          <button class="mode-tab" id="tab-carousel" onclick="setMode('carousel')">🗂️ Carousel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="imagen-notice" id="imagen-notice">
+      <div class="imagen-notice-icon">🔑</div>
+      <div class="imagen-notice-text">
+        Uses <strong>Google Imagen 3</strong> via Vertex AI — same setup as Text to Video.
+        Requires <strong>VEO_PROJECT_ID</strong> and <strong>GOOGLE_SERVICE_ACCOUNT_KEY</strong> in Vercel env vars.
+        <a href="https://console.cloud.google.com/vertex-ai" target="_blank">Enable Vertex AI →</a>
+      </div>
+    </div>
+
+    <div class="gg-canvas" id="gg-canvas">
+      <div class="empty-state-gg" id="empty-state">
+        <div class="empty-icon">🎨</div>
+        <h3>No graphics yet</h3>
+        <p>Configure your settings on the left and hit Generate to create ad creatives and social media graphics</p>
+        <div class="example-prompts">
+          <div class="example-prompt" onclick="setExamplePrompt('Indian child sitting cross-legged on floor reading a colorful picture book, warm afternoon light, cozy living room')">Child reading at home</div>
+          <div class="example-prompt" onclick="setExamplePrompt('Stack of vibrant childrens books on a wooden table, scattered crayons and a leaf, white minimal background')">Books still-life</div>
+          <div class="example-prompt" onclick="setExamplePrompt('Happy Indian mother and daughter laughing together with a book open between them, natural light, lifestyle photo')">Mom &amp; daughter moment</div>
+          <div class="example-prompt" onclick="setExamplePrompt('Minimal flat design showing a phone app icon for a book library, purple and pink gradient, clean vector')">App icon concept</div>
+          <div class="example-prompt" onclick="setExamplePrompt('Bold ad creative: colourful cartoon books flying out of a smartphone screen, vibrant background, playful energy')">Books from phone</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="global-toast" class="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script>
+window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ─── State ──────────────────────────────────────────────────────
+let currentFormat = 'square';
+let currentAspect = '1:1';
+let currentDims = '1024x1024';
+let currentMode = 'single'; // 'single' | 'carousel'
+let slideCount = 5;
+let generations = []; // {id, prompt, params, images[], status}
+let chipState = { mood: [], palette: [], platform: [], quality: [] };
+
+// Init chips
+function initChips() {
+  ['mood','palette','platform','quality'].forEach(group => {
+    document.querySelectorAll(`#${group}-chips .param-chip`).forEach(chip => {
+      if (chip.classList.contains('active')) chipState[group].push(chip.textContent.trim());
+    });
+  });
+}
+
+// ─── Format ─────────────────────────────────────────────────────
+function setFormat(fmt, aspect, dims) {
+  currentFormat = fmt;
+  currentAspect = aspect;
+  currentDims = dims;
+  document.querySelectorAll('.format-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('fmt-'+fmt).classList.add('active');
+
+  const isCarousel = fmt === 'carousel';
+  document.getElementById('slide-count-group').style.display = isCarousel ? 'block' : 'none';
+  document.getElementById('carousel-prompts-group').style.display = isCarousel ? 'block' : 'none';
+
+  if (isCarousel && currentMode !== 'carousel') setMode('carousel', true);
+  else if (!isCarousel && currentMode === 'carousel') setMode('single', true);
+
+  updateTitle();
+}
+
+// ─── Mode (static vs carousel) ──────────────────────────────────
+function setMode(mode, skipFormatSync) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + mode).classList.add('active');
+
+  if (!skipFormatSync) {
+    if (mode === 'carousel') {
+      if (currentFormat !== 'carousel') setFormat('carousel','1:1','1080x1080');
+    } else {
+      if (currentFormat === 'carousel') setFormat('square','1:1','1024x1024');
+    }
+  }
+
+  if (mode === 'carousel') renderPerSlideList();
+  document.getElementById('carousel-prompts-group').style.display = mode === 'carousel' ? 'block' : 'none';
+  document.getElementById('slide-count-group').style.display = mode === 'carousel' ? 'block' : 'none';
+  updateTitle();
+}
+
+function updateTitle() {
+  const t = currentMode === 'carousel' ? `Carousel (${slideCount} slides)` : 'Static Graphic';
+  document.getElementById('mode-title').textContent = t;
+  const btn = document.getElementById('gen-btn-text');
+  btn.textContent = currentMode === 'carousel' ? `Generate ${slideCount} Slides` : 'Generate';
+}
+
+// ─── Slides ─────────────────────────────────────────────────────
+function changeSlides(delta) {
+  slideCount = Math.min(10, Math.max(2, slideCount + delta));
+  document.getElementById('slide-count-display').textContent = slideCount;
+  renderPerSlideList();
+  updateTitle();
+}
+
+function renderPerSlideList() {
+  const container = document.getElementById('per-slide-list');
+  const existing = container.querySelectorAll('textarea');
+  const vals = Array.from(existing).map(t => t.value);
+  container.innerHTML = '';
+  for (let i = 0; i < slideCount; i++) {
+    const ta = document.createElement('div');
+    ta.style.cssText = 'display:flex;gap:8px;align-items:flex-start';
+    ta.innerHTML = `
+      <div style="width:22px;height:22px;border-radius:50%;background:var(--pink-dim);border:1px solid var(--border-bright);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#FF66C0;flex-shrink:0;margin-top:8px">${i+1}</div>
+      <textarea class="param-textarea" style="min-height:54px;flex:1;font-size:12px" placeholder="Slide ${i+1} prompt override (optional — uses main prompt if empty)" data-slide="${i}">${vals[i]||''}</textarea>`;
+    container.appendChild(ta);
+  }
+}
+
+// ─── Chips ──────────────────────────────────────────────────────
+function toggleChip(el, group) {
+  el.classList.toggle('active');
+  const val = el.textContent.trim().replace(/&amp;/g,'&');
+  const idx = chipState[group].indexOf(val);
+  if (idx === -1) chipState[group].push(val);
+  else chipState[group].splice(idx, 1);
+}
+
+// ─── Build final prompt ─────────────────────────────────────────
+function buildPrompt(basePrompt, index) {
+  // If carousel, check per-slide overrides
+  if (currentMode === 'carousel') {
+    const slides = document.querySelectorAll('#per-slide-list textarea');
+    if (slides[index] && slides[index].value.trim()) {
+      basePrompt = slides[index].value.trim();
+    }
+  }
+
+  const parts = [basePrompt];
+  const artStyle = document.getElementById('art-style').value;
+  if (artStyle) parts.push(artStyle);
+  const moods = chipState.mood; if (moods.length) parts.push(moods.join(', ').toLowerCase() + ' mood');
+  const lighting = document.getElementById('lighting').value; if (lighting) parts.push(lighting);
+  const palette = chipState.palette; if (palette.length) parts.push(palette.join(', ').toLowerCase() + ' color palette');
+  const objective = document.getElementById('content-objective').value; if (objective) parts.push('content purpose: ' + objective);
+  const textSpace = document.getElementById('text-space').value; if (textSpace) parts.push(textSpace);
+  const people = document.getElementById('people-type').value; if (people) parts.push(people);
+  const quality = chipState.quality; if (quality.length) parts.push(quality.join(', ').toLowerCase());
+  // Carousel slide context
+  if (currentMode === 'carousel') {
+    parts.push(`carousel slide ${index + 1} of ${slideCount}, consistent visual style across all slides`);
+  }
+  // Dimensions hint
+  parts.push(`optimized for ${currentAspect} format`);
+
+  return parts.filter(Boolean).join(', ');
+}
+
+// ─── Generate ───────────────────────────────────────────────────
+async function generate() {
+  const basePrompt = document.getElementById('main-prompt').value.trim();
+  if (!basePrompt) { showToast('Enter a prompt first', 'error'); return; }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  document.getElementById('gen-btn-text').textContent = 'Generating...';
+
+  document.getElementById('empty-state')?.remove();
+  document.getElementById('imagen-notice').style.display = 'none';
+
+  const count = parseInt(document.getElementById('num-images').value);
+  const numSlides = currentMode === 'carousel' ? slideCount : 1;
+  const negPrompt = document.getElementById('neg-prompt').value.trim();
+  const platforms = chipState.platform;
+
+  const id = Date.now().toString(36);
+  const gen = {
+    id, basePrompt, status: 'generating',
+    format: currentFormat, aspect: currentAspect, dims: currentDims,
+    mode: currentMode, numSlides, count,
+    platforms, images: []
+  };
+  generations.unshift(gen);
+  renderGenerations();
+
+  // For carousel: generate numSlides images; for static: generate count images
+  const totalImages = currentMode === 'carousel' ? numSlides : count;
+  let completed = 0;
+
+  const promises = Array.from({length: totalImages}, async (_, i) => {
+    const finalPrompt = buildPrompt(basePrompt, i);
+    try {
+      const resp = await fetch('/api/graphic-gen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: finalPrompt,
+          negativePrompt: negPrompt,
+          aspectRatio: currentAspect,
+          dims: currentDims,
+          slideIndex: i,
+          totalSlides: totalImages
+        })
+      });
+      const data = await resp.json();
+      if (data.error) return { index: i, error: data.error };
+      return { index: i, imageData: data.imageData, mimeType: data.mimeType };
+    } catch (err) {
+      return { index: i, error: err.message };
+    } finally {
+      completed++;
+      updateGenStatus(id, `Generating ${completed}/${totalImages}...`);
+    }
+  });
+
+  const results = await Promise.all(promises);
+
+  const updatedGen = generations.find(g => g.id === id);
+  if (updatedGen) {
+    results.sort((a,b) => a.index - b.index);
+    updatedGen.images = results;
+    updatedGen.status = results.every(r => r.error) ? 'error' : 'done';
+    renderGenerations();
+  }
+
+  btn.disabled = false;
+  document.getElementById('gen-btn-text').textContent = currentMode === 'carousel' ? `Generate ${slideCount} Slides` : 'Generate';
+  showToast(updatedGen?.status === 'done' ? 'Graphics ready!' : 'Some images failed', updatedGen?.status === 'done' ? 'success' : 'warning');
+}
+
+function updateGenStatus(id, msg) {
+  const el = document.querySelector(`[data-gen-id="${id}"] .gen-status`);
+  if (el && el.classList.contains('generating')) el.textContent = msg;
+}
+
+// ─── Render ─────────────────────────────────────────────────────
+function renderGenerations() {
+  const canvas = document.getElementById('gg-canvas');
+  if (!generations.length) {
+    canvas.innerHTML = `<div class="empty-state-gg" id="empty-state"><div class="empty-icon">🎨</div><h3>No graphics yet</h3></div>`;
+    return;
+  }
+
+  const ratioMap = {square:'1',portrait:'0.5625',landscape:'1.778',story:'0.8',banner:'1.91',carousel:'1'};
+
+  canvas.innerHTML = `<div class="gen-stack">${generations.map(gen => {
+    const ratio = ratioMap[gen.format] || '1';
+    const isCarousel = gen.mode === 'carousel';
+    const paramsHtml = [
+      gen.format, gen.aspect,
+      ...(gen.platforms||[]),
+      isCarousel ? `${gen.numSlides} slides` : `${gen.count} images`
+    ].map(p => `<span class="gen-param-tag">${p}</span>`).join('');
+
+    const imagesHtml = gen.images.length === 0
+      ? Array.from({length: isCarousel ? gen.numSlides : gen.count}, (_,i) =>
+          `<div class="gen-img-wrap loading" style="--img-ratio:${ratio}">
+            ${isCarousel ? `<div class="img-slide-num">${i+1}</div>` : ''}
+            <div class="spin"></div>
+            <span style="font-size:11px;color:var(--text3)">Generating...</span>
+          </div>`).join('')
+      : gen.images.map(img =>
+          img.error
+          ? `<div class="gen-img-wrap loading" style="--img-ratio:${ratio}">
+              ${isCarousel ? `<div class="img-slide-num">${img.index+1}</div>` : ''}
+              <span style="font-size:11px;color:var(--red)">⚠ ${img.error}</span>
+            </div>`
+          : `<div class="gen-img-wrap" style="--img-ratio:${ratio}">
+              ${isCarousel ? `<div class="img-slide-num">${img.index+1}</div>` : ''}
+              <img src="data:${img.mimeType||'image/png'};base64,${img.imageData}" alt="Generated graphic" loading="lazy"/>
+              <div class="img-overlay">
+                <div class="img-actions">
+                  <button class="img-action-btn" onclick="downloadImage('${gen.id}',${img.index})" title="Download">⬇</button>
+                  <button class="img-action-btn" onclick="copyImageToClipboard('${gen.id}',${img.index})" title="Copy">⎘</button>
+                </div>
+              </div>
+            </div>`
+        ).join('');
+
+    return `<div class="gen-card" data-gen-id="${gen.id}">
+      <div class="gen-card-header">
+        <div class="gen-card-title">${gen.basePrompt}</div>
+        <div class="gen-card-meta">
+          <span class="gen-status ${gen.status === 'done' ? 'done' : gen.status === 'error' ? 'error' : 'generating'}">
+            ${gen.status === 'done' ? '✓ Done' : gen.status === 'error' ? '⚠ Error' : 'Generating…'}
+          </span>
+        </div>
+      </div>
+      <div class="gen-card-params">${paramsHtml}</div>
+      <div class="gen-images ${isCarousel ? 'carousel' : 'single'}">${imagesHtml}</div>
+      <div class="gen-card-footer">
+        <div class="gen-actions-left">
+          ${gen.status === 'done'
+            ? `<button class="gen-action primary" onclick="saveToCalendar('${gen.id}')">📅 Save to Calendar</button>`
+            : ''
+          }
+          <button class="gen-action" onclick="regenSame('${gen.id}')">🔄 Regenerate</button>
+        </div>
+        <div class="gen-actions-right">
+          ${gen.status === 'done' ? `<button class="gen-action" onclick="downloadAll('${gen.id}')">⬇ Download All</button>` : ''}
+          <button class="gen-action danger" onclick="deleteGen('${gen.id}')">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ─── Actions ────────────────────────────────────────────────────
+function downloadImage(genId, index) {
+  const gen = generations.find(g => g.id === genId);
+  if (!gen) return;
+  const img = gen.images.find(i => i.index === index);
+  if (!img || img.error) return;
+  const a = document.createElement('a');
+  a.href = `data:${img.mimeType||'image/png'};base64,${img.imageData}`;
+  a.download = `neown-graphic-${genId}-${index+1}.png`;
+  a.click();
+  showToast('Downloaded!', 'success');
+}
+
+function downloadAll(genId) {
+  const gen = generations.find(g => g.id === genId);
+  if (!gen) return;
+  gen.images.filter(i => !i.error).forEach((img, i) => {
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = `data:${img.mimeType||'image/png'};base64,${img.imageData}`;
+      a.download = `neown-graphic-${genId}-${img.index+1}.png`;
+      a.click();
+    }, i * 400);
+  });
+  showToast('Downloading all...', 'success');
+}
+
+async function copyImageToClipboard(genId, index) {
+  const gen = generations.find(g => g.id === genId);
+  if (!gen) return;
+  const img = gen.images.find(i => i.index === index);
+  if (!img || img.error) return;
+  try {
+    const blob = await fetch(`data:${img.mimeType||'image/png'};base64,${img.imageData}`).then(r => r.blob());
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+    showToast('Copied to clipboard!', 'success');
+  } catch { showToast('Copy failed — download instead', 'error'); }
+}
+
+function regenSame(genId) {
+  const gen = generations.find(g => g.id === genId);
+  if (!gen) return;
+  document.getElementById('main-prompt').value = gen.basePrompt;
+  generate();
+}
+
+function deleteGen(genId) {
+  generations = generations.filter(g => g.id !== genId);
+  renderGenerations();
+}
+
+async function saveToCalendar(genId) {
+  const gen = generations.find(g => g.id === genId);
+  if (!gen) return;
+  DB.setPending('calendar_item', {
+    title: gen.basePrompt.substring(0,80),
+    platform: gen.platforms?.[0] || '',
+    description: `Graphic generated via Imagen 3. Format: ${gen.format} (${gen.aspect}). Slides: ${gen.numSlides||1}.`
+  });
+  showToast('Saved! Opening Calendar...', 'success');
+  setTimeout(() => window.location.href = 'calendar.html', 800);
+}
+
+// ─── Enhance prompt with Claude ────────────────────────────────
+async function enhancePrompt() {
+  const base = document.getElementById('main-prompt').value.trim();
+  if (!base) { showToast('Enter a prompt to enhance', 'error'); return; }
+  const btn = document.querySelector('.enhance-btn');
+  btn.textContent = '⏳ Enhancing...'; btn.disabled = true;
+  try {
+    const resp = await fetch('/api/copywriter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: 'You are an expert at writing Imagen 3 image generation prompts for marketing creatives. Return ONLY the enhanced prompt, no preamble or explanation.',
+        messages: [{
+          role: 'user',
+          content: `Enhance this image prompt for Imagen 3, making it richer, more specific, and more likely to produce a professional marketing/ad creative. Keep it under 200 words. Original: "${base}"`
+        }]
+      })
+    });
+    const data = await resp.json();
+    if (data.content) {
+      document.getElementById('main-prompt').value = data.content.trim();
+      showToast('Prompt enhanced!', 'success');
+    }
+  } catch { showToast('Enhancement failed', 'error'); }
+  btn.textContent = '✨ Enhance with AI'; btn.disabled = false;
+}
+
+// ─── Example prompts ───────────────────────────────────────────
+function setExamplePrompt(p) {
+  document.getElementById('main-prompt').value = p;
+  document.getElementById('main-prompt').focus();
+}
+
+// ─── Auth ──────────────────────────────────────────────────────
+(async () => {
+  const user = await Auth.requireAuth();
+  if (!user) return;
+  document.getElementById('nav-avatar').textContent = user.avatar;
+  initChips();
+  renderPerSlideList();
+})();
+</script>
+</body>
+</html>
