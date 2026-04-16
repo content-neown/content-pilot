@@ -84,7 +84,6 @@ export default async function handler(req) {
       parameters: {
         aspectRatio,
         durationSeconds,
-        numberOfVideos: 1,   // AI Studio uses numberOfVideos, not sampleCount
       },
     };
 
