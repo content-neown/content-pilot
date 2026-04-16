@@ -43,7 +43,23 @@ scrollbar-width:thin;scrollbar-color:var(--card2) transparent;
 .nav-sep{width:1px;height:20px;background:var(--border);}
 .nav-page-title{font-size:13px;font-weight:500;color:var(--text3);}
 .nav-right{display:flex;align-items:center;gap:10px;}
+.nav-actions{display:flex;align-items:center;gap:10px;}
+.nav-logo{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-0.3px;text-decoration:none;white-space:nowrap;flex-shrink:0;}
+.nav-logo:hover{color:var(--pink);}
 .nav-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--indigo));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;border:1.5px solid rgba(240,0,140,0.4);cursor:default;}
+/* .avatar = alias used in calendar/performance pages */
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--indigo));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;border:1.5px solid rgba(240,0,140,0.4);cursor:default;flex-shrink:0;}
+/* tag utility classes used in overview */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.tag-blue{background:rgba(91,127,255,0.12);color:var(--blue);border:1px solid rgba(91,127,255,0.2);}
+.tag-green{background:rgba(0,208,132,0.12);color:var(--green);border:1px solid rgba(0,208,132,0.2);}
+.tag-orange{background:rgba(255,181,32,0.12);color:var(--amber);border:1px solid rgba(255,181,32,0.2);}
+.tag-pink{background:rgba(240,0,140,0.12);color:#FF66C0;border:1px solid rgba(240,0,140,0.25);}
+.tag-purple{background:rgba(108,99,255,0.12);color:#9B8FFF;border:1px solid rgba(108,99,255,0.2);}
+.tag-red{background:rgba(255,77,77,0.12);color:var(--red);border:1px solid rgba(255,77,77,0.2);}
+.tag-teal{background:rgba(20,184,166,0.12);color:#2dd4bf;border:1px solid rgba(20,184,166,0.2);}
+.tag-indigo{background:rgba(99,102,241,0.12);color:#818cf8;border:1px solid rgba(99,102,241,0.2);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
 
 /* ── SIDEBAR ── */
 .sidebar{width:216px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:12px 10px;}

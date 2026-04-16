@@ -247,20 +247,52 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
       <div class="form-group"><label class="form-label">🚀 Live Date</label><input type="date" class="input-field" id="task-live-date"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Platform</label>
-        <select class="input-field" id="task-platform">
-          <option value="">Select platform...</option>
-          <option>Instagram Reels</option><option>Instagram Post</option><option>Instagram Story</option>
-          <option>YouTube Shorts</option><option>YouTube Video</option><option>TikTok</option>
-          <option>LinkedIn</option><option>Twitter / X</option><option>Facebook</option>
-          <option>Google Ads</option><option>Meta Ads</option><option>Email</option><option>Blog</option>
-        </select>
+      <div class="form-group"><label class="form-label">Platform <span style="color:var(--text3);font-weight:400;text-transform:none;font-size:10px">(multi-select)</span></label>
+        <div style="position:relative" id="platform-ms-wrap">
+          <div class="tag-multiselect" id="platform-tags" onclick="togglePlatformDropdown(event)" style="min-height:38px;cursor:pointer">
+            <span id="platform-placeholder" style="color:var(--text3);font-size:13px;padding:2px 4px">Select platform(s)...</span>
+          </div>
+          <div class="ms-dropdown" id="platform-dropdown" style="display:none">
+            <div style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">Social</div>
+            <div class="ms-option" onclick="togglePlatform('Instagram Reels')">📱 Instagram Reels</div>
+            <div class="ms-option" onclick="togglePlatform('Instagram Post')">🖼️ Instagram Post</div>
+            <div class="ms-option" onclick="togglePlatform('Instagram Story')">⭕ Instagram Story</div>
+            <div class="ms-option" onclick="togglePlatform('YouTube Shorts')">▶️ YouTube Shorts</div>
+            <div class="ms-option" onclick="togglePlatform('YouTube Video')">🎬 YouTube Video</div>
+            <div class="ms-option" onclick="togglePlatform('TikTok')">🎵 TikTok</div>
+            <div class="ms-option" onclick="togglePlatform('LinkedIn')">💼 LinkedIn</div>
+            <div class="ms-option" onclick="togglePlatform('Twitter / X')">𝕏 Twitter / X</div>
+            <div class="ms-option" onclick="togglePlatform('Facebook')">👤 Facebook</div>
+            <div style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-top:1px solid var(--border);margin-top:4px">Paid</div>
+            <div class="ms-option" onclick="togglePlatform('Google Ads')">🔍 Google Ads</div>
+            <div class="ms-option" onclick="togglePlatform('Meta Ads')">🎯 Meta Ads</div>
+            <div style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-top:1px solid var(--border);margin-top:4px">Other</div>
+            <div class="ms-option" onclick="togglePlatform('Email')">✉️ Email</div>
+            <div class="ms-option" onclick="togglePlatform('Blog')">📝 Blog</div>
+            <div class="ms-option" onclick="togglePlatform('WhatsApp')">💬 WhatsApp</div>
+          </div>
+        </div>
+        <input type="hidden" id="task-platform"/>
       </div>
       <div class="form-group"><label class="form-label">Status</label>
         <select class="input-field" id="task-status">
-          <option value="idea">Idea</option><option value="in-progress">In Progress</option>
-          <option value="review">Review</option><option value="ready">Ready</option>
-          <option value="live">Live</option><option value="short">Short</option>
+          <optgroup label="🎬 Pre-Production">
+            <option value="idea">Idea</option>
+            <option value="script-research">Script Research</option>
+            <option value="script-in-progress">Script In Progress</option>
+            <option value="script-done">Script Done</option>
+          </optgroup>
+          <optgroup label="🎥 Production">
+            <option value="shoot-ready">Shoot Ready</option>
+            <option value="shoot-in-progress">Shoot In Progress</option>
+            <option value="shoot-done">Shoot Done</option>
+            <option value="edit-in-progress">Edit In Progress</option>
+            <option value="edit-done">Edit Done</option>
+          </optgroup>
+          <optgroup label="🚀 Post-Production">
+            <option value="content-ready">Content Ready</option>
+            <option value="content-live">Content Live</option>
+          </optgroup>
         </select>
       </div>
     </div>
@@ -406,35 +438,61 @@ function renderContent(){
 }
 
 function renderOverview(c){
-  const st=['idea','in-progress','review','ready','live','short'];
-  const counts={};st.forEach(s=>counts[s]=allTasks.filter(t=>t.status===s).length);
+  const allStatuses=['idea','script-research','script-in-progress','script-done','shoot-ready','shoot-in-progress','shoot-done','edit-in-progress','edit-done','content-ready','content-live'];
+  const counts={};allStatuses.forEach(s=>counts[s]=allTasks.filter(t=>t.status===s).length);
   const social=allTasks.filter(t=>t.calType==='social');
   const campaign=allTasks.filter(t=>t.calType==='campaign');
+  const groups=[
+    {label:'🎬 Pre-Production',statuses:['idea','script-research','script-in-progress','script-done']},
+    {label:'🎥 Production',statuses:['shoot-ready','shoot-in-progress','shoot-done','edit-in-progress','edit-done']},
+    {label:'🚀 Post-Production',statuses:['content-ready','content-live']}
+  ];
   c.innerHTML=`
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px">
-      ${st.map(s=>`<div class="card" style="text-align:center"><div style="font-size:26px;font-weight:700;font-family:'Clash Display',sans-serif;margin-bottom:4px">${counts[s]}</div><span class="tag ${STATUS_COLORS[s]}">${STATUS_LABELS[s]}</span></div>`).join('')}
+    <div style="margin-bottom:24px">
+      ${groups.map(g=>`
+        <div style="margin-bottom:16px">
+          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;padding:0 2px">${g.label}</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            ${g.statuses.map(s=>`<div class="card" style="text-align:center;padding:14px 18px;flex:1;min-width:100px"><div style="font-size:24px;font-weight:700;margin-bottom:4px">${counts[s]||0}</div><span class="tag ${STATUS_COLORS[s]}">${STATUS_LABELS[s]}</span></div>`).join('')}
+          </div>
+        </div>`).join('')}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
       <div class="card"><h3 style="margin-bottom:16px;font-size:16px">📱 Social Media</h3>
-        ${social.slice(0,5).map(t=>`<div onclick="openEditTask('${t.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer"><span style="font-size:13px;font-weight:600">${t.title}</span><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></div>`).join('')||'<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}
+        ${social.slice(0,5).map(t=>`<div onclick="openEditTask('${t.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px">${t.title}</span><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}" style="white-space:nowrap;flex-shrink:0">${STATUS_LABELS[t.status]||t.status}</span></div>`).join('')||'<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}
         <button class="btn-ghost" style="width:100%;margin-top:12px;font-size:12px" onclick="setSection('social',document.getElementById('nav-social'))">View All →</button>
       </div>
       <div class="card"><h3 style="margin-bottom:16px;font-size:16px">🎯 Campaign</h3>
-        ${campaign.slice(0,5).map(t=>`<div onclick="openEditTask('${t.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer"><span style="font-size:13px;font-weight:600">${t.title}</span><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></div>`).join('')||'<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}
+        ${campaign.slice(0,5).map(t=>`<div onclick="openEditTask('${t.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px">${t.title}</span><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}" style="white-space:nowrap;flex-shrink:0">${STATUS_LABELS[t.status]||t.status}</span></div>`).join('')||'<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}
         <button class="btn-ghost" style="width:100%;margin-top:12px;font-size:12px" onclick="setSection('campaign',document.getElementById('nav-campaign'))">View All →</button>
       </div>
     </div>`;
 }
+}
 
-function statsBar(tasks){return`<div class="stats-bar">${['idea','in-progress','ready','live','short'].map(s=>`<div class="stat-pill"><span class="tag ${STATUS_COLORS[s]}">${STATUS_LABELS[s]}</span><strong>${tasks.filter(t=>t.status===s).length}</strong></div>`).join('')}<div class="stat-pill" style="margin-left:auto"><strong>${tasks.length}</strong> total</div></div>`;}
+function statsBar(tasks){
+  const keyStats=[
+    {s:'idea',icon:'💡'},
+    {s:'script-in-progress',icon:'✍️'},
+    {s:'shoot-ready',icon:'🎬'},
+    {s:'edit-in-progress',icon:'✂️'},
+    {s:'content-ready',icon:'📦'},
+    {s:'content-live',icon:'🚀'}
+  ];
+  return`<div class="stats-bar">${keyStats.map(({s,icon})=>`<div class="stat-pill"><span class="tag ${STATUS_COLORS[s]}">${icon} ${STATUS_LABELS[s]}</span><strong>${tasks.filter(t=>t.status===s).length}</strong></div>`).join('')}<div class="stat-pill" style="margin-left:auto"><strong>${tasks.length}</strong> total</div></div>`;
+}
 function emptyEl(){return`<div class="empty-state"><div style="font-size:48px;margin-bottom:12px">📋</div><h3>No tasks yet</h3><p>Add your first content task</p><button class="btn-primary" onclick="openAddTask()">+ Add Task</button></div>`;}
 
 function renderList(c){
   const tasks=getFiltered();
-  c.innerHTML=`${statsBar(tasks)}<div class="filter-bar"><input class="search-input" id="s-search" placeholder="🔍 Search..." oninput="filterTable()"/><select class="filter-select" id="s-status" onchange="filterTable()"><option value="">All Status</option><option value="idea">Idea</option><option value="in-progress">In Progress</option><option value="review">Review</option><option value="ready">Ready</option><option value="live">Live</option><option value="short">Short</option></select><select class="filter-select" id="s-platform" onchange="filterTable()"><option value="">All Platforms</option><option>Instagram Reels</option><option>TikTok</option><option>YouTube Shorts</option><option>LinkedIn</option><option>Twitter / X</option><option>Google Ads</option><option>Meta Ads</option></select></div>${tasks.length===0?emptyEl():`<table class="task-table"><thead><tr><th>Title</th><th>Platform</th><th>Status</th><th>Live Date</th><th>Deadline</th><th>Pillar</th><th></th></tr></thead><tbody id="task-tbody">${tasks.map(taskRow).join('')}</tbody></table>`}`;
+  c.innerHTML=`${statsBar(tasks)}<div class="filter-bar"><input class="search-input" id="s-search" placeholder="🔍 Search..." oninput="filterTable()"/><select class="filter-select" id="s-status" onchange="filterTable()"><option value="">All Status</option><optgroup label="🎬 Pre-Production"><option value="idea">Idea</option><option value="script-research">Script Research</option><option value="script-in-progress">Script In Progress</option><option value="script-done">Script Done</option></optgroup><optgroup label="🎥 Production"><option value="shoot-ready">Shoot Ready</option><option value="shoot-in-progress">Shoot In Progress</option><option value="shoot-done">Shoot Done</option><option value="edit-in-progress">Edit In Progress</option><option value="edit-done">Edit Done</option></optgroup><optgroup label="🚀 Post-Production"><option value="content-ready">Content Ready</option><option value="content-live">Content Live</option></optgroup></select><select class="filter-select" id="s-platform" onchange="filterTable()"><option value="">All Platforms</option><option>Instagram Reels</option><option>Instagram Post</option><option>Instagram Story</option><option>YouTube Shorts</option><option>YouTube Video</option><option>TikTok</option><option>LinkedIn</option><option>Twitter / X</option><option>Facebook</option><option>Google Ads</option><option>Meta Ads</option><option>Email</option><option>Blog</option><option>WhatsApp</option></select></div>${tasks.length===0?emptyEl():`<table class="task-table"><thead><tr><th>Title</th><th>Platform</th><th>Status</th><th>Live Date</th><th>Deadline</th><th>Pillar</th><th></th></tr></thead><tbody id="task-tbody">${tasks.map(taskRow).join('')}</tbody></table>`}`;
 }
 
-function taskRow(t){return`<tr class="task-row" onclick="openEditTask('${t.id}')"><td><strong>${t.title}</strong></td><td><span class="tag tag-blue" style="font-size:11px">${t.platform||'—'}</span></td><td><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></td><td>${formatDate(t.liveDate)}</td><td>${formatDate(t.deadline)}</td><td>${t.pillar||'—'}</td><td><button onclick="event.stopPropagation();delTask('${t.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px">🗑</button></td></tr>`;}
+function taskRow(t){
+  const platforms = Array.isArray(t.platform) ? t.platform : (t.platform ? [t.platform] : []);
+  const platformHtml = platforms.length ? platforms.map(p=>`<span class="tag tag-blue" style="font-size:11px">${p}</span>`).join(' ') : '<span style="color:var(--text3)">—</span>';
+  return`<tr class="task-row" onclick="openEditTask('${t.id}')"><td><strong>${t.title}</strong></td><td>${platformHtml}</td><td><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></td><td>${formatDate(t.liveDate)}</td><td>${formatDate(t.deadline)}</td><td>${t.pillar||'—'}</td><td><button onclick="event.stopPropagation();delTask('${t.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px">🗑</button></td></tr>`;
+}
 
 function filterTable(){
   const q=(document.getElementById('s-search')?.value||'').toLowerCase();
@@ -450,9 +508,19 @@ function filterTable(){
 
 function renderKanban(c){
   const tasks=getFiltered();
-  const cols=['idea','in-progress','review','ready','live','short'];
-  const clr={idea:'var(--accent3)','in-progress':'var(--orange)',review:'var(--pink)',ready:'var(--green)',live:'var(--accent)',short:'var(--red)'};
-  c.innerHTML=`<div class="kanban-board">${cols.map(s=>{const ct=tasks.filter(t=>t.status===s);return`<div class="kanban-col"><div class="kanban-col-header"><div class="kanban-col-title"><div style="width:8px;height:8px;border-radius:50%;background:${clr[s]}"></div>${STATUS_LABELS[s]}</div><div class="kanban-count">${ct.length}</div></div><div class="kanban-cards">${ct.map(t=>`<div class="kanban-card" onclick="openEditTask('${t.id}')"><div style="font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.4">${t.title}</div>${t.pillar?`<span class="tag tag-purple" style="font-size:11px">${t.pillar}</span>`:''}<div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:11px;color:var(--text3)">${formatDate(t.liveDate)}</span><span style="font-size:11px;color:var(--text3);background:var(--bg3);padding:2px 6px;border-radius:4px">${t.platform||''}</span></div></div>`).join('')}</div></div>`}).join('')}</div>`;
+  const groups=[
+    {label:'🎬 Pre-Production',cols:['idea','script-research','script-in-progress','script-done']},
+    {label:'🎥 Production',cols:['shoot-ready','shoot-in-progress','shoot-done','edit-in-progress','edit-done']},
+    {label:'🚀 Post-Production',cols:['content-ready','content-live']}
+  ];
+  const clr={'idea':'var(--blue)','script-research':'#818cf8','script-in-progress':'var(--amber)','script-done':'#2dd4bf','shoot-ready':'var(--green)','shoot-in-progress':'var(--amber)','shoot-done':'#2dd4bf','edit-in-progress':'var(--amber)','edit-done':'var(--green)','content-ready':'#9B8FFF','content-live':'#FF66C0'};
+  c.innerHTML=groups.map(g=>`
+    <div style="margin-bottom:28px">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;padding:0 2px">${g.label}</div>
+      <div class="kanban-board">
+        ${g.cols.map(s=>{const ct=tasks.filter(t=>t.status===s);return`<div class="kanban-col"><div class="kanban-col-header"><div class="kanban-col-title"><div style="width:8px;height:8px;border-radius:50%;background:${clr[s]}"></div>${STATUS_LABELS[s]}</div><div class="kanban-count">${ct.length}</div></div><div class="kanban-cards">${ct.map(t=>`<div class="kanban-card" onclick="openEditTask('${t.id}')"><div style="font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.4">${t.title}</div>${t.pillar?`<span class="tag tag-purple" style="font-size:11px">${t.pillar}</span>`:''}<div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:11px;color:var(--text3)">${formatDate(t.liveDate)}</span><span style="font-size:11px;color:var(--text3);background:var(--bg3);padding:2px 6px;border-radius:4px">${Array.isArray(t.platform)?t.platform.join(', '):t.platform||''}</span></div></div>`).join('')}</div></div>`}).join('')}
+      </div>
+    </div>`).join('');
 }
 
 function renderBlock(c){
@@ -478,17 +546,76 @@ function renderCalendar(c){
 
 function changeMonth(d){currentMonth+=d;if(currentMonth>11){currentMonth=0;currentYear++;}if(currentMonth<0){currentMonth=11;currentYear--;}renderContent();}
 
-// Modal / tasks (unchanged)
+// ── Platform multi-select ──────────────────────────────────────
+let selectedPlatforms = [];
+
+function togglePlatformDropdown(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('platform-dropdown');
+  dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+}
+
+document.addEventListener('click', () => {
+  const dd = document.getElementById('platform-dropdown');
+  if (dd) dd.style.display = 'none';
+});
+
+function togglePlatform(val) {
+  const idx = selectedPlatforms.indexOf(val);
+  if (idx === -1) selectedPlatforms.push(val);
+  else selectedPlatforms.splice(idx, 1);
+  renderPlatformTags();
+  // sync hidden input (store as JSON array string)
+  document.getElementById('task-platform').value = JSON.stringify(selectedPlatforms);
+  // update option selected state
+  document.querySelectorAll('#platform-dropdown .ms-option').forEach(el => {
+    const txt = el.textContent.trim().replace(/^[^\w]+/, '').trim();
+    const match = selectedPlatforms.some(p => el.onclick.toString().includes(`'${p}'`));
+    el.classList.toggle('selected', selectedPlatforms.includes(val) && el.onclick.toString().includes(`'${val}'`));
+  });
+  // re-check all
+  document.querySelectorAll('#platform-dropdown .ms-option').forEach(el => {
+    const match = selectedPlatforms.find(p => el.onclick?.toString().includes(`'${p}'`));
+    el.classList.toggle('selected', !!match);
+  });
+}
+
+function renderPlatformTags() {
+  const wrap = document.getElementById('platform-tags');
+  const ph = document.getElementById('platform-placeholder');
+  if (selectedPlatforms.length === 0) {
+    wrap.innerHTML = '<span id="platform-placeholder" style="color:var(--text3);font-size:13px;padding:2px 4px">Select platform(s)...</span>';
+    return;
+  }
+  wrap.innerHTML = selectedPlatforms.map(p =>
+    `<div class="ms-tag">${p}<span class="ms-tag-del" onclick="event.stopPropagation();togglePlatform('${p}')">✕</span></div>`
+  ).join('');
+}
+
+function setPlatformValue(val) {
+  // val can be string, JSON array string, or array
+  if (!val) { selectedPlatforms = []; }
+  else if (Array.isArray(val)) { selectedPlatforms = val; }
+  else {
+    try { const parsed = JSON.parse(val); selectedPlatforms = Array.isArray(parsed) ? parsed : [val]; }
+    catch { selectedPlatforms = val ? [val] : []; }
+  }
+  renderPlatformTags();
+  document.getElementById('task-platform').value = JSON.stringify(selectedPlatforms);
+}
+
+// ── Modal / tasks ──────────────────────────────────────────────
 function openAddTask(){
   editingTaskId=null;
   document.getElementById('modal-title').textContent='Add New Task';
   ['task-title','task-desc','task-ref-link','task-live-link','task-script','task-assigned-date','task-deadline','task-live-date'].forEach(id=>document.getElementById(id).value='');
-  ['task-platform','task-pillar','task-structure','task-objective'].forEach(id=>document.getElementById(id).value='');
+  ['task-pillar','task-structure','task-objective'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('task-status').value='idea';
   document.getElementById('task-cal-type').value='social';
+  setPlatformValue('');
   selectedAssignees=[];renderAssignees();loadAssignees();
   const p=DB.getPending('calendar_item');
-  if(p){document.getElementById('task-title').value=p.title||'';document.getElementById('task-script').value=p.script||'';if(p.platform)document.getElementById('task-platform').value=p.platform;}
+  if(p){document.getElementById('task-title').value=p.title||'';document.getElementById('task-script').value=p.script||'';if(p.platform)setPlatformValue(p.platform);}
   document.getElementById('task-modal').classList.add('open');
 }
 function openEditTask(id){
@@ -499,7 +626,7 @@ function openEditTask(id){
   document.getElementById('task-assigned-date').value=t.assignedDate||'';
   document.getElementById('task-deadline').value=t.deadline||'';
   document.getElementById('task-live-date').value=t.liveDate||'';
-  document.getElementById('task-platform').value=t.platform||'';
+  setPlatformValue(t.platform||'');
   document.getElementById('task-status').value=t.status||'idea';
   document.getElementById('task-pillar').value=t.pillar||'';
   document.getElementById('task-structure').value=t.structure||'';
@@ -540,7 +667,7 @@ async function saveTask(){
     assignedDate:document.getElementById('task-assigned-date').value,
     deadline:document.getElementById('task-deadline').value,
     liveDate:document.getElementById('task-live-date').value,
-    platform:document.getElementById('task-platform').value,
+    platform:JSON.parse(document.getElementById('task-platform').value||'[]'),
     status:document.getElementById('task-status').value,
     pillar:document.getElementById('task-pillar').value,
     structure:document.getElementById('task-structure').value,

@@ -239,10 +239,17 @@ async function openAdd(){
   ['m-title','m-views','m-likes','m-comments','m-shares','m-saves','m-reach','m-clicks','m-leads','m-conversions','m-spend','m-revenue','m-watchtime','m-avgdur','m-followers','m-ctr','m-er','m-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('m-platform').value='';
   document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
-  const tasks=await DB.getTasks({status:'live'});
+  const tasks=await DB.getTasks({status:'content-live,live'});
   const sel=document.getElementById('m-task-select');
   sel.innerHTML='<option value="">Pick a live content piece...</option>';
-  tasks.forEach(t=>sel.innerHTML+=`<option value="${t.id}" data-platform="${t.platform||''}" data-date="${t.liveDate||''}">${t.title}${t.platform?' ('+t.platform+')':''}</option>`);
+  tasks.forEach(t=>{
+    let platformLabel = '';
+    if (t.platform) {
+      try { const p=JSON.parse(t.platform); platformLabel=Array.isArray(p)?p[0]:t.platform; }
+      catch { platformLabel=t.platform; }
+    }
+    sel.innerHTML+=`<option value="${t.id}" data-platform="${platformLabel||''}" data-date="${t.liveDate||''}">${t.title}${platformLabel?' ('+platformLabel+')':''}</option>`;
+  });
   document.getElementById('metrics-modal').classList.add('open');
 }
 
@@ -279,7 +286,9 @@ function prefill(taskId){
   if(!opt) return;
   const text=opt.textContent;
   document.getElementById('m-title').value=text.split('(')[0].trim();
-  const platform=opt.dataset.platform||'';
+  let platform=opt.dataset.platform||'';
+  // platform may be JSON array
+  try { const parsed=JSON.parse(platform); if(Array.isArray(parsed)) platform=parsed[0]||''; } catch{}
   if(platform) document.getElementById('m-platform').value=platform;
   const date=opt.dataset.date||'';
   if(date) document.getElementById('m-date').value=date;
