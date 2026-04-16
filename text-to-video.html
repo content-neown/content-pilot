@@ -197,8 +197,8 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
       <div class="veo-notice-icon">⚠️</div>
       <div class="veo-notice-text">
         <strong>Veo API Key Required.</strong> This tool calls Google's Veo 3.1 API via AI Studio. Add your
-        <code>VEO_API_KEY</code> and <code>VEO_PROJECT_ID</code> to your Vercel environment variables.
-        See <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/video/generate-videos" target="_blank">Veo documentation →</a>
+        <code>GEMINI_API_KEY</code> to your Vercel environment variables (Settings → Environment Variables).
+        See <a href="https://aistudio.google.com/apikey" target="_blank">Get API Key →</a>
       </div>
     </div>
 
@@ -347,6 +347,7 @@ async function generateVideo() {
     const data = await resp.json();
 
     if (!resp.ok) throw new Error(data.error || 'Generation failed');
+    if (data.error) throw new Error(data.error);
 
     // Veo returns an operation — poll for completion
     if (data.operationName) {
