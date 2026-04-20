@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>neOwn — TrendForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css"/>
+<style>
+html,body{height:100%;overflow:hidden;}
+.app-shell{display:flex;flex-direction:column;height:100vh;}
+
+/* NAV */
+.top-nav{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--bg2);border-bottom:1px solid var(--border);position:relative;z-index:50;flex-shrink:0;}
+.top-nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--pink),transparent);opacity:0.4;}
+.nav-brand{display:flex;align-items:center;gap:14px;text-decoration:none;}
+.nav-logo-img{height:26px;width:auto;}
+.nav-sep{width:1px;height:20px;background:var(--border);}
+.nav-title{font-size:13px;font-weight:500;color:var(--text3);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--indigo));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;border:1.5px solid rgba(240,0,140,0.4);}
+
+/* MODE TOGGLE */
+.mode-toggle{display:flex;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:100px;padding:3px;}
+.mtoggle-btn{font-family:var(--font);font-size:12px;font-weight:600;padding:5px 14px;border-radius:100px;border:none;cursor:pointer;transition:all 0.2s;background:transparent;color:var(--text3);}
+.mtoggle-btn.active{background:linear-gradient(135deg,var(--pink),var(--indigo));color:white;}
+
+/* BODY */
+.body-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* SEARCH AREA */
+.search-area{padding:28px 32px 0;flex-shrink:0;}
+.search-row{display:flex;gap:12px;align-items:center;max-width:880px;}
+.search-wrap{flex:1;position:relative;}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;pointer-events:none;}
+.search-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px 11px 38px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.search-input:focus{border-color:var(--pink);}
+.search-input::placeholder{color:var(--text3);}
+.btn-fetch{background:linear-gradient(135deg,var(--pink),var(--indigo));border:none;border-radius:10px;padding:11px 24px;font-family:var(--font);font-size:13px;font-weight:600;color:white;cursor:pointer;transition:opacity 0.2s,transform 0.1s;white-space:nowrap;display:flex;align-items:center;gap:8px;}
+.btn-fetch:hover{opacity:0.88;}
+.btn-fetch:active{transform:scale(0.98);}
+.btn-fetch:disabled{opacity:0.45;cursor:not-allowed;}
+.source-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.chip{display:flex;align-items:center;gap:6px;padding:5px 13px;border-radius:100px;border:1px solid var(--border);background:var(--card);font-family:var(--font);font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;transition:all 0.15s;user-select:none;}
+.chip.active{border-color:var(--border-bright);color:#FF66C0;background:var(--pink-dim);}
+.chip-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* DIVIDER */
+.section-divider{display:flex;align-items:center;gap:14px;padding:20px 32px 16px;flex-shrink:0;}
+.divider-line{flex:1;height:1px;background:var(--border);}
+.divider-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
+.divider-count{font-size:11px;color:var(--text3);background:var(--card);border:1px solid var(--border);padding:2px 10px;border-radius:20px;}
+
+/* RESULTS SCROLL */
+.results-scroll{flex:1;overflow-y:auto;padding:0 32px 32px;}
+
+/* EMPTY */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:60px 20px;text-align:center;color:var(--text3);}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:0.35;}
+.empty-state h3{font-size:18px;font-weight:600;color:var(--text2);margin-bottom:8px;}
+.empty-state p{font-size:13px;max-width:360px;line-height:1.6;}
+
+/* LOADING */
+.loading-state{display:none;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:60px 20px;text-align:center;}
+.loading-state.visible{display:flex;}
+.loader-ring{width:40px;height:40px;border:3px solid var(--card2);border-top-color:var(--pink);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:20px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-msg{font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.loading-sub{font-size:13px;color:var(--text3);}
+
+/* ERROR */
+.error-banner{display:none;background:rgba(255,77,77,0.08);border:1px solid rgba(255,77,77,0.25);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--red);margin:0 32px 16px;}
+.error-banner.visible{display:block;}
+
+/* TREND GRID */
+.trend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:18px;}
+
+/* TREND CARD */
+.trend-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color 0.2s,transform 0.2s;animation:cardIn 0.3s ease forwards;opacity:0;}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.trend-card:hover{border-color:var(--border-bright);transform:translateY(-2px);}
+
+.card-header{padding:16px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;}
+.source-badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:5px;flex-shrink:0;margin-top:1px;}
+.source-google{background:rgba(66,133,244,0.15);color:#4285f4;}
+.source-reddit{background:rgba(255,69,0,0.15);color:#ff6314;}
+.source-twitter{background:rgba(29,161,242,0.15);color:#1da1f2;}
+.source-web{background:rgba(0,208,132,0.12);color:var(--green);}
+.card-title{font-size:14px;font-weight:600;line-height:1.4;flex:1;}
+
+/* PULSE */
+.pulse-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:7px;animation:pulse 2s ease-in-out infinite;vertical-align:middle;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+
+/* TABS */
+.card-tabs{display:flex;background:var(--bg3);border-bottom:1px solid var(--border);}
+.card-tab{flex:1;padding:9px 6px;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--text3);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;transition:all 0.15s;}
+.card-tab.active{color:var(--pink);border-bottom-color:var(--pink);}
+.card-tab:hover:not(.active){color:var(--text2);}
+
+/* CARD CONTENT */
+.card-content{padding:16px 18px;min-height:160px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+.content-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+.hook-text{font-size:14px;font-weight:500;color:var(--text);line-height:1.55;padding:10px 13px;background:var(--bg3);border-radius:8px;border-left:2px solid var(--pink);margin-bottom:12px;}
+.visual-text{font-size:13px;color:var(--text2);line-height:1.6;padding:10px 13px;background:var(--bg3);border-radius:8px;border-left:2px solid var(--indigo);}
+.slide-list{display:flex;flex-direction:column;gap:7px;}
+.slide-item{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;background:var(--bg3);border-radius:8px;}
+.slide-num{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,var(--pink),var(--indigo));font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;}
+.slide-copy{font-size:13px;color:var(--text2);line-height:1.5;}
+.meme-block{padding:13px 14px;background:var(--bg3);border-radius:8px;border:1px dashed rgba(240,0,140,0.25);}
+.meme-format{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--pink);margin-bottom:7px;}
+.meme-caption{font-size:14px;color:var(--text);line-height:1.5;font-style:italic;margin-bottom:8px;}
+.meme-context{font-size:12px;color:var(--text3);line-height:1.5;}
+
+/* CARD FOOTER */
+.card-footer{padding:10px 18px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--bg3);}
+.btn-copy{flex:1;padding:7px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:var(--font);font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.btn-copy:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-dim);}
+.btn-copy.copied{border-color:var(--green);color:var(--green);}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- NAV -->
+  <nav class="top-nav">
+    <a href="dashboard.html" class="nav-brand">
+      <img class="nav-logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAACcCAYAAACJBlkJAAABCmlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGBckZOcW8wkwMCQm1dSFOTupBARGaXAfoeBkUGSgZlBk8EyMbm4wDEgwIcBJ/h2DagaCC7rgszCrQ4r4ExJLU4G0h+AOD65oKiEgYERZBdPeUkBiB0BZIsUAR0FZOeA2OkQdgOInQRhTwGrCQlyBrJ5gGyHdCR2EhIbahcIsCYbJWciOyS5tKgMypQC4tOMJ5mTWSdxZHN/E7AXDZQ2UfyoOcFIwnqSG2tgeezb7IIq1s6Ns2rWZO6vvXz4pcH//yWpFSUgzc7OBgygMEQPG4RY/iIGBouvDAzMExBiSTMZGLa3MjBI3EKIqSxgYOBvYWDYdh4A8P1N247YzPkAAIbISURBVHic7Z15mFxVnfc/59x7q7qq37uqure700kICQlLICxhkU0QRUcZdFzQYRFwARVQFgVxQQVcQJAtyiIoKsgqi+w7IYGQkITs6XTSSa/Vu6qru6pe3j/urU4l3Z3uvlXdnZDzeZ73qaquvvece3/3nt96zjnna2IcI5CTPJ0a8deVn08fYcv4kWGgx5+SIkWKFClSpEiRIkWKFClSpEiRIkWKFClSpEiRIkWKFClSpEiRIkWKFClSpEiRIkWKFClSpEiRIkWKFClSpEiRIkWKFClSpEiRIkWKFClSpEiRIkWKFClSpEiRIkWKFClSpEiRIkWKFClSpEiRIkWKFCkkzb9JbAQmgAXJvz2AbcAQkANagReAI0QEJD8pIiXkMb8g/hIPCq+JN3MOOlHHPmAMOBfoJfqE1O85UqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkSJFihQpUqRIkWJnxr86Afh+nfuE9G9adK6kzf+0gYXEHuirgMWkFTFP1sxAQaAMbRf0S8lxm9oJsJkHN3GMmg38ueAl4+2BL6ib/yHbsXOXzXkA0yB2uBqBB4+KW7GJWl7oQOTjruLQmzMQSSCSlm3kW/UQ2mJYA1Tnt6X1Voh4EKrYa/D2DPQCqJ16aLxAEF2KkyF/jHLcJYHFvFXaewGfiFjCnvGhJWh/5Iff3e1pSi+JFV4e14/yoHxgpOIlGaLPIbqZHYHIiDDvTBvQZ/sCIbAhOFyI1AE7dCi5Vm2BmFaBAlXnHEWwE6e3bIerPuKR+HNj4OA+7u2M0j7e3FNFrAmH6hKCE0bBBzFVZ0cBVfSxC1OlGdAxHDAqRB+bJbCY2CjSYbWiZyEFnq7SLaqXerLRAvVNp+N+WPSEFGiVqbNYFIPxdgHuFYK4lJ+bHW0XiMFr9YDXcGU3hOyFtF+TkNGMRRfQ1vXaEk+d0ZFbZvSGAFq9FQeU3VuRt+y+VJjVqxarJXAqKKa2V6B3tEBYAl2FceMgvlAL3S76cHb3Pv3sRblYPHqg7eLJsCkASM5VlKQJ+QIJwcVBmJbsGGdoJ6J9yqiK91oX/8g6Kh1M0T4GYPUl3NHFv6t0HoaXFWM5wqNpPdR1YUvEYiVdCTFLRRX0H88EAkjAoSMjfK2FmXvVGbdmq3O7QA9akZ5fBFtGhF/3IVFuHXgD3kJ7YCIpBFocWq2b0SINbkJ8A90+s8jQCi8fhEiJ04BKF/0Dq8hQ9L+f3EYfSAFG6wAuaAf2C1xFCW26UGEWwJv0bB1jq3wqXwFsEdQ1gx8H7AdoFajKByF2mM/ZHXWkLSJuuJSDfX04fKYWVBatXB4ANJCxiKT/H+LT4FMD+A3rQCR8ELqDgATRVOjaMJEJdV+1AOz7VtB2GgBp7AAAAABJRU5ErkJggg==" alt="neOwn"/>
+      <div class="nav-sep"></div>
+      <span class="nav-title">TrendForge</span>
+    </a>
+    <div class="nav-right">
+      <div class="mode-toggle">
+        <button class="mtoggle-btn active" id="modeNeown" onclick="setMode('neown')">neOwn</button>
+        <button class="mtoggle-btn" id="modeGeneric" onclick="setMode('generic')">Generic</button>
+      </div>
+      <div class="nav-avatar" id="nav-avatar">N</div>
+    </div>
+  </nav>
+
+  <div class="body-area">
+    <!-- SEARCH -->
+    <div class="search-area">
+      <div class="search-row">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="topicInput"
+            placeholder="Enter a topic or leave blank to fetch today's trends..."
+            onkeydown="if(event.key==='Enter') fetchTrends()"/>
+        </div>
+        <button class="btn-fetch" id="fetchBtn" onclick="fetchTrends()">
+          <span>⚡</span> Fetch Trends
+        </button>
+      </div>
+      <div class="source-chips">
+        <div class="chip active" data-source="google" onclick="toggleChip(this)"><span class="chip-dot"></span>Google Trends</div>
+        <div class="chip active" data-source="reddit" onclick="toggleChip(this)"><span class="chip-dot"></span>Reddit</div>
+        <div class="chip active" data-source="web" onclick="toggleChip(this)"><span class="chip-dot"></span>Web Search</div>
+        <div class="chip active" data-source="twitter" onclick="toggleChip(this)"><span class="chip-dot"></span>X / Twitter</div>
+      </div>
+    </div>
+
+    <!-- ERROR -->
+    <div class="error-banner" id="errorBanner"></div>
+
+    <!-- DIVIDER -->
+    <div class="section-divider" id="sectionDivider" style="display:none;">
+      <div class="divider-line"></div>
+      <div class="divider-label">Trending Now</div>
+      <div class="divider-count" id="trendCount">0 trends</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-scroll" id="resultsScroll">
+      <div class="loading-state" id="loadingState">
+        <div class="loader-ring"></div>
+        <div class="loading-msg" id="loadingMsg">Scanning the internet...</div>
+        <div class="loading-sub" id="loadingSub">Fetching live trends across selected sources</div>
+      </div>
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">📡</div>
+        <h3>No trends fetched yet</h3>
+        <p>Enter a topic above (or leave blank) and hit Fetch Trends to discover what's viral right now.</p>
+      </div>
+      <div class="trend-grid" id="trendGrid" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+// Auth
+Auth.requireAuth().then(user => {
+  if (user) document.getElementById('nav-avatar').textContent = user.avatar || user.name?.[0] || 'N';
+});
+
+let currentMode = 'neown';
+let activeSources = new Set(['google','reddit','web','twitter']);
+
+function setMode(m) {
+  currentMode = m;
+  document.getElementById('modeNeown').classList.toggle('active', m === 'neown');
+  document.getElementById('modeGeneric').classList.toggle('active', m === 'generic');
+}
+
+function toggleChip(el) {
+  const src = el.dataset.source;
+  if (activeSources.has(src)) {
+    if (activeSources.size === 1) return;
+    activeSources.delete(src);
+    el.classList.remove('active');
+  } else {
+    activeSources.add(src);
+    el.classList.add('active');
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorBanner');
+  el.textContent = msg;
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 6000);
+}
+
+function setLoading(loading) {
+  document.getElementById('loadingState').classList.toggle('visible', loading);
+  document.getElementById('emptyState').style.display = loading ? 'none' : '';
+  document.getElementById('trendGrid').style.display = 'none';
+  document.getElementById('sectionDivider').style.display = 'none';
+  document.getElementById('fetchBtn').disabled = loading;
+}
+
+async function fetchTrends() {
+  const topic = document.getElementById('topicInput').value.trim();
+  const sources = [...activeSources].join(', ');
+  const isNeown = currentMode === 'neown';
+
+  document.getElementById('emptyState').style.display = 'none';
+  setLoading(true);
+
+  const msgs = [
+    ['Scanning the internet...', `Looking across: ${sources}`],
+    ['Finding what\'s viral...', 'Analyzing trending topics right now'],
+    ['Crafting your angles...', 'Generating ad concepts & meme ideas'],
+  ];
+  let mi = 0;
+  const interval = setInterval(() => {
+    mi = (mi + 1) % msgs.length;
+    document.getElementById('loadingMsg').textContent = msgs[mi][0];
+    document.getElementById('loadingSub').textContent = msgs[mi][1];
+  }, 2500);
+
+  const brandCtx = isNeown
+    ? `Brand: neOwn — India's #1 children's book rental subscription. Anti-screen-time positioning. Target: urban Indian mothers, Tier-1 cities, dual-income households. Tone: warm, observational, never preachy. USPs: curated by age/interest, home delivery & pickup, 300+ cities.`
+    : `Generate brand-agnostic creative concepts that any brand could adapt.`;
+
+  const topicClause = topic
+    ? `Focus specifically on trends related to: "${topic}".`
+    : `Find the most viral/relevant trends right now, especially those relevant to parenting, education, screen time, or childhood development in India.`;
+
+  const prompt = `You are a creative strategist. Search the web for what is currently trending on ${sources}.
+
+${topicClause}
+${brandCtx}
+
+Find 4 distinct trending topics. For each, generate:
+1. Static ad concept: hook line + visual idea
+2. Carousel: 4 slides with short punchy copy each
+3. Meme angle: format name + caption + brief context note
+
+Return ONLY valid JSON with this exact structure — no other text:
+{"trends":[{"title":"short punchy trend title","source":"google|reddit|twitter|web","static":{"hook":"hook line","visual":"visual idea"},"carousel":[{"slide":1,"copy":"slide copy"},{"slide":2,"copy":"slide copy"},{"slide":3,"copy":"slide copy"},{"slide":4,"copy":"slide copy"}],"meme":{"format":"meme format name","caption":"meme caption","context":"why this works"}}]}`;
+
+  try {
+    const res = await fetch('/api/trendforge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+
+    clearInterval(interval);
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `API error ${res.status}`);
+    }
+
+    const data = await res.json();
+    const text = data.content || '';
+
+    const match = text.match(/\{[\s\S]*"trends"[\s\S]*\}/);
+    if (!match) throw new Error('Could not parse trend data. Please try again.');
+
+    const parsed = JSON.parse(match[0]);
+    renderTrends(parsed.trends || []);
+
+  } catch(e) {
+    clearInterval(interval);
+    setLoading(false);
+    document.getElementById('emptyState').style.display = '';
+    showError('⚠ ' + (e.message || 'Something went wrong. Please try again.'));
+  }
+}
+
+function renderTrends(trends) {
+  document.getElementById('loadingState').classList.remove('visible');
+  document.getElementById('emptyState').style.display = 'none';
+
+  const grid = document.getElementById('trendGrid');
+  grid.innerHTML = '';
+  grid.style.display = 'grid';
+
+  const divider = document.getElementById('sectionDivider');
+  divider.style.display = 'flex';
+  document.getElementById('trendCount').textContent = `${trends.length} trend${trends.length !== 1 ? 's' : ''}`;
+
+  document.getElementById('fetchBtn').disabled = false;
+
+  trends.forEach((t, i) => {
+    const srcClass = `source-${t.source || 'web'}`;
+    const srcLabel = {google:'Google',reddit:'Reddit',twitter:'X/Twitter',web:'Web'}[t.source] || 'Web';
+    const slides = (t.carousel || []).map((s, si) =>
+      `<div class="slide-item"><div class="slide-num">${si+1}</div><div class="slide-copy">${esc(s.copy)}</div></div>`
+    ).join('');
+
+    const card = document.createElement('div');
+    card.className = 'trend-card';
+    card.style.animationDelay = `${i * 80}ms`;
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="source-badge ${srcClass}">${srcLabel}</span>
+        <div class="card-title"><span class="pulse-dot"></span>${esc(t.title)}</div>
+      </div>
+      <div class="card-tabs">
+        <button class="card-tab active" onclick="switchTab(this,'s-${i}')">Static Ad</button>
+        <button class="card-tab" onclick="switchTab(this,'c-${i}')">Carousel</button>
+        <button class="card-tab" onclick="switchTab(this,'m-${i}')">Meme</button>
+      </div>
+      <div class="card-content">
+        <div class="tab-pane active" id="s-${i}">
+          <div class="content-label">Hook</div>
+          <div class="hook-text">${esc(t.static?.hook||'')}</div>
+          <div class="content-label">Visual Idea</div>
+          <div class="visual-text">${esc(t.static?.visual||'')}</div>
+        </div>
+        <div class="tab-pane" id="c-${i}">
+          <div class="slide-list">${slides}</div>
+        </div>
+        <div class="tab-pane" id="m-${i}">
+          <div class="meme-block">
+            <div class="meme-format">${esc(t.meme?.format||'')}</div>
+            <div class="meme-caption">"${esc(t.meme?.caption||'')}"</div>
+            <div class="meme-context">${esc(t.meme?.context||'')}</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn-copy" onclick="copyAll(this,${i})">Copy All</button>
+        <button class="btn-copy" onclick="copyTab(this,${i})">Copy Tab</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+  window._trendsData = trends;
+}
+
+function switchTab(btn, paneId) {
+  const card = btn.closest('.trend-card');
+  card.querySelectorAll('.card-tab').forEach(t => t.classList.remove('active'));
+  card.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(paneId).classList.add('active');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function copyAll(btn, idx) {
+  const t = window._trendsData?.[idx]; if (!t) return;
+  const slides = (t.carousel||[]).map((s,i) => `Slide ${i+1}: ${s.copy}`).join('\n');
+  copy(btn, `TREND: ${t.title}\n\nSTATIC AD\nHook: ${t.static?.hook}\nVisual: ${t.static?.visual}\n\nCARROUSEL\n${slides}\n\nMEME\nFormat: ${t.meme?.format}\nCaption: ${t.meme?.caption}\nContext: ${t.meme?.context}`);
+}
+
+function copyTab(btn, idx) {
+  const t = window._trendsData?.[idx]; if (!t) return;
+  const card = btn.closest('.trend-card');
+  const pane = card.querySelector('.tab-pane.active');
+  let text = '';
+  if (pane?.id?.startsWith('s-')) text = `Hook: ${t.static?.hook}\nVisual: ${t.static?.visual}`;
+  else if (pane?.id?.startsWith('c-')) text = (t.carousel||[]).map((s,i)=>`Slide ${i+1}: ${s.copy}`).join('\n');
+  else text = `Format: ${t.meme?.format}\nCaption: ${t.meme?.caption}\nContext: ${t.meme?.context}`;
+  copy(btn, text);
+}
+
+function copy(btn, text) {
+  const orig = btn.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    btn.textContent = '✗ Failed';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
