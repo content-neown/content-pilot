@@ -192,8 +192,12 @@ html,body{height:100%;overflow:hidden;}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js"></script>
 <script>
+// Init Supabase
+window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 // Auth
 Auth.requireAuth().then(user => {
   if (user) document.getElementById('nav-avatar').textContent = user.avatar || user.name?.[0] || 'N';
@@ -287,6 +291,7 @@ Return ONLY valid JSON with this exact structure — no other text:
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
+      if (res.status === 404) throw new Error('API route not found. Make sure api/trendforge.js is deployed to Vercel.');
       throw new Error(err.error || `API error ${res.status}`);
     }
 
