@@ -260,25 +260,14 @@ async function fetchTrends() {
   }, 2500);
 
   const brandCtx = isNeown
-    ? `Brand: neOwn — India's #1 children's book rental subscription. Anti-screen-time positioning. Target: urban Indian mothers, Tier-1 cities, dual-income households. Tone: warm, observational, never preachy. USPs: curated by age/interest, home delivery & pickup, 300+ cities.`
-    : `Generate brand-agnostic creative concepts that any brand could adapt.`;
+    ? `neOwn: India kids book rental, anti-screen, urban moms, warm tone.`
+    : `Brand-agnostic.`;
 
-  const topicClause = topic
-    ? `Focus specifically on trends related to: "${topic}".`
-    : `Find the most viral/relevant trends right now, especially those relevant to parenting, education, screen time, or childhood development in India.`;
+  const topicClause = topic ? `Topic: "${topic}".` : `Parenting, kids, screen time, India.`;
 
-  const prompt = `You are a creative strategist. Search the web for what is currently trending on ${sources}.
-
-${topicClause}
-${brandCtx}
-
-Find 4 distinct trending topics. For each, generate:
-1. Static ad concept: hook line + visual idea
-2. Carousel: 4 slides with short punchy copy each
-3. Meme angle: format name + caption + brief context note
-
-Return ONLY valid JSON with this exact structure — no other text:
-{"trends":[{"title":"short punchy trend title","source":"google|reddit|twitter|web","static":{"hook":"hook line","visual":"visual idea"},"carousel":[{"slide":1,"copy":"slide copy"},{"slide":2,"copy":"slide copy"},{"slide":3,"copy":"slide copy"},{"slide":4,"copy":"slide copy"}],"meme":{"format":"meme format name","caption":"meme caption","context":"why this works"}}]}`;
+  const prompt = `Search web for 4 trending topics. ${topicClause} ${brandCtx}
+For each trend output JSON with: title, source (google/reddit/twitter/web), static.hook, static.visual, carousel array (4 items: slide+copy), meme.format, meme.caption, meme.context.
+Reply ONLY with JSON: {"trends":[{"title":"","source":"","static":{"hook":"","visual":""},"carousel":[{"slide":1,"copy":""},{"slide":2,"copy":""},{"slide":3,"copy":""},{"slide":4,"copy":""}],"meme":{"format":"","caption":"","context":""}}]}`;
 
   try {
     const res = await fetch('/api/trendforge', {
