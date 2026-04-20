@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="shared.css"/>
 <style>
 body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
-.top-nav{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;min-height:56px}
+.top-nav{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;min-height:52px}
 .perf-layout{display:flex;flex:1;overflow:hidden}
 .perf-sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:16px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
 .perf-main{flex:1;overflow-y:auto;padding:28px}
@@ -17,7 +17,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .kpi-card.green::after{background:var(--green)}.kpi-card.orange::after{background:var(--orange)}
 .kpi-card.pink::after{background:var(--pink)}.kpi-card.red::after{background:var(--red)}
 .kpi-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
-.kpi-value{font-size:28px;font-family:'Clash Display',sans-serif;font-weight:700}
+.kpi-value{font-size:26px;font-weight:800;letter-spacing:-0.5px}
 .perf-table{width:100%;border-collapse:collapse}
 .perf-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg2);white-space:nowrap}
 .perf-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;vertical-align:middle}
@@ -38,17 +38,34 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .empty-state h3{font-size:18px;color:var(--text2);margin-bottom:8px}
 .log-btn{background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:var(--accent3);padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s}
 .log-btn:hover{background:rgba(56,189,248,0.2)}
+
+  /* ── ContentPilot alignment fixes (v2) ── */
+  body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  .top-nav { flex-shrink: 0; }
+  .sidebar-item { display: flex; align-items: center; gap: 8px; }
+  .sidebar-item .icon,
+  .sidebar-item .si-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
+  .nav-page-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .btn-primary, .btn-ghost { display: inline-flex; align-items: center; gap: 5px; }
+
 </style>
 </head>
 <body>
 
 <nav class="top-nav" style="background:var(--bg2);border-bottom:1px solid var(--border)">
-  <div style="display:flex;align-items:center;gap:10px;min-width:0;flex-shrink:1;overflow:hidden">
+  <div style="display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden">
     <a href="dashboard.html" class="nav-logo" style="flex-shrink:0">ContentPilot</a>
-    <span style="color:var(--text3);font-size:18px;font-weight:200;flex-shrink:0">/</span>
-    <span style="font-size:13px;color:var(--text2);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performance</span>
+    <span class="nav-sep" style="width:auto;height:auto;background:transparent;color:var(--text3);font-size:16px;font-weight:300">/</span>
+    <span class="nav-page-title">Performance</span>
   </div>
-  <div class="nav-actions" style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+  <div class="nav-actions" >
     <button class="log-btn" onclick="openAdd()">+ Log Metrics</button>
     <div class="avatar" id="nav-avatar">?</div>
   </div>

@@ -16,7 +16,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .panel-header p{font-size:12px;color:var(--text3);margin-top:3px}
 .param-group{margin-bottom:14px}
 .param-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;display:block;padding:0 4px}
-.param-select,.param-input,.param-textarea{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;width:100%;font-family:'Satoshi',sans-serif;transition:all 0.2s;outline:none}
+.param-select,.param-input,.param-textarea{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;width:100%;font-family:var(--font);transition:all 0.2s;outline:none}
 .param-select:focus,.param-input:focus,.param-textarea:focus{border-color:var(--accent)}
 .param-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2360607a' d='M5 7L0 2h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
 .param-select option{background:var(--bg3)}
@@ -89,14 +89,31 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .use-enhanced-btn{margin-top:8px;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.3);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--accent2);cursor:pointer;transition:all 0.15s;display:none}
 .use-enhanced-btn:hover{background:rgba(108,99,255,0.25)}
 .use-enhanced-btn.visible{display:inline-block}
+
+  /* ── ContentPilot alignment fixes (v2) ── */
+  body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  .top-nav { flex-shrink: 0; }
+  .sidebar-item { display: flex; align-items: center; gap: 8px; }
+  .sidebar-item .icon,
+  .sidebar-item .si-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
+  .nav-page-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .btn-primary, .btn-ghost { display: inline-flex; align-items: center; gap: 5px; }
+
 </style>
 </head>
 <body>
 <nav class="top-nav">
-  <div style="display:flex;align-items:center;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden">
     <a href="dashboard.html" class="nav-logo">ContentPilot</a>
-    <span style="color:var(--text3);font-size:20px;font-weight:200">/</span>
-    <span style="font-size:14px;color:var(--text2);font-weight:600">Text to Video</span>
+    <span class="nav-sep" style="width:auto;height:auto;background:transparent;color:var(--text3);font-size:16px;font-weight:300">/</span>
+    <span class="nav-page-title">Text to Video</span>
   </div>
   <div class="nav-actions">
     <div class="avatar" id="nav-avatar">?</div>

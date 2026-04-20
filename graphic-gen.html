@@ -150,6 +150,23 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
 /* Quality/style chips */
 .chips-scroll{display:flex;flex-wrap:wrap;gap:6px;max-height:none}
+
+  /* ── ContentPilot alignment fixes (v2) ── */
+  body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  .top-nav { flex-shrink: 0; }
+  .sidebar-item { display: flex; align-items: center; gap: 8px; }
+  .sidebar-item .icon,
+  .sidebar-item .si-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
+  .nav-page-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .btn-primary, .btn-ghost { display: inline-flex; align-items: center; gap: 5px; }
+
 </style>
 </head>
 <body>

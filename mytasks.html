@@ -39,10 +39,10 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .add-task-area{padding:0 32px 20px;flex-shrink:0;border-bottom:1px solid var(--border)}
 .add-task-row{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;transition:all 0.2s}
 .add-task-row:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
-.add-task-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14px;font-family:'Satoshi',sans-serif;font-weight:500}
+.add-task-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14px;font-family:var(--font);font-weight:500}
 .add-task-input::placeholder{color:var(--text3)}
 .add-task-meta{display:flex;gap:6px;align-items:center;flex-shrink:0}
-.meta-select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px;font-weight:600;color:var(--text2);font-family:'Satoshi',sans-serif;outline:none;cursor:pointer}
+.meta-select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px;font-weight:600;color:var(--text2);font-family:var(--font);outline:none;cursor:pointer}
 .add-task-btn{background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;color:#818cf8;cursor:pointer;transition:all 0.15s;white-space:nowrap}
 .add-task-btn:hover{background:rgba(99,102,241,0.3)}
 
@@ -73,7 +73,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 /* Task content */
 .task-content{flex:1;min-width:0}
 .task-text{font-size:14px;font-weight:500;color:var(--text);line-height:1.4;word-break:break-word}
-.task-text-edit{background:transparent;border:none;outline:none;color:var(--text);font-size:14px;font-weight:500;font-family:'Satoshi',sans-serif;width:100%;line-height:1.4}
+.task-text-edit{background:transparent;border:none;outline:none;color:var(--text);font-size:14px;font-weight:500;font-family:var(--font);width:100%;line-height:1.4}
 .task-text-edit:focus{border-bottom:1px solid var(--accent)}
 .task-meta-row{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
 .task-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
@@ -109,14 +109,31 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .stat-chip{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:12px;text-align:center}
 .stat-chip-num{font-size:20px;font-weight:800;display:block}
 .stat-chip-label{color:var(--text3);margin-top:2px}
+
+  /* ── ContentPilot alignment fixes (v2) ── */
+  body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  .top-nav { flex-shrink: 0; }
+  .sidebar-item { display: flex; align-items: center; gap: 8px; }
+  .sidebar-item .icon,
+  .sidebar-item .si-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
+  .nav-page-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .btn-primary, .btn-ghost { display: inline-flex; align-items: center; gap: 5px; }
+
 </style>
 </head>
 <body>
 <nav class="top-nav">
-  <div style="display:flex;align-items:center;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden">
     <a href="dashboard.html" class="nav-logo">ContentPilot</a>
-    <span style="color:var(--text3);font-size:20px;font-weight:200">/</span>
-    <span style="font-size:14px;color:var(--text2);font-weight:600">My Tasks</span>
+    <span class="nav-sep" style="width:auto;height:auto;background:transparent;color:var(--text3);font-size:16px;font-weight:300">/</span>
+    <span class="nav-page-title">My Tasks</span>
   </div>
   <div class="nav-actions">
     <div class="avatar" id="nav-avatar">?</div>
