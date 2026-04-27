@@ -2,25 +2,35 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>ContentPilot — Dashboard</title>
+<title>neOwn — Content Studio</title>
 <link rel="stylesheet" href="shared.css"/>
 <style>
-/* ── Dashboard layout ── */
 body { display: flex; flex-direction: column; min-height: 100vh; }
 
-/* Nav override for dashboard */
+/* ── Dashboard Nav ── */
 .dash-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  height: 52px;
-  background: var(--bg2);
+  padding: 0 28px;
+  height: 54px;
+  background: rgba(11,10,23,0.95);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 100;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   gap: 12px;
+}
+.dash-nav::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(240,0,140,0.35) 50%, transparent 100%);
+  pointer-events: none;
 }
 
 .user-chip {
@@ -38,30 +48,75 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .user-chip .avatar { width: 26px; height: 26px; font-size: 11px; }
 .user-chip span { font-size: 13px; font-weight: 600; color: var(--text2); }
 
-/* Main */
+/* ── Main Body ── */
 .dashboard-body {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px 60px;
-  background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(108,99,255,0.05) 0%, transparent 70%);
+  padding: 52px 24px 72px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Header */
+/* Ambient background orbs */
+.dashboard-body::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(240,0,140,0.06) 0%, transparent 70%);
+  top: -200px; left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.dashboard-body::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(110,91,255,0.05) 0%, transparent 70%);
+  bottom: -100px; right: 10%;
+  pointer-events: none;
+}
+
+/* ── Header ── */
 .dash-header {
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 52px;
+  position: relative;
+  z-index: 1;
+}
+.dash-greeting-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pink-light);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.dash-greeting-eyebrow::before,
+.dash-greeting-eyebrow::after {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: rgba(240,0,140,0.35);
 }
 .dash-header h1 {
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.5px;
+  font-family: 'Syne', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--text);
 }
 .dash-header h1 .name-accent {
-  background: linear-gradient(120deg, var(--pink), var(--accent));
+  background: linear-gradient(120deg, var(--pink) 0%, var(--indigo) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -69,26 +124,29 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .dash-header p {
   color: var(--text3);
   font-size: 14px;
-  margin-top: 8px;
+  margin-top: 10px;
+  font-weight: 400;
 }
 
-/* Widget grid */
+/* ── Widget Grid ── */
 .widgets-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 14px;
   width: 100%;
-  max-width: 780px;
+  max-width: 800px;
+  position: relative;
+  z-index: 1;
 }
 
-/* Widget card */
+/* ── Widget Card ── */
 .widget-card {
-  background: var(--bg2);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 22px 22px 20px;
+  padding: 24px 22px 20px;
   cursor: pointer;
-  transition: border-color 0.2s, transform 0.2s, background 0.2s;
+  transition: border-color 0.22s, transform 0.22s, background 0.22s, box-shadow 0.22s;
   position: relative;
   overflow: hidden;
   text-decoration: none;
@@ -96,81 +154,89 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   flex-direction: column;
   gap: 6px;
   opacity: 0;
-  animation: fadeIn 0.35s ease forwards;
+  animation: fadeInUp 0.4s ease forwards;
+  box-shadow: var(--shadow-card);
 }
 
 /* Stagger */
-.widget-card:nth-child(1) { animation-delay: 0.04s; }
-.widget-card:nth-child(2) { animation-delay: 0.08s; }
-.widget-card:nth-child(3) { animation-delay: 0.12s; }
-.widget-card:nth-child(4) { animation-delay: 0.16s; }
-.widget-card:nth-child(5) { animation-delay: 0.20s; }
-.widget-card:nth-child(6) { animation-delay: 0.24s; }
-.widget-card:nth-child(7) { animation-delay: 0.28s; }
+.widget-card:nth-child(1) { animation-delay: 0.05s; }
+.widget-card:nth-child(2) { animation-delay: 0.10s; }
+.widget-card:nth-child(3) { animation-delay: 0.15s; }
+.widget-card:nth-child(4) { animation-delay: 0.20s; }
+.widget-card:nth-child(5) { animation-delay: 0.25s; }
+.widget-card:nth-child(6) { animation-delay: 0.30s; }
+.widget-card:nth-child(7) { animation-delay: 0.35s; }
 
 .widget-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255,255,255,0.12);
+  transform: translateY(-3px);
+  border-color: var(--border2);
   background: var(--card2);
 }
 
-/* Accent bar on left edge */
-.widget-card::after {
+/* Color-coded top border */
+.widget-card::before {
   content: '';
   position: absolute;
-  left: 0; top: 20%; bottom: 20%;
-  width: 2px;
-  border-radius: 0 2px 2px 0;
+  top: 0; left: 0; right: 0;
+  height: 2px;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.22s;
 }
-.widget-card:hover::after { opacity: 1; }
-.widget-card.purple::after { background: var(--accent); }
-.widget-card.blue::after   { background: var(--accent3); }
-.widget-card.green::after  { background: var(--green); }
-.widget-card.pink::after   { background: var(--pink); }
-.widget-card.orange::after { background: var(--orange); }
-.widget-card.teal::after   { background: #14b8a6; }
-.widget-card.indigo::after { background: #818cf8; }
+.widget-card:hover::before { opacity: 1; }
+.widget-card.pink::before   { background: linear-gradient(90deg, var(--pink), var(--indigo)); }
+.widget-card.orange::before { background: linear-gradient(90deg, var(--orange), var(--amber)); }
+.widget-card.blue::before   { background: linear-gradient(90deg, var(--blue), var(--teal)); }
+.widget-card.green::before  { background: linear-gradient(90deg, var(--green), var(--teal)); }
+.widget-card.indigo::before { background: linear-gradient(90deg, var(--indigo), var(--blue)); }
+.widget-card.teal::before   { background: linear-gradient(90deg, var(--teal), var(--green)); }
+
+/* Hover glow based on color */
+.widget-card.pink:hover   { box-shadow: 0 8px 32px rgba(240,0,140,0.12); }
+.widget-card.orange:hover { box-shadow: 0 8px 32px rgba(255,112,48,0.12); }
+.widget-card.blue:hover   { box-shadow: 0 8px 32px rgba(56,189,248,0.12); }
+.widget-card.green:hover  { box-shadow: 0 8px 32px rgba(0,204,122,0.12); }
+.widget-card.indigo:hover { box-shadow: 0 8px 32px rgba(110,91,255,0.12); }
+.widget-card.teal:hover   { box-shadow: 0 8px 32px rgba(0,212,176,0.12); }
 
 /* Card content */
 .widget-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .widget-icon {
-  font-size: 22px;
+  font-size: 24px;
   line-height: 1;
-  transition: transform 0.2s;
+  transition: transform 0.22s;
 }
-.widget-card:hover .widget-icon { transform: scale(1.1); }
+.widget-card:hover .widget-icon { transform: scale(1.12) rotate(-4deg); }
 
 .widget-tag {
   font-size: 10px;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 3px 9px;
   border-radius: 20px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-.tag-purple-bg { background: rgba(108,99,255,0.12); color: var(--accent2); }
-.tag-blue-bg   { background: rgba(56,189,248,0.12);  color: var(--accent3); }
-.tag-green-bg  { background: rgba(0,201,122,0.12);   color: var(--green); }
-.tag-pink-bg   { background: rgba(240,0,140,0.12);   color: #FF5CB8; }
-.tag-orange-bg { background: rgba(249,115,22,0.12);  color: var(--orange); }
-.tag-teal-bg   { background: rgba(20,184,166,0.12);  color: #14b8a6; }
-.tag-indigo-bg { background: rgba(99,102,241,0.12);  color: #818cf8; }
+/* Tag variants */
+.tag-pink-bg   { background: rgba(240,0,140,0.12);   color: var(--pink-light); }
+.tag-orange-bg { background: rgba(255,112,48,0.12);  color: var(--orange); }
+.tag-blue-bg   { background: rgba(56,189,248,0.12);  color: var(--blue); }
+.tag-green-bg  { background: rgba(0,204,122,0.12);   color: var(--green); }
+.tag-indigo-bg { background: rgba(110,91,255,0.12);  color: var(--indigo2); }
+.tag-teal-bg   { background: rgba(0,212,176,0.12);   color: var(--teal); }
 
 .widget-title {
   font-size: 15px;
   font-weight: 700;
   color: var(--text);
   line-height: 1.3;
+  font-family: 'Syne', sans-serif;
 }
 .widget-desc {
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--text3);
   line-height: 1.55;
 }
@@ -180,44 +246,52 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   position: absolute;
   top: 14px;
   right: 14px;
-  background: var(--pink);
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
   color: #fff;
   font-size: 9px;
   font-weight: 800;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 20px;
   letter-spacing: 0.6px;
   text-transform: uppercase;
+  box-shadow: 0 2px 8px var(--pink-glow);
 }
 
-/* Stats bar */
+/* ── Stats Bar ── */
 .quick-stats {
   display: flex;
   align-items: center;
-  gap: 24px;
-  margin-top: 32px;
+  gap: 28px;
+  margin-top: 36px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: 12.5px;
   flex-wrap: wrap;
   justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 .quick-stats span {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
+  transition: color 0.15s;
 }
+.quick-stats span:hover { color: var(--text2); }
 .stat-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
+.stat-num { font-weight: 700; color: var(--text2); font-family: 'Syne', sans-serif; }
 </style>
 </head>
 <body>
 
 <nav class="dash-nav">
-  <div class="nav-logo">ContentPilot</div>
+  <a href="dashboard.html" class="nav-logo">
+    <img src="https://neown.in/cdn/shop/files/neOwn_website_logo_4f4f6dc2-8b02-4ac7-bfda-842abc1992f8.png?v=1745232656&width=500" alt="neOwn" class="nav-logo-img"/>
+  </a>
   <div style="display:flex;align-items:center;gap:8px;">
     <div class="user-chip">
       <div class="avatar" id="user-avatar">?</div>
@@ -229,16 +303,17 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 
 <main class="dashboard-body">
   <div class="dash-header">
+    <div class="dash-greeting-eyebrow">Content Studio</div>
     <h1>Hello, <span class="name-accent" id="greeting-name">there</span> 👋</h1>
     <p>What would you like to work on today?</p>
   </div>
 
   <div class="widgets-grid">
 
-    <a href="copywriter.html" class="widget-card purple">
+    <a href="copywriter.html" class="widget-card pink">
       <div class="widget-top">
         <span class="widget-icon">✍️</span>
-        <span class="widget-tag tag-purple-bg">AI Powered</span>
+        <span class="widget-tag tag-pink-bg">AI Powered</span>
       </div>
       <div class="widget-title">Copywriter</div>
       <div class="widget-desc">Generate scripts, captions, and copy for any platform with AI.</div>
@@ -286,10 +361,10 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       <span class="new-badge">New</span>
       <div class="widget-top">
         <span class="widget-icon">🎨</span>
-        <span class="widget-tag tag-teal-bg">Imagen 3</span>
+        <span class="widget-tag tag-teal-bg">Imagen 4</span>
       </div>
       <div class="widget-title">Graphic Generator</div>
-      <div class="widget-desc">Generate ads, carousels and creatives with Google Imagen 3.</div>
+      <div class="widget-desc">Generate ads, carousels and creatives with Google Imagen 4.</div>
     </a>
 
     <a href="performance.html" class="widget-card pink" style="grid-column: 1 / -1; max-width: 100%;">
@@ -304,10 +379,10 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   </div>
 
   <div class="quick-stats">
-    <span><div class="stat-dot" style="background:var(--accent)"></div><span id="stat-tasks">— tasks</span></span>
-    <span><div class="stat-dot" style="background:var(--green)"></div><span id="stat-live">— live</span></span>
-    <span><div class="stat-dot" style="background:var(--orange)"></div><span id="stat-progress">— in progress</span></span>
-    <span><div class="stat-dot" style="background:var(--pink)"></div><span id="stat-bank">— in bank</span></span>
+    <span><div class="stat-dot" style="background:var(--pink)"></div><span class="stat-num" id="stat-tasks">—</span> tasks</span>
+    <span><div class="stat-dot" style="background:var(--green)"></div><span class="stat-num" id="stat-live">—</span> live</span>
+    <span><div class="stat-dot" style="background:var(--orange)"></div><span class="stat-num" id="stat-progress">—</span> in progress</span>
+    <span><div class="stat-dot" style="background:var(--blue)"></div><span class="stat-num" id="stat-bank">—</span> in bank</span>
   </div>
 </main>
 
@@ -332,10 +407,10 @@ window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 (async () => {
   try {
     const [tasks, bankItems] = await Promise.all([DB.getTasks(), DB.getBankItems()]);
-    document.getElementById('stat-tasks').textContent = tasks.length + ' tasks';
-    document.getElementById('stat-live').textContent = tasks.filter(t=>t.status==='live').length + ' live';
-    document.getElementById('stat-progress').textContent = tasks.filter(t=>t.status==='in-progress').length + ' in progress';
-    document.getElementById('stat-bank').textContent = bankItems.length + ' in bank';
+    document.getElementById('stat-tasks').textContent = tasks.length;
+    document.getElementById('stat-live').textContent = tasks.filter(t=>t.status==='content-live'||t.status==='live').length;
+    document.getElementById('stat-progress').textContent = tasks.filter(t=>['shoot-in-progress','edit-in-progress','in-progress'].includes(t.status)).length;
+    document.getElementById('stat-bank').textContent = bankItems.length;
   } catch(e) {}
 })();
 </script>

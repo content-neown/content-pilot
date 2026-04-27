@@ -46,10 +46,10 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .cal-cell{background:var(--bg2);min-height:90px;padding:8px}
 .cal-cell.other-month .cal-date{opacity:0.3}
-.cal-cell.today{background:rgba(108,99,255,0.08)}
+.cal-cell.today{background:rgba(110,91,255,0.08)}
 .cal-date{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px;display:block}
 .cal-cell.today .cal-date{background:var(--accent);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
-.cal-task-dot{font-size:11px;border-left:2px solid var(--accent);background:rgba(108,99,255,0.12);padding:2px 5px;border-radius:0 3px 3px 0;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:var(--text)}
+.cal-task-dot{font-size:11px;border-left:2px solid var(--accent);background:rgba(110,91,255,0.12);padding:2px 5px;border-radius:0 3px 3px 0;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:var(--text)}
 .cal-task-dot.live{border-left-color:var(--green);background:rgba(52,211,153,0.12)}
 .cal-task-dot.in-progress{border-left-color:var(--orange);background:rgba(251,146,60,0.12)}
 .cal-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
@@ -82,18 +82,18 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .mx-table thead th.col-num{width:36px}
 .mx-table thead th.col-num .th-in{justify-content:center}
 .mx-table tbody tr{transition:background 0.1s}
-.mx-table tbody tr:hover{background:rgba(108,99,255,0.04)}
+.mx-table tbody tr:hover{background:rgba(110,91,255,0.04)}
 .mx-table td{border:1px solid var(--border);padding:0;vertical-align:top}
 .mx-table td.col-num{text-align:center;color:var(--text3);font-size:11px;font-weight:600;background:var(--bg2);width:36px;vertical-align:middle;cursor:pointer;user-select:none}
-.mx-table td.col-num:hover{background:rgba(108,99,255,0.08)}
+.mx-table td.col-num:hover{background:rgba(110,91,255,0.08)}
 .mx-cell-input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;font-family:var(--font);padding:7px 10px;line-height:1.4;min-height:34px}
-.mx-cell-input:focus{background:rgba(108,99,255,0.05);box-shadow:inset 0 0 0 2px var(--accent)}
+.mx-cell-input:focus{background:rgba(110,91,255,0.05);box-shadow:inset 0 0 0 2px var(--accent)}
 .mx-cell-select{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:12px;font-family:var(--font);padding:7px 8px;cursor:pointer;appearance:none;font-weight:600}
-.mx-cell-select:focus{background:rgba(108,99,255,0.05)}
+.mx-cell-select:focus{background:rgba(110,91,255,0.05)}
 .mx-add-row{background:var(--bg2);border-top:1px solid var(--border)}
 .mx-add-row td{padding:0}
 .mx-add-row-btn{width:100%;padding:8px 18px;background:transparent;border:none;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:6px;transition:all 0.15s}
-.mx-add-row-btn:hover{background:rgba(108,99,255,0.05);color:var(--accent2)}
+.mx-add-row-btn:hover{background:rgba(110,91,255,0.05);color:var(--accent2)}
 .mx-save-ind{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px;margin-left:auto}
 .mx-save-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
 .mx-save-dot.saving{background:#fbbf24;animation:pulse 1s infinite}
@@ -106,7 +106,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .ctx-menu{position:fixed;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:5px;z-index:1000;box-shadow:0 8px 30px rgba(0,0,0,0.4);min-width:170px;display:none}
 .ctx-menu.open{display:block}
 .ctx-item{padding:7px 12px;font-size:13px;color:var(--text2);cursor:pointer;border-radius:5px;display:flex;align-items:center;gap:8px;transition:all 0.1s}
-.ctx-item:hover{background:rgba(108,99,255,0.1);color:var(--text)}
+.ctx-item:hover{background:rgba(110,91,255,0.1);color:var(--text)}
 .ctx-item.danger{color:#ef4444}.ctx-item.danger:hover{background:rgba(239,68,68,0.1)}
 .ctx-sep{height:1px;background:var(--border);margin:3px 0}
 
@@ -135,7 +135,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 <body>
 <nav class="top-nav">
   <div style="display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden">
-    <a href="dashboard.html" class="nav-logo">ContentPilot</a>
+    <a href="dashboard.html" class="nav-logo"><img src="https://neown.in/cdn/shop/files/neOwn_website_logo_4f4f6dc2-8b02-4ac7-bfda-842abc1992f8.png?v=1745232656&width=500" alt="neOwn" class="nav-logo-img"/></a>
     <span class="nav-sep" style="width:auto;height:auto;background:transparent;color:var(--text3);font-size:16px;font-weight:300">/</span>
     <span class="nav-page-title">Content Calendar</span>
   </div>

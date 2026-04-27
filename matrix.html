@@ -41,18 +41,18 @@ thead tr th .sort-icon:hover{opacity:1}
 
 /* Rows */
 tbody tr{transition:background 0.1s}
-tbody tr:hover{background:rgba(108,99,255,0.04)}
-tbody tr.selected-row{background:rgba(108,99,255,0.08)}
+tbody tr:hover{background:rgba(110,91,255,0.04)}
+tbody tr.selected-row{background:rgba(110,91,255,0.08)}
 td{border:1px solid var(--border);padding:0;position:relative;vertical-align:top}
 td.col-num{text-align:center;color:var(--text3);font-size:11px;font-weight:600;background:var(--bg2);width:42px;vertical-align:middle;cursor:pointer;user-select:none}
-td.col-num:hover{background:rgba(108,99,255,0.08)}
+td.col-num:hover{background:rgba(110,91,255,0.08)}
 
 /* Editable cell */
 .cell-input{width:100%;height:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;font-family:var(--font);padding:8px 12px;resize:none;line-height:1.4;min-height:36px}
-.cell-input:focus{background:rgba(108,99,255,0.05);box-shadow:inset 0 0 0 2px var(--accent)}
+.cell-input:focus{background:rgba(110,91,255,0.05);box-shadow:inset 0 0 0 2px var(--accent)}
 td.focused{box-shadow:inset 0 0 0 2px var(--accent)}
 .cell-select{width:100%;height:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:12px;font-family:var(--font);padding:8px 10px;cursor:pointer;appearance:none;font-weight:600}
-.cell-select:focus{background:rgba(108,99,255,0.05)}
+.cell-select:focus{background:rgba(110,91,255,0.05)}
 
 /* Status colors */
 .status-draft{color:#fbbf24}.status-planned{color:#38bdf8}.status-in-review{color:#a78bfa}.status-live{color:#34d399}.status-paused{color:#f87171}
@@ -61,7 +61,7 @@ td.focused{box-shadow:inset 0 0 0 2px var(--accent)}
 /* Add row btn */
 .add-row-row td{background:var(--bg2);padding:0}
 .add-row-btn{width:100%;padding:10px;background:transparent;border:none;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;text-align:left;padding-left:20px;display:flex;align-items:center;gap:8px}
-.add-row-btn:hover{background:rgba(108,99,255,0.05);color:var(--accent2)}
+.add-row-btn:hover{background:rgba(110,91,255,0.05);color:var(--accent2)}
 
 /* Tabs (sheets) */
 .sheet-tabs{display:flex;gap:4px;padding:8px 24px 0;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
@@ -69,7 +69,7 @@ td.focused{box-shadow:inset 0 0 0 2px var(--accent)}
 .sheet-tab:hover{color:var(--text);background:var(--bg3)}
 .sheet-tab.active{background:var(--bg);color:var(--text);border-color:var(--border)}
 .sheet-tab-add{padding:7px 14px;font-size:18px;color:var(--text3);cursor:pointer;border-radius:8px;transition:all 0.15s;align-self:center}
-.sheet-tab-add:hover{color:var(--accent2);background:rgba(108,99,255,0.08)}
+.sheet-tab-add:hover{color:var(--accent2);background:rgba(110,91,255,0.08)}
 
 /* Formula bar */
 .formula-bar{display:flex;align-items:center;gap:10px;padding:6px 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
@@ -80,7 +80,7 @@ td.focused{box-shadow:inset 0 0 0 2px var(--accent)}
 .ctx-menu{position:fixed;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px;z-index:1000;box-shadow:0 8px 30px rgba(0,0,0,0.4);min-width:180px;display:none}
 .ctx-menu.visible{display:block}
 .ctx-item{padding:8px 14px;font-size:13px;color:var(--text2);cursor:pointer;border-radius:6px;display:flex;align-items:center;gap:10px;transition:all 0.1s}
-.ctx-item:hover{background:rgba(108,99,255,0.1);color:var(--text)}
+.ctx-item:hover{background:rgba(110,91,255,0.1);color:var(--text)}
 .ctx-item.danger{color:#ef4444}
 .ctx-item.danger:hover{background:rgba(239,68,68,0.1)}
 .ctx-sep{height:1px;background:var(--border);margin:4px 0}
@@ -115,7 +115,7 @@ td.focused{box-shadow:inset 0 0 0 2px var(--accent)}
 <body>
 <nav class="top-nav">
   <div style="display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden">
-    <a href="dashboard.html" class="nav-logo">ContentPilot</a>
+    <a href="dashboard.html" class="nav-logo"><img src="https://neown.in/cdn/shop/files/neOwn_website_logo_4f4f6dc2-8b02-4ac7-bfda-842abc1992f8.png?v=1745232656&width=500" alt="neOwn" class="nav-logo-img"/></a>
     <span class="nav-sep" style="width:auto;height:auto;background:transparent;color:var(--text3);font-size:16px;font-weight:300">/</span>
     <span class="nav-page-title">Weekly Matrix</span>
   </div>
