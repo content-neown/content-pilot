@@ -9,22 +9,17 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .top-nav{flex-shrink:0}
 .cal-layout{display:flex;flex:1;overflow:hidden}
 .cal-sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:16px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
-.sidebar-logo{padding:8px 10px 16px;border-bottom:1px solid var(--border);margin-bottom:8px}
-.sidebar-logo h3{font-size:14px;font-weight:700}
 .cal-main{flex:1;overflow:hidden;display:flex;flex-direction:column}
-.cal-header{padding:20px 28px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.cal-header{padding:20px 28px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .cal-header-left h2{font-size:20px}
 .cal-header-left p{font-size:13px;color:var(--text3);margin-top:2px}
-.view-tabs{display:flex;background:var(--bg3);border-radius:8px;padding:3px;flex-wrap:wrap;gap:2px}
-.view-tab{padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.2s;border:none;background:none;white-space:nowrap}
-.view-tab.active{background:var(--accent);color:#fff}
+.view-tabs{display:flex;background:var(--bg3);border-radius:8px;padding:3px}
+.view-tab{padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.2s;border:none;background:none}
+.view-tab.active{background:var(--accent);color:#0c0b09}
 .cal-content{flex:1;overflow-y:auto;padding:24px 28px}
-.cal-content.matrix-mode{padding:0;overflow:hidden;display:flex;flex-direction:column}
-
-/* ── Calendar existing styles ── */
 .stats-bar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
 .stat-pill{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 14px;display:flex;align-items:center;gap:8px;font-size:13px}
-.stat-pill strong{font-size:17px;}
+.stat-pill strong{font-size:17px;font-family:var(--font-display)}
 .task-table{width:100%;border-collapse:collapse}
 .task-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg2)}
 .task-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;vertical-align:middle}
@@ -46,108 +41,40 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .cal-cell{background:var(--bg2);min-height:90px;padding:8px}
 .cal-cell.other-month .cal-date{opacity:0.3}
-.cal-cell.today{background:rgba(108,99,255,0.08)}
+.cal-cell.today{background:rgba(232,160,48,0.07)}
 .cal-date{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px;display:block}
-.cal-cell.today .cal-date{background:var(--accent);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
-.cal-task-dot{font-size:11px;border-left:2px solid var(--accent);background:rgba(108,99,255,0.12);padding:2px 5px;border-radius:0 3px 3px 0;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:var(--text)}
-.cal-task-dot.live{border-left-color:var(--green);background:rgba(52,211,153,0.12)}
-.cal-task-dot.in-progress{border-left-color:var(--orange);background:rgba(251,146,60,0.12)}
+.cal-cell.today .cal-date{background:var(--accent);color:#0c0b09;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
+.cal-task-dot{font-size:11px;border-left:2px solid var(--accent);background:rgba(232,160,48,0.1);padding:2px 5px;border-radius:0 3px 3px 0;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:var(--text)}
+.cal-task-dot.live{border-left-color:var(--green);background:rgba(74,222,128,0.1)}
+.cal-task-dot.in-progress{border-left-color:var(--orange);background:rgba(251,146,60,0.1)}
 .cal-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .cal-nav-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 14px;color:var(--text);cursor:pointer;font-size:14px}
 .empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
 .empty-state h3{font-size:18px;color:var(--text2);margin-bottom:8px}
 .filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.filter-select,.search-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);padding:7px 12px;font-size:13px;font-family:var(--font);outline:none;cursor:pointer}
+.filter-select,.search-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);padding:7px 12px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer}
 .search-input{color:var(--text);width:200px}
 .search-input:focus,.filter-select:focus{border-color:var(--accent)}
-
-/* ── Matrix styles (embedded) ── */
-.matrix-toolbar{display:flex;align-items:center;gap:10px;padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
-.matrix-toolbar .tb-btn{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:5px}
-.matrix-toolbar .tb-btn:hover{border-color:var(--accent);color:var(--text)}
-.matrix-toolbar .tb-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.tb-sep{width:1px;height:20px;background:var(--border)}
-.mx-sheet-tabs{display:flex;gap:2px;padding:6px 20px 0;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
-.mx-sheet-tab{padding:6px 16px;border-radius:6px 6px 0 0;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.15s;border:1px solid transparent;border-bottom:none;white-space:nowrap}
-.mx-sheet-tab:hover{color:var(--text);background:var(--bg3)}
-.mx-sheet-tab.active{background:var(--bg);color:var(--text);border-color:var(--border)}
-.mx-formula-bar{display:flex;align-items:center;gap:8px;padding:5px 14px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
-.mx-cell-ref{font-size:11px;font-weight:700;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;min-width:52px;text-align:center;font-family:monospace}
-.mx-formula-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:12px;font-family:monospace;padding:3px 6px}
-.mx-table-wrap{flex:1;overflow:auto}
-.mx-table{border-collapse:collapse;width:100%;min-width:900px;font-size:13px}
-.mx-table thead{position:sticky;top:0;z-index:10}
-.mx-table thead th{background:var(--bg2);border:1px solid var(--border);padding:0;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);white-space:nowrap;user-select:none}
-.mx-table thead th .th-in{padding:8px 12px;display:flex;align-items:center;gap:4px}
-.mx-table thead th.col-num{width:36px}
-.mx-table thead th.col-num .th-in{justify-content:center}
-.mx-table tbody tr{transition:background 0.1s}
-.mx-table tbody tr:hover{background:rgba(108,99,255,0.04)}
-.mx-table td{border:1px solid var(--border);padding:0;vertical-align:top}
-.mx-table td.col-num{text-align:center;color:var(--text3);font-size:11px;font-weight:600;background:var(--bg2);width:36px;vertical-align:middle;cursor:pointer;user-select:none}
-.mx-table td.col-num:hover{background:rgba(108,99,255,0.08)}
-.mx-cell-input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;font-family:var(--font);padding:7px 10px;line-height:1.4;min-height:34px}
-.mx-cell-input:focus{background:rgba(108,99,255,0.05);box-shadow:inset 0 0 0 2px var(--accent)}
-.mx-cell-select{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:12px;font-family:var(--font);padding:7px 8px;cursor:pointer;appearance:none;font-weight:600}
-.mx-cell-select:focus{background:rgba(108,99,255,0.05)}
-.mx-add-row{background:var(--bg2);border-top:1px solid var(--border)}
-.mx-add-row td{padding:0}
-.mx-add-row-btn{width:100%;padding:8px 18px;background:transparent;border:none;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:6px;transition:all 0.15s}
-.mx-add-row-btn:hover{background:rgba(108,99,255,0.05);color:var(--accent2)}
-.mx-save-ind{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px;margin-left:auto}
-.mx-save-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
-.mx-save-dot.saving{background:#fbbf24;animation:pulse 1s infinite}
-.mx-week-nav{display:flex;align-items:center;gap:4px}
-.mx-week-btn{background:var(--bg3);border:1px solid var(--border);border-radius:5px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:13px;transition:all 0.15s}
-.mx-week-btn:hover{border-color:var(--accent)}
-.mx-week-label{font-size:12px;font-weight:700;color:var(--text2);padding:0 4px}
-
-/* context menu */
-.ctx-menu{position:fixed;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:5px;z-index:1000;box-shadow:0 8px 30px rgba(0,0,0,0.4);min-width:170px;display:none}
-.ctx-menu.open{display:block}
-.ctx-item{padding:7px 12px;font-size:13px;color:var(--text2);cursor:pointer;border-radius:5px;display:flex;align-items:center;gap:8px;transition:all 0.1s}
-.ctx-item:hover{background:rgba(108,99,255,0.1);color:var(--text)}
-.ctx-item.danger{color:#ef4444}.ctx-item.danger:hover{background:rgba(239,68,68,0.1)}
-.ctx-sep{height:1px;background:var(--border);margin:3px 0}
-
-/* status/priority colours in matrix selects */
-.sc-draft{color:#fbbf24}.sc-planned{color:#38bdf8}.sc-in-review{color:#a78bfa}.sc-live{color:#34d399}.sc-paused{color:#f87171}
-.sc-high{color:#f87171}.sc-medium{color:#fbbf24}.sc-low{color:#60a5fa}
-
-  /* ── ContentPilot alignment fixes (v2) ── */
-  body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-  .top-nav { flex-shrink: 0; }
-  .sidebar-item { display: flex; align-items: center; gap: 8px; }
-  .sidebar-item .icon,
-  .sidebar-item .si-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
-  .nav-page-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text2);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .btn-primary, .btn-ghost { display: inline-flex; align-items: center; gap: 5px; }
-
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 </style>
 </head>
 <body>
 <nav class="top-nav">
-  <div style="display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden">
-    <a href="dashboard.html" class="nav-logo">ContentPilot</a>
-    <span class="nav-sep" style="width:auto;height:auto;background:transparent;color:var(--text3);font-size:16px;font-weight:300">/</span>
-    <span class="nav-page-title">Content Calendar</span>
+  <div class="nav-breadcrumb">
+    <a href="dashboard.html" class="neown-logo">
+      <img src="https://neown.in/cdn/shop/files/neOwn_website_logo_4f4f6dc2-8b02-4ac7-bfda-842abc1992f8.png?v=1745232656&width=500" alt="neown" />
+    </a>
+    <span class="sep">/</span>
+    <span class="page-name">Content Calendar</span>
   </div>
   <div class="nav-actions">
-    <button class="btn-primary" id="add-task-btn" onclick="openAddTask()">+ Add Task</button>
+    <button class="btn-primary" onclick="openAddTask()">+ Add Task</button>
     <div class="avatar" id="nav-avatar">?</div>
   </div>
 </nav>
-
 <div class="cal-layout">
   <div class="cal-sidebar">
-    <div class="sidebar-logo"><h3>📅 Calendar</h3></div>
+    <div class="divider" style="margin-bottom:8px"></div>
     <div class="sidebar-section">Overview</div>
     <div class="sidebar-item active" id="nav-overview" onclick="setSection('overview',this)"><span class="icon">🏠</span> Dashboard</div>
     <div class="sidebar-item" id="nav-all" onclick="setSection('all',this)"><span class="icon">📋</span> All Content</div>
@@ -164,90 +91,23 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
     <div class="sidebar-item" onclick="location.href='bank.html'"><span class="icon">🗂️</span> Content Bank</div>
     <div class="sidebar-item" onclick="location.href='performance.html'"><span class="icon">📊</span> Performance</div>
   </div>
-
   <div class="cal-main">
     <div class="cal-header">
       <div class="cal-header-left">
         <h2 id="section-title">Overview Dashboard</h2>
         <p id="section-desc">All your content at a glance</p>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div style="display:flex;gap:8px;align-items:center">
         <div class="view-tabs">
-          <button class="view-tab active" id="tab-list"     onclick="setView('list')">☰ List</button>
-          <button class="view-tab"        id="tab-calendar" onclick="setView('calendar')">📅 Cal</button>
-          <button class="view-tab"        id="tab-block"    onclick="setView('block')">⊞ Block</button>
-          <button class="view-tab"        id="tab-kanban"   onclick="setView('kanban')">⬜ Kanban</button>
-          <button class="view-tab"        id="tab-matrix"   onclick="setView('matrix')">📋 Matrix</button>
+          <button class="view-tab active" id="tab-list" onclick="setView('list')">☰ List</button>
+          <button class="view-tab" id="tab-calendar" onclick="setView('calendar')">📅 Cal</button>
+          <button class="view-tab" id="tab-block" onclick="setView('block')">⊞ Block</button>
+          <button class="view-tab" id="tab-kanban" onclick="setView('kanban')">⬜ Kanban</button>
         </div>
       </div>
     </div>
-
-    <!-- Calendar / regular views -->
     <div class="cal-content" id="cal-content"><div style="text-align:center;padding:60px;color:var(--text3)">Loading...</div></div>
-
-    <!-- Matrix view (hidden until tab activated) -->
-    <div id="matrix-view" style="flex:1;display:none;flex-direction:column;overflow:hidden">
-
-      <!-- Matrix toolbar -->
-      <div class="matrix-toolbar">
-        <div style="display:flex;gap:8px">
-          <button class="tb-btn primary" onclick="mxAddRow()">＋ Row</button>
-          <button class="tb-btn" onclick="mxAddCol()">＋ Column</button>
-        </div>
-        <div class="tb-sep"></div>
-        <div class="mx-week-nav">
-          <div class="mx-week-btn" onclick="mxChangeWeek(-1)">‹</div>
-          <span class="mx-week-label" id="mx-week-label">Week 1</span>
-          <div class="mx-week-btn" onclick="mxChangeWeek(1)">›</div>
-        </div>
-        <div class="tb-sep"></div>
-        <button class="tb-btn" onclick="mxExport()">⬇️ Export XLSX</button>
-        <button class="tb-btn" onclick="mxImport()">⬆️ Import CSV</button>
-        <div class="tb-sep"></div>
-        <input type="text" id="mx-search" placeholder="🔍 Search…" oninput="mxSearch(this.value)"
-          style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--text);outline:none;width:160px;font-family:var(--font)"/>
-        <div class="mx-save-ind">
-          <div class="mx-save-dot" id="mx-save-dot"></div>
-          <span id="mx-save-label">Saved</span>
-        </div>
-      </div>
-
-      <!-- Sheet tabs -->
-      <div class="mx-sheet-tabs" id="mx-sheet-tabs">
-        <div class="mx-sheet-tab active" data-sheet="planning" onclick="mxSwitchSheet('planning')">📋 Planning Matrix</div>
-        <div class="mx-sheet-tab" data-sheet="quota"    onclick="mxSwitchSheet('quota')">📊 Quota Tracker</div>
-        <div class="mx-sheet-tab" data-sheet="library"  onclick="mxSwitchSheet('library')">📚 Book Library</div>
-        <div class="mx-sheet-tab" data-sheet="perf"     onclick="mxSwitchSheet('perf')">🎯 Scorecard</div>
-        <div style="padding:6px 12px;font-size:16px;color:var(--text3);cursor:pointer;border-radius:6px;transition:all .15s;align-self:center" onclick="mxAddSheet()" title="Add sheet">＋</div>
-      </div>
-
-      <!-- Formula bar -->
-      <div class="mx-formula-bar">
-        <div class="mx-cell-ref" id="mx-cell-ref">A1</div>
-        <span style="color:var(--text3);font-size:13px">fx</span>
-        <input class="mx-formula-input" id="mx-formula-input" placeholder="Cell value" oninput="mxFormulaInput(this.value)"/>
-      </div>
-
-      <!-- Table -->
-      <div class="mx-table-wrap">
-        <table class="mx-table">
-          <thead id="mx-thead"></thead>
-          <tbody id="mx-tbody"></tbody>
-        </table>
-      </div>
-    </div>
   </div>
-</div>
-
-<!-- Context menu -->
-<div class="ctx-menu" id="ctx-menu">
-  <div class="ctx-item" onclick="ctxOp('above')">↑ Insert row above</div>
-  <div class="ctx-item" onclick="ctxOp('below')">↓ Insert row below</div>
-  <div class="ctx-sep"></div>
-  <div class="ctx-item" onclick="ctxOp('dup')">⎘ Duplicate row</div>
-  <div class="ctx-item" onclick="ctxOp('clear')">🧹 Clear row</div>
-  <div class="ctx-sep"></div>
-  <div class="ctx-item danger" onclick="ctxOp('del')">🗑 Delete row</div>
 </div>
 
 <!-- Task Modal -->
@@ -264,52 +124,20 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
       <div class="form-group"><label class="form-label">🚀 Live Date</label><input type="date" class="input-field" id="task-live-date"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Platform <span style="color:var(--text3);font-weight:400;text-transform:none;font-size:10px">(multi-select)</span></label>
-        <div style="position:relative" id="platform-ms-wrap">
-          <div class="tag-multiselect" id="platform-tags" onclick="togglePlatformDropdown(event)" style="min-height:38px;cursor:pointer">
-            <span id="platform-placeholder" style="color:var(--text3);font-size:13px;padding:2px 4px">Select platform(s)...</span>
-          </div>
-          <div class="ms-dropdown" id="platform-dropdown" style="display:none">
-            <div style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">Social</div>
-            <div class="ms-option" onclick="togglePlatform('Instagram Reels')">📱 Instagram Reels</div>
-            <div class="ms-option" onclick="togglePlatform('Instagram Post')">🖼️ Instagram Post</div>
-            <div class="ms-option" onclick="togglePlatform('Instagram Story')">⭕ Instagram Story</div>
-            <div class="ms-option" onclick="togglePlatform('YouTube Shorts')">▶️ YouTube Shorts</div>
-            <div class="ms-option" onclick="togglePlatform('YouTube Video')">🎬 YouTube Video</div>
-            <div class="ms-option" onclick="togglePlatform('TikTok')">🎵 TikTok</div>
-            <div class="ms-option" onclick="togglePlatform('LinkedIn')">💼 LinkedIn</div>
-            <div class="ms-option" onclick="togglePlatform('Twitter / X')">𝕏 Twitter / X</div>
-            <div class="ms-option" onclick="togglePlatform('Facebook')">👤 Facebook</div>
-            <div style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-top:1px solid var(--border);margin-top:4px">Paid</div>
-            <div class="ms-option" onclick="togglePlatform('Google Ads')">🔍 Google Ads</div>
-            <div class="ms-option" onclick="togglePlatform('Meta Ads')">🎯 Meta Ads</div>
-            <div style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-top:1px solid var(--border);margin-top:4px">Other</div>
-            <div class="ms-option" onclick="togglePlatform('Email')">✉️ Email</div>
-            <div class="ms-option" onclick="togglePlatform('Blog')">📝 Blog</div>
-            <div class="ms-option" onclick="togglePlatform('WhatsApp')">💬 WhatsApp</div>
-          </div>
-        </div>
-        <input type="hidden" id="task-platform"/>
+      <div class="form-group"><label class="form-label">Platform</label>
+        <select class="input-field" id="task-platform">
+          <option value="">Select platform...</option>
+          <option>Instagram Reels</option><option>Instagram Post</option><option>Instagram Story</option>
+          <option>YouTube Shorts</option><option>YouTube Video</option><option>TikTok</option>
+          <option>LinkedIn</option><option>Twitter / X</option><option>Facebook</option>
+          <option>Google Ads</option><option>Meta Ads</option><option>Email</option><option>Blog</option>
+        </select>
       </div>
       <div class="form-group"><label class="form-label">Status</label>
         <select class="input-field" id="task-status">
-          <optgroup label="🎬 Pre-Production">
-            <option value="idea">Idea</option>
-            <option value="script-research">Script Research</option>
-            <option value="script-in-progress">Script In Progress</option>
-            <option value="script-done">Script Done</option>
-          </optgroup>
-          <optgroup label="🎥 Production">
-            <option value="shoot-ready">Shoot Ready</option>
-            <option value="shoot-in-progress">Shoot In Progress</option>
-            <option value="shoot-done">Shoot Done</option>
-            <option value="edit-in-progress">Edit In Progress</option>
-            <option value="edit-done">Edit Done</option>
-          </optgroup>
-          <optgroup label="🚀 Post-Production">
-            <option value="content-ready">Content Ready</option>
-            <option value="content-live">Content Live</option>
-          </optgroup>
+          <option value="idea">Idea</option><option value="in-progress">In Progress</option>
+          <option value="review">Review</option><option value="ready">Ready</option>
+          <option value="live">Live</option><option value="short">Short</option>
         </select>
       </div>
     </div>
@@ -369,687 +197,40 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
 <div id="global-toast" class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="auth.js"></script>
 <script>
 window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// ═══════════════════════════════════════════════════════════════
-//  CALENDAR LOGIC (unchanged from original)
-// ═══════════════════════════════════════════════════════════════
 let currentView='list', currentSection='overview';
 let currentMonth=new Date().getMonth(), currentYear=new Date().getFullYear();
 let editingTaskId=null, selectedAssignees=[], allTasks=[];
-
-const SECTIONS={
-  overview:{title:'Overview Dashboard',desc:'All your content at a glance'},
-  all:{title:'All Content',desc:'Every task across all calendars'},
-  social:{title:'Social Media Calendar',desc:'Instagram, TikTok, YouTube, Twitter'},
-  reels:{title:'Reels & Shorts',desc:'Short-form video content'},
-  posts:{title:'Posts & Stories',desc:'Static posts and story content'},
-  campaign:{title:'Campaign Calendar',desc:'Paid campaigns and performance content'},
-  ads:{title:'Paid Ads',desc:'Google, Meta, and other paid ads'},
-  email:{title:'Email Campaigns',desc:'Email newsletters and sequences'}
-};
-const SECTION_FILTER={
-  overview:null, all:null,
-  social:t=>t.calType==='social',
-  reels:t=>(t.platform||[]).some(p=>['Instagram Reels','YouTube Shorts','TikTok'].includes(p)),
-  posts:t=>(t.platform||[]).some(p=>['Instagram Post','Instagram Story','Facebook'].includes(p)),
-  campaign:t=>t.calType==='campaign',
-  ads:t=>(t.platform||[]).some(p=>['Google Ads','Meta Ads'].includes(p)),
-  email:t=>(t.platform||[]).includes('Email')
-};
-
-(async()=>{
-  const user=await Auth.requireAuth();
-  if(!user) return;
-  document.getElementById('nav-avatar').textContent=user.avatar;
-  await refresh();
-  mxUpdateWeekLabel();
-})();
-
+const SECTIONS={overview:{title:'Overview Dashboard',desc:'All your content at a glance'},all:{title:'All Content',desc:'Every task across all calendars'},social:{title:'Social Media Calendar',desc:'Instagram, TikTok, YouTube, Twitter'},reels:{title:'Reels & Shorts',desc:'Short-form video content'},posts:{title:'Posts & Stories',desc:'Static posts and story content'},campaign:{title:'Campaign Calendar',desc:'Paid campaigns and performance content'},ads:{title:'Paid Ads',desc:'Google, Meta, and other paid ads'},email:{title:'Email Campaigns',desc:'Email newsletters and sequences'}};
+const SECTION_FILTER={overview:null,all:null,social:t=>t.calType==='social',reels:t=>['Instagram Reels','YouTube Shorts','TikTok'].includes(t.platform),posts:t=>['Instagram Post','Instagram Story','Facebook'].includes(t.platform),campaign:t=>t.calType==='campaign',ads:t=>['Google Ads','Meta Ads'].includes(t.platform),email:t=>t.platform==='Email'};
+(async()=>{const user=await Auth.requireAuth();if(!user) return;document.getElementById('nav-avatar').textContent=user.avatar;await refresh();})();
 async function refresh(){ allTasks=await DB.getTasks(); renderContent(); }
 function getFiltered(){ const f=SECTION_FILTER[currentSection]; return f?allTasks.filter(f):allTasks; }
-
-function setSection(s,el){
-  currentSection=s;
-  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
-  if(el) el.classList.add('active');
-  document.getElementById('section-title').textContent=SECTIONS[s]?.title||s;
-  document.getElementById('section-desc').textContent=SECTIONS[s]?.desc||'';
-  // if matrix tab is active, switch back to list first
-  if(currentView==='matrix') setView('list');
-  else renderContent();
-}
-
-function setView(v){
-  currentView=v;
-  document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+v).classList.add('active');
-
-  const calContent = document.getElementById('cal-content');
-  const matrixView = document.getElementById('matrix-view');
-  const addTaskBtn = document.getElementById('add-task-btn');
-
-  if(v==='matrix'){
-    calContent.style.display='none';
-    matrixView.style.display='flex';
-    addTaskBtn.style.display='none';
-    mxRenderTable();
-  } else {
-    calContent.style.display='';
-    matrixView.style.display='none';
-    addTaskBtn.style.display='';
-    renderContent();
-  }
-}
-
-function renderContent(){
-  const c=document.getElementById('cal-content');
-  if(currentSection==='overview'){renderOverview(c);return;}
-  if(currentView==='list') renderList(c);
-  else if(currentView==='calendar') renderCalendar(c);
-  else if(currentView==='kanban') renderKanban(c);
-  else if(currentView==='block') renderBlock(c);
-}
-
-function renderOverview(c){
-  const allStatuses=['idea','script-research','script-in-progress','script-done','shoot-ready','shoot-in-progress','shoot-done','edit-in-progress','edit-done','content-ready','content-live'];
-  const counts={};allStatuses.forEach(s=>counts[s]=allTasks.filter(t=>t.status===s).length);
-  const social=allTasks.filter(t=>t.calType==='social');
-  const campaign=allTasks.filter(t=>t.calType==='campaign');
-  const groups=[
-    {label:'🎬 Pre-Production',statuses:['idea','script-research','script-in-progress','script-done']},
-    {label:'🎥 Production',statuses:['shoot-ready','shoot-in-progress','shoot-done','edit-in-progress','edit-done']},
-    {label:'🚀 Post-Production',statuses:['content-ready','content-live']}
-  ];
-  c.innerHTML=`
-    <div style="margin-bottom:24px">
-      ${groups.map(g=>`
-        <div style="margin-bottom:16px">
-          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;padding:0 2px">${g.label}</div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            ${g.statuses.map(s=>`<div class="card" style="text-align:center;padding:14px 18px;flex:1;min-width:100px"><div style="font-size:24px;font-weight:700;margin-bottom:4px">${counts[s]||0}</div><span class="tag ${STATUS_COLORS[s]}">${STATUS_LABELS[s]}</span></div>`).join('')}
-          </div>
-        </div>`).join('')}
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-      <div class="card"><h3 style="margin-bottom:16px;font-size:16px">📱 Social Media</h3>
-        ${social.slice(0,5).map(t=>`<div onclick="openEditTask('${t.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px">${t.title}</span><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}" style="white-space:nowrap;flex-shrink:0">${STATUS_LABELS[t.status]||t.status}</span></div>`).join('')||'<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}
-        <button class="btn-ghost" style="width:100%;margin-top:12px;font-size:12px" onclick="setSection('social',document.getElementById('nav-social'))">View All →</button>
-      </div>
-      <div class="card"><h3 style="margin-bottom:16px;font-size:16px">🎯 Campaign</h3>
-        ${campaign.slice(0,5).map(t=>`<div onclick="openEditTask('${t.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px">${t.title}</span><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}" style="white-space:nowrap;flex-shrink:0">${STATUS_LABELS[t.status]||t.status}</span></div>`).join('')||'<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}
-        <button class="btn-ghost" style="width:100%;margin-top:12px;font-size:12px" onclick="setSection('campaign',document.getElementById('nav-campaign'))">View All →</button>
-      </div>
-    </div>`;
-}
-
-function statsBar(tasks){
-  const keyStats=[
-    {s:'idea',icon:'💡'},
-    {s:'script-in-progress',icon:'✍️'},
-    {s:'shoot-ready',icon:'🎬'},
-    {s:'edit-in-progress',icon:'✂️'},
-    {s:'content-ready',icon:'📦'},
-    {s:'content-live',icon:'🚀'}
-  ];
-  return`<div class="stats-bar">${keyStats.map(({s,icon})=>`<div class="stat-pill"><span class="tag ${STATUS_COLORS[s]}">${icon} ${STATUS_LABELS[s]}</span><strong>${tasks.filter(t=>t.status===s).length}</strong></div>`).join('')}<div class="stat-pill" style="margin-left:auto"><strong>${tasks.length}</strong> total</div></div>`;
-}
+function setSection(s,el){currentSection=s;document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));if(el) el.classList.add('active');document.getElementById('section-title').textContent=SECTIONS[s]?.title||s;document.getElementById('section-desc').textContent=SECTIONS[s]?.desc||'';renderContent();}
+function setView(v){currentView=v;document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+v).classList.add('active');renderContent();}
+function renderContent(){const c=document.getElementById('cal-content');if(currentSection==='overview'){renderOverview(c);return;}if(currentView==='list') renderList(c);else if(currentView==='calendar') renderCalendar(c);else if(currentView==='kanban') renderKanban(c);else if(currentView==='block') renderBlock(c);}
+function renderOverview(c){const st=['idea','in-progress','review','ready','live','short'];const counts={};st.forEach(s=>counts[s]=allTasks.filter(t=>t.status===s).length);const social=allTasks.filter(t=>t.calType==='social');const campaign=allTasks.filter(t=>t.calType==='campaign');c.innerHTML=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px">${st.map(s=>`<div class="card" style="text-align:center"><div style="font-size:26px;font-weight:700;font-family:var(--font-display);margin-bottom:4px">${counts[s]}</div><span class="tag ${STATUS_COLORS[s]}">${STATUS_LABELS[s]}</span></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div class="card"><h3 style="margin-bottom:16px;font-size:16px">📱 Social Media</h3>${social.slice(0,5).map(t=>`<div onclick="openEditTask('${t.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer"><span style="font-size:13px;font-weight:600">${t.title}</span><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></div>`).join('')||'<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}<button class="btn-ghost" style="width:100%;margin-top:12px;font-size:12px" onclick="setSection('social',document.getElementById('nav-social'))">View All →</button></div><div class="card"><h3 style="margin-bottom:16px;font-size:16px">🎯 Campaign</h3>${campaign.slice(0,5).map(t=>`<div onclick="openEditTask('${t.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer"><span style="font-size:13px;font-weight:600">${t.title}</span><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></div>`).join('')||'<p style="color:var(--text3);font-size:13px">No tasks yet</p>'}<button class="btn-ghost" style="width:100%;margin-top:12px;font-size:12px" onclick="setSection('campaign',document.getElementById('nav-campaign'))">View All →</button></div></div>`;}
+function statsBar(tasks){return`<div class="stats-bar">${['idea','in-progress','ready','live','short'].map(s=>`<div class="stat-pill"><span class="tag ${STATUS_COLORS[s]}">${STATUS_LABELS[s]}</span><strong>${tasks.filter(t=>t.status===s).length}</strong></div>`).join('')}<div class="stat-pill" style="margin-left:auto"><strong>${tasks.length}</strong> total</div></div>`;}
 function emptyEl(){return`<div class="empty-state"><div style="font-size:48px;margin-bottom:12px">📋</div><h3>No tasks yet</h3><p>Add your first content task</p><button class="btn-primary" onclick="openAddTask()">+ Add Task</button></div>`;}
-
-function renderList(c){
-  const tasks=getFiltered();
-  c.innerHTML=`${statsBar(tasks)}<div class="filter-bar"><input class="search-input" id="s-search" placeholder="🔍 Search..." oninput="filterTable()"/><select class="filter-select" id="s-status" onchange="filterTable()"><option value="">All Status</option><optgroup label="🎬 Pre-Production"><option value="idea">Idea</option><option value="script-research">Script Research</option><option value="script-in-progress">Script In Progress</option><option value="script-done">Script Done</option></optgroup><optgroup label="🎥 Production"><option value="shoot-ready">Shoot Ready</option><option value="shoot-in-progress">Shoot In Progress</option><option value="shoot-done">Shoot Done</option><option value="edit-in-progress">Edit In Progress</option><option value="edit-done">Edit Done</option></optgroup><optgroup label="🚀 Post-Production"><option value="content-ready">Content Ready</option><option value="content-live">Content Live</option></optgroup></select><select class="filter-select" id="s-platform" onchange="filterTable()"><option value="">All Platforms</option><option>Instagram Reels</option><option>Instagram Post</option><option>Instagram Story</option><option>YouTube Shorts</option><option>YouTube Video</option><option>TikTok</option><option>LinkedIn</option><option>Twitter / X</option><option>Facebook</option><option>Google Ads</option><option>Meta Ads</option><option>Email</option><option>Blog</option><option>WhatsApp</option></select></div>${tasks.length===0?emptyEl():`<table class="task-table"><thead><tr><th>Title</th><th>Platform</th><th>Status</th><th>Live Date</th><th>Deadline</th><th>Pillar</th><th></th></tr></thead><tbody id="task-tbody">${tasks.map(taskRow).join('')}</tbody></table>`}`;
-}
-
-function taskRow(t){
-  const platforms = Array.isArray(t.platform) ? t.platform : (t.platform ? [t.platform] : []);
-  const platformHtml = platforms.length ? platforms.map(p=>`<span class="tag tag-blue" style="font-size:11px">${p}</span>`).join(' ') : '<span style="color:var(--text3)">—</span>';
-  return`<tr class="task-row" onclick="openEditTask('${t.id}')"><td><strong>${t.title}</strong></td><td>${platformHtml}</td><td><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></td><td>${formatDate(t.liveDate)}</td><td>${formatDate(t.deadline)}</td><td>${t.pillar||'—'}</td><td><button onclick="event.stopPropagation();delTask('${t.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px">🗑</button></td></tr>`;
-}
-
-function filterTable(){
-  const q=(document.getElementById('s-search')?.value||'').toLowerCase();
-  const st=document.getElementById('s-status')?.value||'';
-  const pl=document.getElementById('s-platform')?.value||'';
-  let tasks=getFiltered();
-  if(q) tasks=tasks.filter(t=>t.title.toLowerCase().includes(q));
-  if(st) tasks=tasks.filter(t=>t.status===st);
-  if(pl) tasks=tasks.filter(t=>(t.platform||[]).includes(pl));
-  const tb=document.getElementById('task-tbody');
-  if(tb) tb.innerHTML=tasks.map(taskRow).join('');
-}
-
-function renderKanban(c){
-  const tasks=getFiltered();
-  const groups=[
-    {label:'🎬 Pre-Production',cols:['idea','script-research','script-in-progress','script-done']},
-    {label:'🎥 Production',cols:['shoot-ready','shoot-in-progress','shoot-done','edit-in-progress','edit-done']},
-    {label:'🚀 Post-Production',cols:['content-ready','content-live']}
-  ];
-  const clr={'idea':'var(--blue)','script-research':'#818cf8','script-in-progress':'var(--amber)','script-done':'#2dd4bf','shoot-ready':'var(--green)','shoot-in-progress':'var(--amber)','shoot-done':'#2dd4bf','edit-in-progress':'var(--amber)','edit-done':'var(--green)','content-ready':'#9B8FFF','content-live':'#FF66C0'};
-  c.innerHTML=groups.map(g=>`
-    <div style="margin-bottom:28px">
-      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;padding:0 2px">${g.label}</div>
-      <div class="kanban-board">
-        ${g.cols.map(s=>{const ct=tasks.filter(t=>t.status===s);return`<div class="kanban-col"><div class="kanban-col-header"><div class="kanban-col-title"><div style="width:8px;height:8px;border-radius:50%;background:${clr[s]}"></div>${STATUS_LABELS[s]}</div><div class="kanban-count">${ct.length}</div></div><div class="kanban-cards">${ct.map(t=>`<div class="kanban-card" onclick="openEditTask('${t.id}')"><div style="font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.4">${t.title}</div>${t.pillar?`<span class="tag tag-purple" style="font-size:11px">${t.pillar}</span>`:''}<div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:11px;color:var(--text3)">${formatDate(t.liveDate)}</span><span style="font-size:11px;color:var(--text3);background:var(--bg3);padding:2px 6px;border-radius:4px">${Array.isArray(t.platform)?t.platform.join(', '):t.platform||''}</span></div></div>`).join('')}</div></div>`}).join('')}
-      </div>
-    </div>`).join('');
-}
-
-function renderBlock(c){
-  const tasks=getFiltered();
-  if(!tasks.length){c.innerHTML=emptyEl();return;}
-  c.innerHTML=`<div class="block-view">${tasks.map(t=>`<div class="block-card" onclick="openEditTask('${t.id}')"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span><span style="font-size:11px;color:var(--text3)">${t.platform||''}</span></div><div style="font-size:15px;font-weight:700;margin-bottom:8px">${t.title}</div><div style="font-size:13px;color:var(--text3);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${t.description||'No description'}</div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;color:var(--text3)">🚀 ${formatDate(t.liveDate)}</span>${t.pillar?`<span class="tag tag-purple" style="font-size:11px">${t.pillar}</span>`:''}</div></div>`).join('')}</div>`;
-}
-
-function renderCalendar(c){
-  const fd=new Date(currentYear,currentMonth,1).getDay();
-  const dim=new Date(currentYear,currentMonth+1,0).getDate();
-  const pd=new Date(currentYear,currentMonth,0).getDate();
-  const today=new Date();
-  const mn=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  let cells=[];
-  for(let i=fd-1;i>=0;i--) cells.push({day:pd-i,curr:false});
-  for(let d=1;d<=dim;d++) cells.push({day:d,curr:true});
-  while(cells.length%7!==0) cells.push({day:cells.length-fd-dim+1,curr:false});
-  const gd=d=>allTasks.filter(t=>{if(!t.liveDate)return false;const td=new Date(t.liveDate);return td.getFullYear()===currentYear&&td.getMonth()===currentMonth&&td.getDate()===d;});
-  c.innerHTML=`<div class="cal-month-nav"><button class="cal-nav-btn" onclick="changeMonth(-1)">← Prev</button><h3>${mn[currentMonth]} ${currentYear}</h3><button class="cal-nav-btn" onclick="changeMonth(1)">Next →</button></div><div class="cal-grid-header">${dn.map(d=>`<div class="cal-day-name">${d}</div>`).join('')}</div><div class="cal-grid">${cells.map(cell=>{const isT=cell.curr&&cell.day===today.getDate()&&currentMonth===today.getMonth()&&currentYear===today.getFullYear();const dt=cell.curr?gd(cell.day):[];return`<div class="cal-cell ${!cell.curr?'other-month':''} ${isT?'today':''}"><span class="cal-date">${cell.day}</span>${dt.slice(0,3).map(t=>`<div class="cal-task-dot ${t.status}" onclick="openEditTask('${t.id}')">${t.title}</div>`).join('')}${dt.length>3?`<div style="font-size:10px;color:var(--text3)">+${dt.length-3} more</div>`:''}</div>`;}).join('')}</div>`;
-}
-
+function renderList(c){const tasks=getFiltered();c.innerHTML=`${statsBar(tasks)}<div class="filter-bar"><input class="search-input" id="s-search" placeholder="🔍 Search..." oninput="filterTable()"/><select class="filter-select" id="s-status" onchange="filterTable()"><option value="">All Status</option><option value="idea">Idea</option><option value="in-progress">In Progress</option><option value="review">Review</option><option value="ready">Ready</option><option value="live">Live</option><option value="short">Short</option></select><select class="filter-select" id="s-platform" onchange="filterTable()"><option value="">All Platforms</option><option>Instagram Reels</option><option>TikTok</option><option>YouTube Shorts</option><option>LinkedIn</option><option>Twitter / X</option><option>Google Ads</option><option>Meta Ads</option></select></div>${tasks.length===0?emptyEl():`<table class="task-table"><thead><tr><th>Title</th><th>Platform</th><th>Status</th><th>Live Date</th><th>Deadline</th><th>Pillar</th><th></th></tr></thead><tbody id="task-tbody">${tasks.map(taskRow).join('')}</tbody></table>`}`;}
+function taskRow(t){return`<tr class="task-row" onclick="openEditTask('${t.id}')"><td><strong>${t.title}</strong></td><td><span class="tag tag-blue" style="font-size:11px">${t.platform||'—'}</span></td><td><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span></td><td>${formatDate(t.liveDate)}</td><td>${formatDate(t.deadline)}</td><td>${t.pillar||'—'}</td><td><button onclick="event.stopPropagation();delTask('${t.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px">🗑</button></td></tr>`;}
+function filterTable(){const q=(document.getElementById('s-search')?.value||'').toLowerCase();const st=document.getElementById('s-status')?.value||'';const pl=document.getElementById('s-platform')?.value||'';let tasks=getFiltered();if(q) tasks=tasks.filter(t=>t.title.toLowerCase().includes(q));if(st) tasks=tasks.filter(t=>t.status===st);if(pl) tasks=tasks.filter(t=>t.platform===pl);const tb=document.getElementById('task-tbody');if(tb) tb.innerHTML=tasks.map(taskRow).join('');}
+function renderKanban(c){const tasks=getFiltered();const cols=['idea','in-progress','review','ready','live','short'];const clr={idea:'var(--accent3)','in-progress':'var(--orange)',review:'var(--pink)',ready:'var(--green)',live:'var(--accent)',short:'var(--red)'};c.innerHTML=`<div class="kanban-board">${cols.map(s=>{const ct=tasks.filter(t=>t.status===s);return`<div class="kanban-col"><div class="kanban-col-header"><div class="kanban-col-title"><div style="width:8px;height:8px;border-radius:50%;background:${clr[s]}"></div>${STATUS_LABELS[s]}</div><div class="kanban-count">${ct.length}</div></div><div class="kanban-cards">${ct.map(t=>`<div class="kanban-card" onclick="openEditTask('${t.id}')"><div style="font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.4">${t.title}</div>${t.pillar?`<span class="tag tag-amber" style="font-size:11px">${t.pillar}</span>`:''}<div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:11px;color:var(--text3)">${formatDate(t.liveDate)}</span><span style="font-size:11px;color:var(--text3);background:var(--bg3);padding:2px 6px;border-radius:4px">${t.platform||''}</span></div></div>`).join('')}</div></div>`}).join('')}</div>`;}
+function renderBlock(c){const tasks=getFiltered();if(!tasks.length){c.innerHTML=emptyEl();return;}c.innerHTML=`<div class="block-view">${tasks.map(t=>`<div class="block-card" onclick="openEditTask('${t.id}')"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="tag ${STATUS_COLORS[t.status]||'tag-blue'}">${STATUS_LABELS[t.status]||t.status}</span><span style="font-size:11px;color:var(--text3)">${t.platform||''}</span></div><div style="font-size:15px;font-weight:700;margin-bottom:8px">${t.title}</div><div style="font-size:13px;color:var(--text3);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${t.description||'No description'}</div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;color:var(--text3)">🚀 ${formatDate(t.liveDate)}</span>${t.pillar?`<span class="tag tag-amber" style="font-size:11px">${t.pillar}</span>`:''}</div></div>`).join('')}</div>`;}
+function renderCalendar(c){const fd=new Date(currentYear,currentMonth,1).getDay();const dim=new Date(currentYear,currentMonth+1,0).getDate();const pd=new Date(currentYear,currentMonth,0).getDate();const today=new Date();const mn=['January','February','March','April','May','June','July','August','September','October','November','December'];const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];let cells=[];for(let i=fd-1;i>=0;i--) cells.push({day:pd-i,curr:false});for(let d=1;d<=dim;d++) cells.push({day:d,curr:true});while(cells.length%7!==0) cells.push({day:cells.length-fd-dim+1,curr:false});const gd=d=>allTasks.filter(t=>{if(!t.liveDate)return false;const td=new Date(t.liveDate);return td.getFullYear()===currentYear&&td.getMonth()===currentMonth&&td.getDate()===d;});c.innerHTML=`<div class="cal-month-nav"><button class="cal-nav-btn" onclick="changeMonth(-1)">← Prev</button><h3>${mn[currentMonth]} ${currentYear}</h3><button class="cal-nav-btn" onclick="changeMonth(1)">Next →</button></div><div class="cal-grid-header">${dn.map(d=>`<div class="cal-day-name">${d}</div>`).join('')}</div><div class="cal-grid">${cells.map(cell=>{const isT=cell.curr&&cell.day===today.getDate()&&currentMonth===today.getMonth()&&currentYear===today.getFullYear();const dt=cell.curr?gd(cell.day):[];return`<div class="cal-cell ${!cell.curr?'other-month':''} ${isT?'today':''}"><span class="cal-date">${cell.day}</span>${dt.slice(0,3).map(t=>`<div class="cal-task-dot ${t.status}" onclick="openEditTask('${t.id}')">${t.title}</div>`).join('')}${dt.length>3?`<div style="font-size:10px;color:var(--text3)">+${dt.length-3} more</div>`:''}</div>`;}).join('')}</div>`;}
 function changeMonth(d){currentMonth+=d;if(currentMonth>11){currentMonth=0;currentYear++;}if(currentMonth<0){currentMonth=11;currentYear--;}renderContent();}
-
-// ── Platform multi-select ──────────────────────────────────────
-let selectedPlatforms = [];
-
-function togglePlatformDropdown(e) {
-  e.stopPropagation();
-  const dd = document.getElementById('platform-dropdown');
-  dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
-}
-
-document.addEventListener('click', () => {
-  const dd = document.getElementById('platform-dropdown');
-  if (dd) dd.style.display = 'none';
-});
-
-function togglePlatform(val) {
-  const idx = selectedPlatforms.indexOf(val);
-  if (idx === -1) selectedPlatforms.push(val);
-  else selectedPlatforms.splice(idx, 1);
-  renderPlatformTags();
-  // sync hidden input (store as JSON array string)
-  document.getElementById('task-platform').value = JSON.stringify(selectedPlatforms);
-  // update option selected state
-  document.querySelectorAll('#platform-dropdown .ms-option').forEach(el => {
-    const txt = el.textContent.trim().replace(/^[^\w]+/, '').trim();
-    const match = selectedPlatforms.some(p => el.onclick.toString().includes(`'${p}'`));
-    el.classList.toggle('selected', selectedPlatforms.includes(val) && el.onclick.toString().includes(`'${val}'`));
-  });
-  // re-check all
-  document.querySelectorAll('#platform-dropdown .ms-option').forEach(el => {
-    const match = selectedPlatforms.find(p => el.onclick?.toString().includes(`'${p}'`));
-    el.classList.toggle('selected', !!match);
-  });
-}
-
-function renderPlatformTags() {
-  const wrap = document.getElementById('platform-tags');
-  const ph = document.getElementById('platform-placeholder');
-  if (selectedPlatforms.length === 0) {
-    wrap.innerHTML = '<span id="platform-placeholder" style="color:var(--text3);font-size:13px;padding:2px 4px">Select platform(s)...</span>';
-    return;
-  }
-  wrap.innerHTML = selectedPlatforms.map(p =>
-    `<div class="ms-tag">${p}<span class="ms-tag-del" onclick="event.stopPropagation();togglePlatform('${p}')">✕</span></div>`
-  ).join('');
-}
-
-function setPlatformValue(val) {
-  // val can be string, JSON array string, or array
-  if (!val) { selectedPlatforms = []; }
-  else if (Array.isArray(val)) { selectedPlatforms = val; }
-  else {
-    try { const parsed = JSON.parse(val); selectedPlatforms = Array.isArray(parsed) ? parsed : [val]; }
-    catch { selectedPlatforms = val ? [val] : []; }
-  }
-  renderPlatformTags();
-  document.getElementById('task-platform').value = JSON.stringify(selectedPlatforms);
-}
-
-// ── Modal / tasks ──────────────────────────────────────────────
-function openAddTask(){
-  editingTaskId=null;
-  document.getElementById('modal-title').textContent='Add New Task';
-  ['task-title','task-desc','task-ref-link','task-live-link','task-script','task-assigned-date','task-deadline','task-live-date'].forEach(id=>document.getElementById(id).value='');
-  ['task-pillar','task-structure','task-objective'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('task-status').value='idea';
-  document.getElementById('task-cal-type').value='social';
-  setPlatformValue('');
-  selectedAssignees=[];renderAssignees();loadAssignees();
-  const p=DB.getPending('calendar_item');
-  if(p){document.getElementById('task-title').value=p.title||'';document.getElementById('task-script').value=p.script||'';if(p.platform)setPlatformValue(p.platform);}
-  document.getElementById('task-modal').classList.add('open');
-}
-function openEditTask(id){
-  const t=allTasks.find(x=>x.id===id);if(!t)return;
-  editingTaskId=id;
-  document.getElementById('modal-title').textContent='Edit Task';
-  document.getElementById('task-title').value=t.title||'';
-  document.getElementById('task-assigned-date').value=t.assignedDate||'';
-  document.getElementById('task-deadline').value=t.deadline||'';
-  document.getElementById('task-live-date').value=t.liveDate||'';
-  setPlatformValue(t.platform||'');
-  document.getElementById('task-status').value=t.status||'idea';
-  document.getElementById('task-pillar').value=t.pillar||'';
-  document.getElementById('task-structure').value=t.structure||'';
-  document.getElementById('task-objective').value=t.objective||'';
-  document.getElementById('task-cal-type').value=t.calType||'social';
-  document.getElementById('task-desc').value=t.description||'';
-  document.getElementById('task-ref-link').value=t.refLink||'';
-  document.getElementById('task-live-link').value=t.liveLink||'';
-  document.getElementById('task-script').value=t.script||'';
-  selectedAssignees=t.assignees||[];renderAssignees();loadAssignees();
-  document.getElementById('task-modal').classList.add('open');
-}
+function openAddTask(){editingTaskId=null;document.getElementById('modal-title').textContent='Add New Task';['task-title','task-desc','task-ref-link','task-live-link','task-script','task-assigned-date','task-deadline','task-live-date'].forEach(id=>document.getElementById(id).value='');['task-platform','task-pillar','task-structure','task-objective'].forEach(id=>document.getElementById(id).value='');document.getElementById('task-status').value='idea';document.getElementById('task-cal-type').value='social';selectedAssignees=[];renderAssignees();loadAssignees();const p=DB.getPending('calendar_item');if(p){document.getElementById('task-title').value=p.title||'';document.getElementById('task-script').value=p.script||'';if(p.platform)document.getElementById('task-platform').value=p.platform;}document.getElementById('task-modal').classList.add('open');}
+function openEditTask(id){const t=allTasks.find(x=>x.id===id);if(!t)return;editingTaskId=id;document.getElementById('modal-title').textContent='Edit Task';document.getElementById('task-title').value=t.title||'';document.getElementById('task-assigned-date').value=t.assignedDate||'';document.getElementById('task-deadline').value=t.deadline||'';document.getElementById('task-live-date').value=t.liveDate||'';document.getElementById('task-platform').value=t.platform||'';document.getElementById('task-status').value=t.status||'idea';document.getElementById('task-pillar').value=t.pillar||'';document.getElementById('task-structure').value=t.structure||'';document.getElementById('task-objective').value=t.objective||'';document.getElementById('task-cal-type').value=t.calType||'social';document.getElementById('task-desc').value=t.description||'';document.getElementById('task-ref-link').value=t.refLink||'';document.getElementById('task-live-link').value=t.liveLink||'';document.getElementById('task-script').value=t.script||'';selectedAssignees=t.assignees||[];renderAssignees();loadAssignees();document.getElementById('task-modal').classList.add('open');}
 function closeModal(){document.getElementById('task-modal').classList.remove('open');}
-async function loadAssignees(){
-  const sel=document.getElementById('assignee-select');
-  const users=await Auth.getAllUsers();
-  sel.innerHTML='<option value="">+ Add team member...</option>';
-  users.forEach(u=>{if(!selectedAssignees.find(a=>a.id===u.id))sel.innerHTML+=`<option value="${u.id}">${u.name}</option>`;});
-}
-async function addAssignee(uid){
-  if(!uid)return;
-  const users=await Auth.getAllUsers();
-  const u=users.find(x=>x.id===uid);
-  if(u&&!selectedAssignees.find(a=>a.id===u.id)){selectedAssignees.push(u);renderAssignees();loadAssignees();}
-  document.getElementById('assignee-select').value='';
-}
-function renderAssignees(){
-  document.getElementById('assignee-list').innerHTML=selectedAssignees.map(u=>`<div class="tag tag-purple" style="display:flex;align-items:center;gap:6px">${u.avatar||u.name.charAt(0)} ${u.name}<span onclick="removeAssignee('${u.id}')" style="cursor:pointer;opacity:0.7">✕</span></div>`).join('');
-}
+async function loadAssignees(){const sel=document.getElementById('assignee-select');const users=await Auth.getAllUsers();sel.innerHTML='<option value="">+ Add team member...</option>';users.forEach(u=>{if(!selectedAssignees.find(a=>a.id===u.id))sel.innerHTML+=`<option value="${u.id}">${u.name}</option>`;});}
+async function addAssignee(uid){if(!uid)return;const users=await Auth.getAllUsers();const u=users.find(x=>x.id===uid);if(u&&!selectedAssignees.find(a=>a.id===u.id)){selectedAssignees.push(u);renderAssignees();loadAssignees();}document.getElementById('assignee-select').value='';}
+function renderAssignees(){document.getElementById('assignee-list').innerHTML=selectedAssignees.map(u=>`<div class="tag tag-amber" style="display:flex;align-items:center;gap:6px">${u.avatar||u.name.charAt(0)} ${u.name}<span onclick="removeAssignee('${u.id}')" style="cursor:pointer;opacity:0.7">✕</span></div>`).join('');}
 function removeAssignee(id){selectedAssignees=selectedAssignees.filter(a=>a.id!==id);renderAssignees();loadAssignees();}
-async function saveTask(){
-  const title=document.getElementById('task-title').value.trim();
-  if(!title)return showToast('Title is required','error');
-  const btn=document.getElementById('save-task-btn');
-  btn.disabled=true;btn.textContent='Saving...';
-  const saved=await DB.saveTask({
-    id:editingTaskId||null,title,
-    assignedDate:document.getElementById('task-assigned-date').value,
-    deadline:document.getElementById('task-deadline').value,
-    liveDate:document.getElementById('task-live-date').value,
-    platform:JSON.parse(document.getElementById('task-platform').value||'[]'),
-    status:document.getElementById('task-status').value,
-    pillar:document.getElementById('task-pillar').value,
-    structure:document.getElementById('task-structure').value,
-    objective:document.getElementById('task-objective').value,
-    calType:document.getElementById('task-cal-type').value,
-    description:document.getElementById('task-desc').value,
-    refLink:document.getElementById('task-ref-link').value,
-    liveLink:document.getElementById('task-live-link').value,
-    script:document.getElementById('task-script').value,
-    assignees:selectedAssignees
-  });
-  btn.disabled=false;btn.textContent='Save Task';
-  if(!saved){showToast('Error saving. Check console.','error');return;}
-  showToast(editingTaskId?'Task updated!':'Task added!','success');
-  closeModal();await refresh();
-}
-async function delTask(id){
-  if(!confirm('Delete this task?'))return;
-  await DB.deleteTask(id);showToast('Deleted','info');await refresh();
-}
+async function saveTask(){const title=document.getElementById('task-title').value.trim();if(!title)return showToast('Title is required','error');const btn=document.getElementById('save-task-btn');btn.disabled=true;btn.textContent='Saving...';const saved=await DB.saveTask({id:editingTaskId||null,title,assignedDate:document.getElementById('task-assigned-date').value,deadline:document.getElementById('task-deadline').value,liveDate:document.getElementById('task-live-date').value,platform:document.getElementById('task-platform').value,status:document.getElementById('task-status').value,pillar:document.getElementById('task-pillar').value,structure:document.getElementById('task-structure').value,objective:document.getElementById('task-objective').value,calType:document.getElementById('task-cal-type').value,description:document.getElementById('task-desc').value,refLink:document.getElementById('task-ref-link').value,liveLink:document.getElementById('task-live-link').value,script:document.getElementById('task-script').value,assignees:selectedAssignees});btn.disabled=false;btn.textContent='Save Task';if(!saved){showToast('Error saving. Check console.','error');return;}showToast(editingTaskId?'Task updated!':'Task added!','success');closeModal();await refresh();}
+async function delTask(id){if(!confirm('Delete this task?'))return;await DB.deleteTask(id);showToast('Deleted','info');await refresh();}
 document.getElementById('task-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
-
-
-// ═══════════════════════════════════════════════════════════════
-//  MATRIX LOGIC
-// ═══════════════════════════════════════════════════════════════
-const MX_SHEETS = {
-  planning:{
-    label:'Planning Matrix',
-    cols:[
-      {key:'adId',label:'Ad ID',w:130,type:'text'},
-      {key:'product',label:'Product',w:100,type:'select',opts:['Renewal','Referral','Mini Pack']},
-      {key:'pillar',label:'Funnel Pillar',w:110,type:'select',opts:['Meme','Clickbait','Educational','Brand']},
-      {key:'adType',label:'Ad Type',w:75,type:'select',opts:['EGC','UGC','FGC']},
-      {key:'format',label:'Format',w:85,type:'select',opts:['Video','Carousel','Static','Reel','Story']},
-      {key:'concept',label:'Hook / Concept',w:250,type:'text'},
-      {key:'platform',label:'Platform',w:140,type:'select',opts:['Instagram Reels','Instagram Feed','YouTube Shorts','Meta Ads']},
-      {key:'cta',label:'CTA',w:120,type:'text'},
-      {key:'audience',label:'Audience',w:160,type:'text'},
-      {key:'status',label:'Status',w:95,type:'select',opts:['Draft','Planned','In Review','Live','Paused']},
-      {key:'shootType',label:'Shoot Type',w:95,type:'select',opts:['Self-shoot','Studio','Designed','Animation']},
-      {key:'assignedTo',label:'Assigned To',w:110,type:'text'},
-      {key:'dueDate',label:'Due Date',w:100,type:'date'},
-      {key:'spend',label:'Spend (₹)',w:85,type:'text'},
-      {key:'impressions',label:'Impressions',w:95,type:'text'},
-      {key:'ctr',label:'CTR %',w:65,type:'text'},
-      {key:'cpr',label:'CPR (₹)',w:75,type:'text'},
-      {key:'notes',label:'Priority',w:90,type:'select',opts:['High','Medium','Low','—']},
-    ],
-    rows:[
-      {adId:'NEO-REN-VID-01',product:'Renewal',pillar:'Meme',adType:'UGC',format:'Video',concept:"Mom finds old books piling up — neOwn ka time aa gaya",platform:'Instagram Reels',cta:'Subscribe karo',audience:'Lapsed subscribers',status:'Draft',shootType:'Self-shoot',notes:'High'},
-      {adId:'NEO-REN-VID-02',product:'Renewal',pillar:'Meme',adType:'EGC',format:'Video',concept:"Book subscription reminder — relatable mom humor",platform:'Instagram Reels',cta:'Renew now',audience:'Active subscribers',status:'Planned',shootType:'Self-shoot',notes:'High'},
-      {adId:'NEO-REN-VID-03',product:'Renewal',pillar:'Clickbait',adType:'UGC',format:'Video',concept:"'My child read 12 books this month — here's how'",platform:'Instagram Reels',cta:'Subscribe karo',audience:'New moms 25–35',status:'Planned',shootType:'Self-shoot',notes:'High'},
-      {adId:'NEO-REF-VID-05',product:'Referral',pillar:'Meme',adType:'UGC',format:'Video',concept:"Tag a mom who needs this in her life",platform:'Instagram Reels',cta:'Share with a friend',audience:'Existing subscribers',status:'Draft',shootType:'Self-shoot',notes:'High'},
-      {adId:'NEO-MNP-VID-09',product:'Mini Pack',pillar:'Meme',adType:'UGC',format:'Video',concept:"First box unboxing — mini pack surprise reaction",platform:'Instagram Reels',cta:'Try the mini pack',audience:'First-time visitors',status:'Draft',shootType:'Self-shoot',notes:'High'},
-      {adId:'NEO-MNP-CAR-18',product:'Mini Pack',pillar:'Meme',adType:'FGC',format:'Carousel',concept:"Before neOwn vs. After neOwn — a mom's bookshelf story",platform:'Instagram Feed',cta:'Try the mini pack',audience:'First-time visitors',status:'Planned',shootType:'Designed',notes:'High'},
-    ]
-  },
-  quota:{
-    label:'Quota Tracker',
-    cols:[
-      {key:'category',label:'Category',w:160,type:'text'},
-      {key:'metric',label:'Format / Metric',w:150,type:'text'},
-      {key:'target',label:'Target',w:80,type:'text'},
-      {key:'produced',label:'Produced',w:80,type:'text'},
-      {key:'remaining',label:'Remaining',w:85,type:'text'},
-      {key:'pct',label:'% Done',w:75,type:'text'},
-      {key:'notes',label:'Notes',w:200,type:'text'},
-    ],
-    rows:[
-      {category:'Format Quota',metric:'Video',target:'15',produced:'0',remaining:'15',pct:'0%',notes:''},
-      {category:'Format Quota',metric:'Carousel',target:'4',produced:'0',remaining:'4',pct:'0%',notes:''},
-      {category:'Format Quota',metric:'Static',target:'4',produced:'0',remaining:'4',pct:'0%',notes:''},
-      {category:'Ad Type',metric:'EGC',target:'6',produced:'0',remaining:'6',pct:'0%',notes:'Employee / Expert Generated'},
-      {category:'Ad Type',metric:'UGC',target:'11',produced:'0',remaining:'11',pct:'0%',notes:'Real mom creators'},
-      {category:'Ad Type',metric:'FGC',target:'6',produced:'0',remaining:'6',pct:'0%',notes:'Founder / Brand Generated'},
-      {category:'Product',metric:'Renewal',target:'8',produced:'0',remaining:'8',pct:'0%',notes:''},
-      {category:'Product',metric:'Referral',target:'8',produced:'0',remaining:'8',pct:'0%',notes:''},
-      {category:'Product',metric:'Mini Pack',target:'7',produced:'0',remaining:'7',pct:'0%',notes:''},
-    ]
-  },
-  library:{
-    label:'Book Library',
-    cols:[
-      {key:'category',label:'Book Category',w:150,type:'text'},
-      {key:'desc',label:'Description',w:220,type:'text'},
-      {key:'age',label:'Age Group',w:85,type:'text'},
-      {key:'qty',label:'Avg Qty/Box',w:85,type:'text'},
-      {key:'lang',label:'Language',w:110,type:'select',opts:['English','Hindi','Bilingual','Hindi / English']},
-      {key:'fmt',label:'Format',w:95,type:'select',opts:['Hardcover','Paperback','Board Book']},
-      {key:'adUse',label:'Ad Use',w:180,type:'text'},
-      {key:'testimonial',label:'Testimonial Angle',w:190,type:'text'},
-      {key:'examples',label:'Example Titles',w:210,type:'text'},
-    ],
-    rows:[
-      {category:'Picture Books',desc:'Illustrated stories for early readers',age:'0–3 yrs',qty:'3–4',lang:'Hindi / English',fmt:'Hardcover',adUse:'Mini pack unboxing, UGC',testimonial:"Child's first reaction",examples:'Goodnight Moon, Pat the Bunny'},
-      {category:'Story Books',desc:'Short narrative fiction for toddlers',age:'2–5 yrs',qty:'3–4',lang:'Hindi / English',fmt:'Paperback',adUse:'Renewal, screen guilt angle',testimonial:'Bedtime routine testimonial',examples:'Panchatantra, Tenali Raman'},
-      {category:'Concept Books',desc:'Numbers, colors, shapes, ABCs',age:'1–4 yrs',qty:'2–3',lang:'Bilingual',fmt:'Board Book',adUse:'EGC expert curation content',testimonial:'Learning milestone hook',examples:'My First ABC, Chhota Bheem'},
-      {category:'Early Readers',desc:'Simple text, growing vocabulary',age:'4–6 yrs',qty:'3–4',lang:'English',fmt:'Paperback',adUse:'Clickbait performance angle',testimonial:'Parent surprise at progress',examples:'Fly Guy, Elephant & Piggie'},
-      {category:'Chapter Books',desc:'Longer stories, building attention span',age:'6–9 yrs',qty:'2–3',lang:'English',fmt:'Paperback',adUse:'Renewal — older child angle',testimonial:'Child reading independently',examples:'Magic Tree House, Geronimo Stilton'},
-      {category:'Activity Books',desc:'Puzzles, mazes, creative exercises',age:'3–7 yrs',qty:'1–2',lang:'Hindi / English',fmt:'Paperback',adUse:'Screen-free angle, meme',testimonial:'Off-screen engagement proof',examples:'Wipe-Clean books, Sticker activity'},
-    ]
-  },
-  perf:{
-    label:'Performance Scorecard',
-    cols:[
-      {key:'product',label:'Product',w:100,type:'select',opts:['Renewal','Referral','Mini Pack']},
-      {key:'kpi',label:'KPI',w:130,type:'text'},
-      {key:'target',label:'Target',w:85,type:'text'},
-      {key:'w1',label:'Week 1',w:80,type:'text'},
-      {key:'w2',label:'Week 2',w:80,type:'text'},
-      {key:'w3',label:'Week 3',w:80,type:'text'},
-      {key:'w4',label:'Week 4',w:80,type:'text'},
-      {key:'notes',label:'Notes',w:200,type:'text'},
-    ],
-    rows:[
-      {product:'Renewal',kpi:'Impressions',target:'50,000',w1:'',w2:'',w3:'',w4:'',notes:''},
-      {product:'Renewal',kpi:'Reach',target:'35,000',w1:'',w2:'',w3:'',w4:'',notes:''},
-      {product:'Renewal',kpi:'CTR %',target:'2.5%',w1:'',w2:'',w3:'',w4:'',notes:''},
-      {product:'Renewal',kpi:'CPR (₹)',target:'₹8',w1:'',w2:'',w3:'',w4:'',notes:''},
-      {product:'Renewal',kpi:'New Signups',target:'50',w1:'',w2:'',w3:'',w4:'',notes:''},
-      {product:'Renewal',kpi:'Save Rate',target:'3%',w1:'',w2:'',w3:'',w4:'',notes:'★ Primary signal'},
-      {product:'Referral',kpi:'Impressions',target:'50,000',w1:'',w2:'',w3:'',w4:'',notes:''},
-      {product:'Referral',kpi:'CTR %',target:'2.5%',w1:'',w2:'',w3:'',w4:'',notes:''},
-      {product:'Referral',kpi:'New Signups',target:'50',w1:'',w2:'',w3:'',w4:'',notes:''},
-      {product:'Mini Pack',kpi:'Impressions',target:'50,000',w1:'',w2:'',w3:'',w4:'',notes:''},
-      {product:'Mini Pack',kpi:'CTR %',target:'2.5%',w1:'',w2:'',w3:'',w4:'',notes:''},
-      {product:'Mini Pack',kpi:'New Signups',target:'50',w1:'',w2:'',w3:'',w4:'',notes:''},
-    ]
-  }
-};
-
-// ── Matrix state ──────────────────────────────────────────────
-let mxSheet = 'planning';
-let mxData = {};
-let mxActiveCell = {r:0,c:0};
-let mxCtxRow = -1;
-let mxSaveTimer = null;
-let mxWeekOffset = 0;
-
-// Init data from defaults
-Object.keys(MX_SHEETS).forEach(k => {
-  mxData[k] = MX_SHEETS[k].rows.map((row,i) => ({_id: Date.now()+i+Math.random(), ...row}));
-});
-
-function mxRenderTable() {
-  const def = MX_SHEETS[mxSheet];
-  if(!def) return;
-  const cols = def.cols;
-  const rows = mxData[mxSheet] || [];
-
-  document.getElementById('mx-thead').innerHTML = `<tr>
-    <th class="col-num"><div class="th-in">#</div></th>
-    ${cols.map(c=>`<th style="min-width:${c.w}px"><div class="th-in">${c.label}</div></th>`).join('')}
-  </tr>`;
-
-  document.getElementById('mx-tbody').innerHTML = rows.map((row,ri) => `
-    <tr oncontextmenu="mxShowCtx(event,${ri})">
-      <td class="col-num" onclick="mxToggleRowSelect(this)">${ri+1}</td>
-      ${cols.map((col,ci) => {
-        const val = row[col.key] ?? '';
-        if(col.type==='select'){
-          const sc = col.key==='status'?'sc-'+val.toLowerCase().replace(/\s+/g,'-') :
-                     col.key==='notes'?'sc-'+val.toLowerCase() : '';
-          return `<td><select class="mx-cell-select ${sc}" data-r="${ri}" data-c="${col.key}"
-            onchange="mxCellChange(${ri},'${col.key}',this.value)" onfocus="mxCellFocus(${ri},${ci})">
-            <option value="">—</option>
-            ${col.opts.map(o=>`<option value="${o}" ${o===val?'selected':''}>${o}</option>`).join('')}
-          </select></td>`;
-        } else {
-          return `<td><input type="${col.type==='date'?'date':'text'}" class="mx-cell-input" value="${escH(String(val))}"
-            data-r="${ri}" data-c="${col.key}"
-            onchange="mxCellChange(${ri},'${col.key}',this.value)"
-            onfocus="mxCellFocus(${ri},${ci})"
-            ${col.key.includes('spend')||col.key.includes('w1')||col.key.includes('w2')||col.key.includes('w3')||col.key.includes('w4')||col.key.includes('target')||col.key.includes('produced')?'style="text-align:right"':''}
-          /></td>`;
-        }
-      }).join('')}
-    </tr>
-  `).join('') + `<tr class="mx-add-row"><td colspan="${cols.length+1}">
-    <button class="mx-add-row-btn" onclick="mxAddRow()">＋ Add row</button>
-  </td></tr>`;
-}
-
-function mxCellChange(ri, key, val) {
-  if(mxData[mxSheet][ri]) mxData[mxSheet][ri][key] = val;
-  document.getElementById('mx-formula-input').value = val;
-  mxScheduleSave();
-}
-
-function mxCellFocus(ri, ci) {
-  mxActiveCell = {r:ri, c:ci};
-  const colLetter = String.fromCharCode(65+ci);
-  document.getElementById('mx-cell-ref').textContent = `${colLetter}${ri+1}`;
-  const col = MX_SHEETS[mxSheet].cols[ci];
-  const val = col ? (mxData[mxSheet][ri]?.[col.key] ?? '') : '';
-  document.getElementById('mx-formula-input').value = String(val);
-}
-
-function mxFormulaInput(val) {
-  const col = MX_SHEETS[mxSheet].cols[mxActiveCell.c];
-  if(!col || !mxData[mxSheet][mxActiveCell.r]) return;
-  mxData[mxSheet][mxActiveCell.r][col.key] = val;
-  const inp = document.querySelector(`[data-r="${mxActiveCell.r}"][data-c="${col.key}"]`);
-  if(inp) inp.value = val;
-  mxScheduleSave();
-}
-
-function mxAddRow() {
-  mxData[mxSheet].push({_id: Date.now()+Math.random()});
-  mxRenderTable();
-  mxScheduleSave();
-  setTimeout(()=>{
-    const wrap = document.querySelector('.mx-table-wrap');
-    if(wrap) wrap.scrollTop = wrap.scrollHeight;
-  },50);
-}
-
-function mxAddCol() {
-  const name = prompt('Column name:');
-  if(!name) return;
-  MX_SHEETS[mxSheet].cols.push({key:'custom_'+Date.now(),label:name,w:120,type:'text'});
-  mxRenderTable();
-  showToast('Column added','success');
-}
-
-function mxToggleRowSelect(el) {
-  el.parentElement.classList.toggle('selected-row');
-}
-
-// Context menu
-function mxShowCtx(e, ri) {
-  e.preventDefault();
-  mxCtxRow = ri;
-  const menu = document.getElementById('ctx-menu');
-  menu.style.left = e.clientX+'px';
-  menu.style.top  = e.clientY+'px';
-  menu.classList.add('open');
-}
-document.addEventListener('click', () => document.getElementById('ctx-menu').classList.remove('open'));
-
-function ctxOp(op) {
-  const rows = mxData[mxSheet];
-  if(op==='above') rows.splice(mxCtxRow,0,{_id:Date.now()+Math.random()});
-  else if(op==='below') rows.splice(mxCtxRow+1,0,{_id:Date.now()+Math.random()});
-  else if(op==='dup') rows.splice(mxCtxRow+1,0,{...rows[mxCtxRow],_id:Date.now()+Math.random()});
-  else if(op==='clear') rows[mxCtxRow]={_id:rows[mxCtxRow]._id};
-  else if(op==='del') rows.splice(mxCtxRow,1);
-  mxRenderTable();
-  mxScheduleSave();
-}
-
-// Sheet switching
-function mxSwitchSheet(key) {
-  mxSheet = key;
-  document.querySelectorAll('.mx-sheet-tab').forEach(t=>t.classList.toggle('active', t.dataset.sheet===key));
-  mxRenderTable();
-}
-
-function mxAddSheet() {
-  const name = prompt('New sheet name:');
-  if(!name) return;
-  const key = 'custom_'+Date.now();
-  MX_SHEETS[key] = {label:name,cols:[
-    {key:'col1',label:'Column 1',w:180,type:'text'},
-    {key:'col2',label:'Column 2',w:180,type:'text'},
-    {key:'col3',label:'Column 3',w:180,type:'text'},
-  ],rows:[]};
-  mxData[key] = [];
-  const tabs = document.getElementById('mx-sheet-tabs');
-  const addBtn = tabs.lastElementChild;
-  const tab = document.createElement('div');
-  tab.className='mx-sheet-tab';
-  tab.dataset.sheet=key;
-  tab.textContent='📄 '+name;
-  tab.onclick=()=>mxSwitchSheet(key);
-  tabs.insertBefore(tab,addBtn);
-  mxSwitchSheet(key);
-}
-
-// Week nav
-function mxUpdateWeekLabel() {
-  const base = new Date('2026-04-14');
-  base.setDate(base.getDate() + mxWeekOffset*7);
-  const end = new Date(base); end.setDate(end.getDate()+6);
-  const o={month:'short',day:'numeric'};
-  document.getElementById('mx-week-label').textContent =
-    `Wk ${Math.abs(mxWeekOffset)+1} · ${base.toLocaleDateString('en',o)}–${end.toLocaleDateString('en',o)}`;
-}
-function mxChangeWeek(d) { mxWeekOffset+=d; mxUpdateWeekLabel(); }
-
-// Search
-function mxSearch(q) {
-  const lq=q.toLowerCase();
-  document.querySelectorAll('.mx-cell-input').forEach(el=>{
-    el.style.background = q&&el.value.toLowerCase().includes(lq)?'rgba(251,191,36,0.15)':'';
-  });
-}
-
-// Save indicator
-function mxScheduleSave() {
-  document.getElementById('mx-save-dot').className='mx-save-dot saving';
-  document.getElementById('mx-save-label').textContent='Saving...';
-  clearTimeout(mxSaveTimer);
-  mxSaveTimer = setTimeout(async ()=>{
-    // Persist to Supabase matrix_data table (same schema as standalone matrix.html)
-    try {
-      const sb = getSB();
-      const user = await Auth.getUser();
-      if(user) {
-        const rows = (mxData[mxSheet]||[]).map(row=>({
-          user_id: user.id, sheet_key: mxSheet,
-          row_id: String(row._id), row_data: row
-        }));
-        await sb.from('matrix_data').upsert(rows,{onConflict:'user_id,sheet_key,row_id'});
-      }
-    } catch(e){/* silent */}
-    document.getElementById('mx-save-dot').className='mx-save-dot';
-    document.getElementById('mx-save-label').textContent='Saved';
-  }, 1200);
-}
-
-// Export
-function mxExport() {
-  try {
-    const wb = XLSX.utils.book_new();
-    Object.keys(MX_SHEETS).forEach(k=>{
-      const def=MX_SHEETS[k]; if(!mxData[k]) return;
-      const header=def.cols.map(c=>c.label);
-      const dataRows=mxData[k].map(row=>def.cols.map(c=>row[c.key]??''));
-      const ws=XLSX.utils.aoa_to_sheet([header,...dataRows]);
-      XLSX.utils.book_append_sheet(wb,ws,def.label.substring(0,31));
-    });
-    XLSX.writeFile(wb,'neOwn_Weekly_Matrix.xlsx');
-    showToast('XLSX downloaded!','success');
-  } catch(e){ showToast('Export failed','error'); }
-}
-
-function mxImport() {
-  const inp=document.createElement('input');
-  inp.type='file';inp.accept='.csv,.xlsx';
-  inp.onchange=async e=>{
-    const file=e.target.files[0]; if(!file) return;
-    const ab=await file.arrayBuffer();
-    const wb=XLSX.read(ab);
-    const ws=wb.Sheets[wb.SheetNames[0]];
-    const data=XLSX.utils.sheet_to_json(ws,{header:1});
-    if(!data.length) return;
-    const cols=MX_SHEETS[mxSheet].cols;
-    const headers=data[0];
-    const newRows=data.slice(1).map((r,i)=>{
-      const obj={_id:Date.now()+i+Math.random()};
-      headers.forEach((h,hi)=>{
-        const col=cols.find(c=>c.label.toLowerCase()===String(h).toLowerCase());
-        if(col) obj[col.key]=r[hi]??'';
-      });
-      return obj;
-    });
-    mxData[mxSheet].push(...newRows);
-    mxRenderTable(); mxScheduleSave();
-    showToast(`Imported ${newRows.length} rows!`,'success');
-  };
-  inp.click();
-}
-
-function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
 </body>
 </html>

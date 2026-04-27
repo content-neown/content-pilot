@@ -82,45 +82,21 @@ h4, h5, h6 {
 }
 
 /* ══════════════════════════════════════════════════════════
-   LOGO COMPONENT
+   LOGO COMPONENT — neown image logo
    ══════════════════════════════════════════════════════════ */
 .neown-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
   text-decoration: none;
   cursor: pointer;
   user-select: none;
-}
-
-.neown-logo .logo-mark {
-  width: 32px;
-  height: 32px;
   flex-shrink: 0;
 }
 
-.neown-logo .logo-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
-}
-
-.neown-logo .logo-name {
-  font-family: var(--font-display);
-  font-size: 17px;
-  font-weight: 400;
-  color: var(--text);
-  letter-spacing: -0.01em;
-}
-
-.neown-logo .logo-by {
-  font-family: var(--font-body);
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--text3);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-top: 1px;
+.neown-logo img {
+  height: 36px;
+  width: auto;
+  display: block;
 }
 
 /* ══════════════════════════════════════════════════════════
