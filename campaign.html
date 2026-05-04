@@ -1337,8 +1337,18 @@ async function send() {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ messages: msgs, system: buildSystem() })
       });
-      const d = await r.json();
+      const text = await r.text();
+      let d;
+      try {
+        d = JSON.parse(text);
+      } catch {
+        if (/page could not be found|cannot ?find|<!doctype|<html/i.test(text)) {
+          throw new Error(`API endpoint ${apiUrl} not found (HTTP ${r.status}). Confirm api/campaign.js is committed in your repo and Vercel has finished deploying.`);
+        }
+        throw new Error(`Server returned non-JSON (HTTP ${r.status}): ${text.slice(0, 180)}`);
+      }
       if (d.error) throw new Error(d.error);
+      if (!d.content) throw new Error('API returned no content. Check Vercel function logs.');
       reply = d.content;
     } else {
       let key = localStorage.getItem('cp_dev_key');
