@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>neOwn — Campaign Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink: #F0008C;
+  --pink-dim: rgba(240,0,140,0.10);
+  --pink-glow: rgba(240,0,140,0.25);
+  --indigo: #3C28B4;
+  --indigo-dim: rgba(60,40,180,0.18);
+  --bg: #06060d;
+  --bg2: #0b0a17;
+  --bg3: #100f22;
+  --card: rgba(13,12,30,0.85);
+  --card2: #141328;
+  --border: rgba(130,110,230,0.10);
+  --border-bright: rgba(240,0,140,0.28);
+  --text: #edeaff;
+  --text2: #8f89c0;
+  --text3: #3e3a6a;
+  --green: #00cc7a;
+  --amber: #ffb520;
+  --red: #ff4466;
+  --blue: #5B7FFF;
+  --teal: #00d4b0;
+  --font: 'DM Sans', sans-serif;
+  --display: 'Syne', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: var(--font); background: var(--bg); color: var(--text); overflow: hidden; }
+
+/* ── TOP NAV ── */
+.top-nav {
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  position: relative; z-index: 50; flex-shrink: 0;
+}
+.top-nav::after {
+  content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--pink), transparent);
+  opacity: 0.4;
+}
+.nav-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+.nav-logo-img { height: 26px; width: auto; }
+.nav-sep { width: 1px; height: 20px; background: var(--border); }
+.nav-title { font-size: 13px; font-weight: 500; color: var(--text3); letter-spacing: 0.01em; }
+.nav-title-accent {
+  font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--pink), var(--indigo));
+  color: #fff; letter-spacing: 0.06em; margin-left: 8px;
+}
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.nav-btn-ghost {
+  background: none; border: 1px solid var(--border); color: var(--text3);
+  font-family: var(--font); font-size: 12px; font-weight: 500;
+  padding: 6px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s;
+}
+.nav-btn-ghost:hover { border-color: var(--pink); color: var(--text); }
+.nav-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink), var(--indigo));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+  border: 1.5px solid rgba(240,0,140,0.4);
+}
+
+/* ── LAYOUT ── */
+.studio-layout { display: flex; height: calc(100vh - 52px); overflow: hidden; }
+
+/* ── LEFT PANEL (BRIEF) ── */
+.left-panel {
+  width: 280px; flex-shrink: 0;
+  background: var(--bg2); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.panel-header {
+  padding: 14px 16px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.panel-title {
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.panel-reset {
+  background: none; border: 1px solid var(--border); color: var(--text3);
+  font-family: var(--font); font-size: 10px; font-weight: 600;
+  padding: 4px 9px; border-radius: 6px; cursor: pointer;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.panel-reset:hover { border-color: var(--pink); color: var(--text2); }
+.panel-scroll {
+  flex: 1; overflow-y: auto; padding: 12px 14px 20px;
+  display: flex; flex-direction: column; gap: 14px;
+  scrollbar-width: thin; scrollbar-color: var(--card2) transparent;
+}
+
+.param-group { display: flex; flex-direction: column; gap: 6px; }
+.param-label {
+  font-size: 10px; font-weight: 600; color: var(--text3);
+  letter-spacing: 0.07em; text-transform: uppercase;
+}
+.param-row { display: flex; gap: 6px; }
+.param-select, .param-input, .param-textarea {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); padding: 8px 11px; font-size: 12.5px;
+  font-family: var(--font); width: 100%; outline: none;
+  transition: border-color 0.15s; -webkit-appearance: none;
+}
+.param-textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+.param-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%236E6A8A' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  padding-right: 26px; cursor: pointer;
+}
+.param-select option { background: #1C1A27; }
+.param-select:focus, .param-input:focus, .param-textarea:focus { border-color: var(--pink); }
+.param-input::placeholder, .param-textarea::placeholder { color: var(--text3); }
+
+.chip-grid { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip {
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 500;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text3); cursor: pointer; transition: all 0.12s; user-select: none;
+}
+.chip:hover { border-color: rgba(240,0,140,0.35); color: var(--text2); }
+.chip.on {
+  background: var(--pink-dim); border-color: var(--pink); color: #FF66C0;
+}
+
+.collapse-section { display: flex; flex-direction: column; gap: 10px; }
+.collapse-toggle {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; cursor: pointer; user-select: none;
+  border-top: 1px solid var(--border); margin-top: 4px; padding-top: 12px;
+}
+.collapse-toggle-label {
+  font-size: 10px; font-weight: 700; color: var(--text2);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.collapse-arrow { color: var(--text3); font-size: 10px; transition: transform 0.2s; }
+.collapsed .collapse-arrow { transform: rotate(-90deg); }
+.collapse-content { display: flex; flex-direction: column; gap: 12px; }
+.collapsed .collapse-content { display: none; }
+
+.panel-divider { height: 1px; background: var(--border); margin: 6px 0; }
+
+/* ── MAIN AREA ── */
+.main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); min-width: 0; }
+
+/* ── MODE TABS ── */
+.mode-tabs {
+  display: flex; align-items: center; gap: 2px;
+  padding: 10px 20px 0; border-bottom: 1px solid var(--border);
+  background: var(--bg2); flex-shrink: 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.mode-tabs::-webkit-scrollbar { display: none; }
+.mode-tab {
+  padding: 8px 14px 10px;
+  font-size: 12.5px; font-weight: 500;
+  color: var(--text3); cursor: pointer;
+  border: none; background: none; font-family: var(--font);
+  white-space: nowrap; position: relative;
+  transition: color 0.15s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.mode-tab:hover { color: var(--text2); }
+.mode-tab.active { color: #FF66C0; border-bottom-color: var(--pink); }
+.mode-tab .tab-icon { margin-right: 5px; font-size: 13px; }
+
+/* ── MESSAGES ── */
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 24px 28px;
+  display: flex; flex-direction: column; gap: 24px;
+  scrollbar-width: thin; scrollbar-color: var(--card2) transparent;
+}
+
+/* ── WELCOME ── */
+.welcome-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px; text-align: center; padding: 40px 20px;
+}
+.welcome-icon {
+  width: 64px; height: 64px; border-radius: 20px;
+  background: var(--pink-dim); border: 1px solid var(--border-bright);
+  display: flex; align-items: center; justify-content: center; font-size: 28px;
+}
+.welcome-title { font-family: var(--display); font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+.welcome-sub { font-size: 14px; color: var(--text3); max-width: 460px; line-height: 1.6; }
+.quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; max-width: 580px; margin-top: 8px; }
+.quick-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 16px; text-align: left; cursor: pointer; transition: all 0.15s;
+}
+.quick-card:hover {
+  border-color: var(--border-bright); background: var(--card2); transform: translateY(-1px);
+}
+.quick-card-label {
+  font-size: 11px; font-weight: 600; color: var(--pink);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;
+}
+.quick-card-title { font-size: 13px; font-weight: 500; color: var(--text2); line-height: 1.4; }
+
+/* ── MESSAGES ── */
+.msg { display: flex; flex-direction: column; animation: fadeSlide 0.3s ease; }
+@keyframes fadeSlide { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.msg-user { align-items: flex-end; }
+.msg-user .msg-bubble {
+  background: linear-gradient(135deg, rgba(60,40,180,0.3), rgba(240,0,140,0.15));
+  border: 1px solid rgba(240,0,140,0.2);
+  border-radius: 16px 16px 4px 16px;
+  padding: 11px 16px; font-size: 14px; line-height: 1.6; color: var(--text); max-width: 72%;
+}
+.msg-ai { align-items: flex-start; }
+
+/* ── OUTPUT CARD ── */
+.output-card {
+  max-width: 92%; min-width: 60%;
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  overflow: hidden; box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.output-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: var(--card2);
+  border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px;
+}
+.output-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.output-icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--pink-dim); border: 1px solid var(--border-bright);
+  display: flex; align-items: center; justify-content: center; font-size: 13px;
+}
+.output-mode-label {
+  font-size: 11px; font-weight: 700; color: var(--pink);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.output-title {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  margin-left: 4px; max-width: 380px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.output-platform-tag {
+  font-size: 11px; color: var(--text3);
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 6px; padding: 2px 8px;
+}
+.output-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.output-act-btn {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 7px;
+  padding: 5px 10px; font-size: 11px; font-weight: 500;
+  color: var(--text3); cursor: pointer; font-family: var(--font);
+  transition: all 0.12s; display: flex; align-items: center; gap: 5px;
+}
+.output-act-btn:hover { border-color: var(--pink); color: var(--text); }
+
+.output-body { padding: 18px 20px; }
+.output-summary {
+  font-size: 13px; color: var(--text2); line-height: 1.65;
+  padding: 11px 14px; background: linear-gradient(135deg, rgba(60,40,180,0.10), rgba(240,0,140,0.06));
+  border: 1px solid rgba(240,0,140,0.15); border-radius: 10px;
+  margin-bottom: 18px; font-style: italic;
+}
+
+/* ── SECTIONS ── */
+.out-section { margin-bottom: 18px; }
+.out-section:last-child { margin-bottom: 0; }
+.out-section-label {
+  font-size: 10px; font-weight: 700; color: var(--text3);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+}
+.out-section-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.out-section-content { font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+.out-section-content.hook {
+  font-size: 15px; font-weight: 600; color: var(--text);
+  line-height: 1.5; padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(240,0,140,0.07), rgba(60,40,180,0.07));
+  border: 1px solid rgba(240,0,140,0.15); border-radius: 10px;
+}
+
+.plain-text { font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+.muted-text { font-size: 13px; line-height: 1.65; color: var(--text2); }
+
+/* card list */
+.card-list { display: flex; flex-direction: column; gap: 8px; }
+.list-card {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px 14px;
+}
+.list-card-num {
+  width: 22px; height: 22px; border-radius: 6px;
+  background: var(--pink-dim); border: 1px solid var(--border-bright);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--pink);
+  font-family: var(--mono); margin-right: 8px; vertical-align: middle;
+}
+.list-card-row { display: flex; gap: 10px; align-items: flex-start; }
+.list-card-title {
+  font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px;
+}
+.list-card-body { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* tags */
+.tag-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag-pill {
+  font-size: 11.5px; font-weight: 500; color: var(--blue);
+  background: rgba(91,127,255,0.10); border: 1px solid rgba(91,127,255,0.22);
+  border-radius: 20px; padding: 3px 10px;
+}
+.tag-pill.green { color: var(--green); background: rgba(0,204,122,0.10); border-color: rgba(0,204,122,0.22); }
+.tag-pill.amber { color: var(--amber); background: rgba(255,181,32,0.10); border-color: rgba(255,181,32,0.22); }
+.tag-pill.red { color: var(--red); background: rgba(255,68,102,0.10); border-color: rgba(255,68,102,0.22); }
+
+/* table */
+.out-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 12.5px; background: var(--bg3); border-radius: 8px; overflow: hidden;
+}
+.out-table th {
+  background: var(--card2); color: var(--text3); font-weight: 700;
+  text-align: left; padding: 8px 10px; font-size: 10.5px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+}
+.out-table td {
+  padding: 9px 10px; color: var(--text2); border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.out-table tr:last-child td { border-bottom: none; }
+.out-table td strong { color: var(--text); }
+
+/* scenario columns (predict mode) */
+.scenarios-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.scenario-col {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px;
+}
+.scenario-col.expected { border-color: var(--border-bright); }
+.scenario-col.expected .scenario-name { color: var(--pink); }
+.scenario-name {
+  font-size: 10px; font-weight: 700; color: var(--text3);
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px;
+}
+.scenario-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 4px 0; font-size: 12px; color: var(--text2);
+  border-bottom: 1px dashed rgba(130,110,230,0.06);
+}
+.scenario-row:last-child { border-bottom: none; }
+.scenario-row .k { color: var(--text3); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+.scenario-row .v { color: var(--text); font-weight: 600; font-family: var(--mono); font-size: 12px; }
+
+/* scene block (creative mode) */
+.scene-block {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; margin-bottom: 8px; font-size: 12.5px; line-height: 1.55; color: var(--text2);
+}
+.scene-block:last-child { margin-bottom: 0; }
+.scene-time {
+  font-size: 9.5px; font-weight: 700; color: var(--indigo);
+  background: rgba(60,40,180,0.18); border: 1px solid rgba(60,40,180,0.25);
+  border-radius: 5px; padding: 2px 7px; font-family: var(--mono);
+  display: inline-block; margin-bottom: 5px;
+}
+
+/* concept (creative mode) */
+.concept-block {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 12px;
+}
+.concept-block:last-child { margin-bottom: 0; }
+.concept-name {
+  font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.concept-section { margin-top: 10px; }
+.concept-section-label {
+  font-size: 10px; font-weight: 700; color: var(--text3);
+  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px;
+}
+
+/* segment block (audience mode) */
+.segment-block {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.segment-block:last-child { margin-bottom: 0; }
+.segment-name {
+  font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px;
+}
+.segment-grid {
+  display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 6px;
+}
+.segment-row { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; line-height: 1.55; }
+.segment-row .seg-key {
+  flex-shrink: 0; width: 92px; font-size: 10.5px; font-weight: 700;
+  color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase;
+  padding-top: 2px;
+}
+.segment-row .seg-val { color: var(--text2); flex: 1; }
+
+/* stage block (retargeting) */
+.stage-block {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 10px; position: relative;
+}
+.stage-block::before {
+  content: attr(data-num);
+  position: absolute; top: -10px; left: 14px;
+  background: var(--pink); color: #fff; font-size: 11px; font-weight: 700;
+  padding: 2px 9px; border-radius: 10px; font-family: var(--mono);
+  letter-spacing: 0.04em;
+}
+.stage-name {
+  font-size: 13.5px; font-weight: 700; color: var(--text);
+  margin-bottom: 4px; padding-top: 2px;
+}
+.stage-pill-row { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 8px; }
+
+/* ad copy variant table */
+.copy-variants { display: flex; flex-direction: column; gap: 8px; }
+.copy-variant {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px 14px;
+}
+.copy-variant-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px; gap: 8px;
+}
+.copy-variant-num {
+  font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--pink);
+  background: var(--pink-dim); border: 1px solid var(--border-bright);
+  border-radius: 6px; padding: 2px 8px;
+}
+.copy-variant-angle {
+  font-size: 11px; font-weight: 600; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.copy-variant-char {
+  font-size: 10px; color: var(--text3); font-family: var(--mono);
+}
+.copy-variant-field { margin-bottom: 6px; }
+.copy-variant-field:last-child { margin-bottom: 0; }
+.copy-variant-key {
+  font-size: 9.5px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px;
+}
+.copy-variant-val { font-size: 13px; color: var(--text); line-height: 1.5; }
+.copy-variant-cta {
+  display: inline-block; margin-top: 4px;
+  background: var(--pink-dim); border: 1px solid var(--border-bright);
+  color: #FF66C0; font-size: 12px; font-weight: 600;
+  padding: 4px 12px; border-radius: 7px;
+}
+
+/* TYPING */
+.typing-indicator { display: flex; align-items: center; gap: 8px; padding: 12px 16px; color: var(--text3); font-size: 13px; }
+.typing-dots { display: flex; gap: 4px; }
+.tdot { width: 6px; height: 6px; border-radius: 50%; background: var(--pink); opacity: 0.6; animation: tdot 1.2s ease-in-out infinite; }
+.tdot:nth-child(2) { animation-delay: 0.2s; }
+.tdot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes tdot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ── INPUT AREA ── */
+.input-area { flex-shrink: 0; padding: 14px 20px 18px; background: var(--bg2); border-top: 1px solid var(--border); }
+.active-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; min-height: 22px; }
+.active-tag {
+  font-size: 11px; font-weight: 500; color: var(--text3);
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 3px 10px;
+}
+.active-tag.warn { color: var(--amber); border-color: rgba(255,181,32,0.3); }
+.input-row { display: flex; gap: 10px; align-items: flex-end; }
+.chat-input {
+  flex: 1; background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; color: var(--text); padding: 12px 15px;
+  font-size: 14px; font-family: var(--font); resize: none;
+  min-height: 46px; max-height: 130px; line-height: 1.5; outline: none;
+  transition: border-color 0.15s;
+}
+.chat-input:focus { border-color: var(--pink); }
+.chat-input::placeholder { color: var(--text3); }
+.send-btn {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--pink), #B8006E);
+  border: none; cursor: pointer; color: #fff; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(240,0,140,0.3);
+}
+.send-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(240,0,140,0.45); }
+.send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ── RIGHT PANEL (SAVED CAMPAIGNS) ── */
+.right-panel {
+  width: 260px; flex-shrink: 0;
+  background: var(--bg2); border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.saved-list {
+  flex: 1; overflow-y: auto; padding: 10px;
+  display: flex; flex-direction: column; gap: 6px;
+  scrollbar-width: thin; scrollbar-color: var(--card2) transparent;
+}
+.saved-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 11px 13px; cursor: pointer; transition: all 0.15s; position: relative;
+}
+.saved-card:hover { border-color: var(--border-bright); transform: translateX(-2px); }
+.saved-card-name {
+  font-size: 12.5px; font-weight: 600; color: var(--text);
+  margin-bottom: 4px; padding-right: 22px; line-height: 1.35;
+}
+.saved-card-meta {
+  display: flex; gap: 6px; align-items: center; font-size: 10px;
+  color: var(--text3); flex-wrap: wrap;
+}
+.saved-card-mode { color: var(--pink); font-weight: 600; }
+.saved-card-platform {
+  background: var(--bg3); padding: 2px 7px; border-radius: 8px; font-weight: 500;
+}
+.saved-card-x {
+  position: absolute; top: 8px; right: 8px;
+  background: none; border: none; color: var(--text3); font-size: 14px;
+  cursor: pointer; padding: 2px 6px; border-radius: 4px;
+  opacity: 0; transition: all 0.15s; line-height: 1;
+}
+.saved-card:hover .saved-card-x { opacity: 0.7; }
+.saved-card-x:hover { background: rgba(255,68,102,0.12); color: var(--red); opacity: 1; }
+.empty-saved {
+  text-align: center; padding: 30px 14px;
+  color: var(--text3); font-size: 12px; line-height: 1.5;
+}
+.empty-saved-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.45; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  animation: fadeSlide 0.2s ease;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--card2); border: 1px solid var(--border); border-radius: 16px;
+  width: 92%; max-width: 600px; max-height: 88vh; overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.modal-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.modal-title { font-family: var(--display); font-size: 16px; font-weight: 700; color: var(--text); }
+.modal-close {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text3); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { border-color: var(--pink); color: var(--text); }
+.modal-body { padding: 18px 20px; overflow-y: auto; }
+.modal-body p { font-size: 13px; color: var(--text3); line-height: 1.6; margin-bottom: 12px; }
+.modal-body strong { color: var(--pink); }
+.modal-footer {
+  padding: 14px 20px; border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 8px;
+}
+.btn-modal-primary {
+  background: linear-gradient(135deg, var(--pink), #B8006E);
+  border: none; color: #fff; font-family: var(--font);
+  font-size: 13px; font-weight: 600; padding: 9px 18px;
+  border-radius: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(240,0,140,0.25);
+}
+.btn-modal-secondary {
+  background: var(--bg3); border: 1px solid var(--border); color: var(--text2);
+  font-family: var(--font); font-size: 13px; font-weight: 500;
+  padding: 9px 18px; border-radius: 8px; cursor: pointer;
+}
+.btn-modal-secondary:hover { border-color: var(--pink); color: var(--text); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--card2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 18px; font-size: 13px; color: var(--text);
+  opacity: 0; transform: translateY(10px); transition: all 0.3s;
+  pointer-events: none; z-index: 9999;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { border-color: rgba(0,208,132,0.4); color: var(--green); }
+.toast.error { border-color: rgba(255,68,102,0.4); color: var(--red); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) { .right-panel { display: none; } }
+@media (max-width: 820px)  { .left-panel  { display: none; } }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--card2); border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="dashboard.html" class="nav-brand">
+    <img class="nav-logo-img" src="https://neown.in/cdn/shop/files/neOwn_website_logo_4f4f6dc2-8b02-4ac7-bfda-842abc1992f8.png?v=1745232656&width=500" alt="neOwn"/>
+    <div class="nav-sep"></div>
+    <span class="nav-title">Campaign Manager<span class="nav-title-accent">PERFORMANCE</span></span>
+  </a>
+  <div class="nav-right">
+    <button class="nav-btn-ghost" onclick="newCampaign()">+ New</button>
+    <button class="nav-btn-ghost" onclick="openImport()">📥 Import Data</button>
+    <button class="nav-btn-ghost" onclick="clearChat()">Clear</button>
+    <div class="nav-avatar" id="nav-avatar">N</div>
+  </div>
+</nav>
+
+<div class="studio-layout">
+
+  <!-- LEFT: BRIEF PANEL -->
+  <aside class="left-panel">
+    <div class="panel-header">
+      <div class="panel-title">Campaign Brief</div>
+      <button class="panel-reset" onclick="resetBrief()">Reset</button>
+    </div>
+    <div class="panel-scroll">
+
+      <div class="param-group">
+        <label class="param-label">Campaign Name</label>
+        <input type="text" class="param-input" id="b-name" placeholder="e.g. Q1 Mom Push" oninput="refreshTags()"/>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">Objective</label>
+        <select class="param-select" id="b-objective" onchange="refreshTags()">
+          <option value="">Any objective</option>
+          <option>Brand Awareness</option>
+          <option>Reach</option>
+          <option>Traffic / Link Clicks</option>
+          <option>Engagement</option>
+          <option>Video Views</option>
+          <option>Lead Generation</option>
+          <option>Trial Signups</option>
+          <option>Sales / Subscriptions</option>
+          <option>Retargeting</option>
+          <option>Reactivation</option>
+        </select>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">Platforms</label>
+        <div class="chip-grid" id="chips-platform">
+          <div class="chip" data-val="Meta (FB+IG)" onclick="multiChip(this)">Meta</div>
+          <div class="chip" data-val="Google Ads" onclick="multiChip(this)">Google</div>
+          <div class="chip" data-val="YouTube" onclick="multiChip(this)">YouTube</div>
+          <div class="chip" data-val="Instagram Reels" onclick="multiChip(this)">Reels</div>
+          <div class="chip" data-val="WhatsApp Ads" onclick="multiChip(this)">WhatsApp</div>
+          <div class="chip" data-val="Programmatic / DV360" onclick="multiChip(this)">DV360</div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">Funnel Stage</label>
+        <div class="chip-grid" id="chips-funnel">
+          <div class="chip" data-val="TOF — Top of Funnel" onclick="solo(this,'chips-funnel')">TOF</div>
+          <div class="chip" data-val="MOF — Middle of Funnel" onclick="solo(this,'chips-funnel')">MOF</div>
+          <div class="chip" data-val="BOF — Bottom of Funnel" onclick="solo(this,'chips-funnel')">BOF</div>
+          <div class="chip" data-val="Retention" onclick="solo(this,'chips-funnel')">Retention</div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">Total Budget</label>
+        <div class="param-row">
+          <input type="text" class="param-input" id="b-budget" placeholder="e.g. 200000" oninput="refreshTags()"/>
+          <select class="param-select" id="b-currency" onchange="refreshTags()" style="max-width:78px">
+            <option>INR</option><option>USD</option><option>EUR</option><option>GBP</option><option>AED</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">Daily Budget (optional)</label>
+        <input type="text" class="param-input" id="b-daily" placeholder="e.g. 5000"/>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">Duration</label>
+        <div class="param-row">
+          <input type="date" class="param-input" id="b-start"/>
+          <input type="date" class="param-input" id="b-end"/>
+        </div>
+      </div>
+
+      <div class="collapse-section" id="audience-section">
+        <div class="collapse-toggle" onclick="toggleCollapse('audience-section')">
+          <span class="collapse-toggle-label">👥 Audience</span>
+          <span class="collapse-arrow">▼</span>
+        </div>
+        <div class="collapse-content">
+          <div class="param-group">
+            <label class="param-label">Target Audience</label>
+            <textarea class="param-textarea" id="b-audience" placeholder="e.g. Working mothers 28–42, urban India, kids aged 4–10, currently dealing with screen time guilt"></textarea>
+          </div>
+          <div class="param-group">
+            <label class="param-label">Age Range</label>
+            <div class="param-row">
+              <input type="text" class="param-input" id="b-age-min" placeholder="Min" value="28"/>
+              <input type="text" class="param-input" id="b-age-max" placeholder="Max" value="45"/>
+            </div>
+          </div>
+          <div class="param-group">
+            <label class="param-label">Gender</label>
+            <div class="chip-grid" id="chips-gender">
+              <div class="chip on" data-val="All" onclick="solo(this,'chips-gender')">All</div>
+              <div class="chip" data-val="Women" onclick="solo(this,'chips-gender')">Women</div>
+              <div class="chip" data-val="Men" onclick="solo(this,'chips-gender')">Men</div>
+            </div>
+          </div>
+          <div class="param-group">
+            <label class="param-label">Geography</label>
+            <input type="text" class="param-input" id="b-geo" placeholder="e.g. India — Tier 1 + Tier 2 cities"/>
+          </div>
+          <div class="param-group">
+            <label class="param-label">Language</label>
+            <select class="param-select" id="b-language">
+              <option>English</option><option>Hinglish</option><option>Hindi</option>
+              <option>Marathi</option><option>Tamil</option><option>Telugu</option>
+              <option>Kannada</option><option>Bengali</option><option>Gujarati</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="collapse-section collapsed" id="brand-section">
+        <div class="collapse-toggle" onclick="toggleCollapse('brand-section')">
+          <span class="collapse-toggle-label">🏷️ Offer & Hooks</span>
+          <span class="collapse-arrow">▼</span>
+        </div>
+        <div class="collapse-content">
+          <div class="param-group">
+            <label class="param-label">USP / Key Hook</label>
+            <textarea class="param-textarea" id="b-usp" placeholder="The single sharpest claim. Default: 'Replace screen time with curated books, delivered home.'"></textarea>
+          </div>
+          <div class="param-group">
+            <label class="param-label">Offer / Promo</label>
+            <input type="text" class="param-input" id="b-offer" placeholder="e.g. First month free trial"/>
+          </div>
+          <div class="param-group">
+            <label class="param-label">Landing Page URL</label>
+            <input type="text" class="param-input" id="b-lp" placeholder="https://neown.in/..."/>
+          </div>
+          <div class="param-group">
+            <label class="param-label">Competitors</label>
+            <input type="text" class="param-input" id="b-competitors" placeholder="e.g. Bookosmia, JustBooks, library subscriptions"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="collapse-section collapsed" id="kpi-section">
+        <div class="collapse-toggle" onclick="toggleCollapse('kpi-section')">
+          <span class="collapse-toggle-label">📊 KPI Targets</span>
+          <span class="collapse-arrow">▼</span>
+        </div>
+        <div class="collapse-content">
+          <div class="param-group">
+            <label class="param-label">Target CPA</label>
+            <input type="text" class="param-input" id="b-cpa" placeholder="e.g. ₹400 per trial signup"/>
+          </div>
+          <div class="param-group">
+            <label class="param-label">Target ROAS</label>
+            <input type="text" class="param-input" id="b-roas" placeholder="e.g. 2.5x"/>
+          </div>
+          <div class="param-group">
+            <label class="param-label">Target CTR</label>
+            <input type="text" class="param-input" id="b-ctr" placeholder="e.g. 1.5%"/>
+          </div>
+          <div class="param-group">
+            <label class="param-label">Conversion Event</label>
+            <input type="text" class="param-input" id="b-conv" placeholder="e.g. Trial signup, Subscription, Lead form"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-area">
+
+    <!-- MODE TABS -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="full" onclick="switchMode(this)"><span class="tab-icon">🎯</span>Full Plan</button>
+      <button class="mode-tab" data-mode="copy" onclick="switchMode(this)"><span class="tab-icon">✍️</span>Ad Copy</button>
+      <button class="mode-tab" data-mode="creative" onclick="switchMode(this)"><span class="tab-icon">🎬</span>Creatives</button>
+      <button class="mode-tab" data-mode="audience" onclick="switchMode(this)"><span class="tab-icon">👥</span>Audiences</button>
+      <button class="mode-tab" data-mode="abtest" onclick="switchMode(this)"><span class="tab-icon">🧪</span>A/B Tests</button>
+      <button class="mode-tab" data-mode="predict" onclick="switchMode(this)"><span class="tab-icon">📈</span>Predict</button>
+      <button class="mode-tab" data-mode="budget" onclick="switchMode(this)"><span class="tab-icon">💰</span>Budget</button>
+      <button class="mode-tab" data-mode="retargeting" onclick="switchMode(this)"><span class="tab-icon">🔁</span>Retargeting</button>
+      <button class="mode-tab" data-mode="scale" onclick="switchMode(this)"><span class="tab-icon">🚀</span>Scale</button>
+      <button class="mode-tab" data-mode="optimize" onclick="switchMode(this)"><span class="tab-icon">🛠️</span>Optimize</button>
+      <button class="mode-tab" data-mode="landing" onclick="switchMode(this)"><span class="tab-icon">🎯</span>Landing</button>
+      <button class="mode-tab" data-mode="brief" onclick="switchMode(this)"><span class="tab-icon">📝</span>Brief</button>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="chat-messages" id="chat-messages">
+      <div class="welcome-wrap" id="welcome-state">
+        <div class="welcome-icon">🚀</div>
+        <div class="welcome-title">Campaign Manager</div>
+        <div class="welcome-sub">Set your brief on the left, pick a mode above, then describe what you need. Outputs render as structured cards you can save, schedule, or export.</div>
+        <div class="quick-grid" id="quick-grid"></div>
+      </div>
+    </div>
+
+    <!-- INPUT -->
+    <div class="input-area">
+      <div class="active-tags" id="active-tags"></div>
+      <div class="input-row">
+        <textarea class="chat-input" id="chat-input" placeholder="Describe what you need, or just hit send to use the selected mode..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="send()">↑</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: SAVED CAMPAIGNS -->
+  <aside class="right-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Saved Campaigns</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:0.04em" id="saved-count">0 campaigns</div>
+      </div>
+    </div>
+    <div class="saved-list" id="saved-list"></div>
+  </aside>
+</div>
+
+<!-- IMPORT DATA MODAL -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📥 Import Performance Data</div>
+      <button class="modal-close" onclick="closeModal('import-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p>Paste current campaign metrics (CSV, table, or just numbers). Switches to <strong>Optimize</strong> mode for diagnosis &amp; recommendations.</p>
+      <textarea class="param-textarea" id="import-data" rows="10" placeholder="Campaign,Spend,Impressions,Clicks,CTR,CPC,Conversions,CPA,ROAS&#10;Reels-Moms-A,42000,1250000,18750,1.5%,2.24,295,142,2.4x&#10;Reels-Moms-B,38000,990000,14850,1.5%,2.56,218,174,2.0x&#10;Carousel-Dads,21000,520000,5200,1.0%,4.04,82,256,1.4x"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-secondary" onclick="closeModal('import-modal')">Cancel</button>
+      <button class="btn-modal-primary" onclick="useImport()">Use in Optimize</button>
+    </div>
+  </div>
+</div>
+
+<div id="global-toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let user = null;
+let msgs = [];
+let lastAI = '';
+let lastMode = 'full';
+let busy = false;
+let mode = 'full';
+let importedData = '';
+const STORAGE_KEY = 'cp_campaigns_v1';
+
+const MODES = {
+  full:        { icon:'🎯', label:'Full Campaign Plan', placeholder:'Plan a full campaign for this brief' },
+  copy:        { icon:'✍️', label:'Ad Copy Variants',   placeholder:'10 ad copy variants across angles' },
+  creative:    { icon:'🎬', label:'Creative Concepts',  placeholder:'Creative concepts with shot lists' },
+  audience:    { icon:'👥', label:'Audience Strategy',  placeholder:'5 audience segments to test' },
+  abtest:      { icon:'🧪', label:'A/B Test Plan',      placeholder:'What should we test first?' },
+  predict:     { icon:'📈', label:'KPI Predictions',    placeholder:'Predict campaign performance' },
+  budget:      { icon:'💰', label:'Budget Allocation',  placeholder:'How should we split the budget?' },
+  retargeting: { icon:'🔁', label:'Retargeting Funnel', placeholder:'Build the retargeting funnel' },
+  scale:       { icon:'🚀', label:'Scaling Playbook',   placeholder:'How to scale from current performance?' },
+  optimize:    { icon:'🛠️', label:'Optimization',      placeholder:'Diagnose & recommend (use Import Data →)' },
+  landing:     { icon:'🎯', label:'Landing Page Copy',  placeholder:'Conversion-optimized LP copy' },
+  brief:       { icon:'📝', label:'Designer Brief',     placeholder:'Brief for design/video team' }
+};
+
+const QUICK_PROMPTS = [
+  { mode:'full',     label:'Full Plan', title:'Full Meta + Google plan for moms 28-42' },
+  { mode:'copy',     label:'Copy',      title:'10 ad variants — screen time guilt angle' },
+  { mode:'audience', label:'Audiences', title:'5 mom audiences for trial signups' },
+  { mode:'abtest',   label:'A/B Test',  title:'Hook test: guilt vs. joy framing' },
+  { mode:'creative', label:'Creative',  title:'3 UGC concepts for IG Reels' },
+  { mode:'budget',   label:'Budget',    title:'Split 5L across Meta/Google/YouTube' }
+];
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+(async () => {
+  try {
+    window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    user = await Auth.requireAuth();
+    if (user) document.getElementById('nav-avatar').textContent = user.avatar || user.name?.[0] || 'N';
+  } catch (e) { console.warn('Auth init', e); }
+  buildQuickGrid();
+  refreshTags();
+  renderSaved();
+})();
+
+function buildQuickGrid() {
+  document.getElementById('quick-grid').innerHTML = QUICK_PROMPTS.map(p => `
+    <div class="quick-card" onclick="useQuick('${p.mode}','${p.title.replace(/'/g, "\\'")}')">
+      <div class="quick-card-label">${p.label}</div>
+      <div class="quick-card-title">${p.title}</div>
+    </div>`).join('');
+}
+
+function useQuick(m, text) {
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === m));
+  setMode(m);
+  document.getElementById('chat-input').value = text;
+  autoResize(document.getElementById('chat-input'));
+  send();
+}
+
+function switchMode(el) {
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  setMode(el.dataset.mode);
+}
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('chat-input').placeholder = MODES[m]?.placeholder || 'Describe what you need…';
+}
+
+// ═══════════════════════════════════════════════════════════
+// PARAMS
+// ═══════════════════════════════════════════════════════════
+function solo(el, gid) {
+  document.querySelectorAll('#'+gid+' .chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on'); refreshTags();
+}
+function multiChip(el) { el.classList.toggle('on'); refreshTags(); }
+function toggleCollapse(id) { document.getElementById(id).classList.toggle('collapsed'); }
+
+function getBrief() {
+  const g = id => document.getElementById(id)?.value?.trim() || '';
+  const gc = id => document.querySelector('#'+id+' .chip.on')?.dataset.val || '';
+  const gcm = id => Array.from(document.querySelectorAll('#'+id+' .chip.on')).map(c => c.dataset.val);
+  return {
+    name: g('b-name'),
+    objective: g('b-objective'),
+    platforms: gcm('chips-platform'),
+    funnel: gc('chips-funnel'),
+    budget: g('b-budget'),
+    currency: g('b-currency'),
+    daily: g('b-daily'),
+    start: g('b-start'),
+    end: g('b-end'),
+    audience: g('b-audience'),
+    ageMin: g('b-age-min'),
+    ageMax: g('b-age-max'),
+    gender: gc('chips-gender'),
+    geo: g('b-geo'),
+    language: g('b-language'),
+    usp: g('b-usp'),
+    offer: g('b-offer'),
+    lp: g('b-lp'),
+    competitors: g('b-competitors'),
+    cpa: g('b-cpa'),
+    roas: g('b-roas'),
+    ctr: g('b-ctr'),
+    conv: g('b-conv')
+  };
+}
+
+function refreshTags() {
+  const b = getBrief();
+  const tags = [];
+  if (b.name) tags.push(b.name);
+  if (b.objective) tags.push(b.objective);
+  if (b.platforms.length) tags.push(b.platforms.length === 1 ? b.platforms[0] : `${b.platforms.length} platforms`);
+  if (b.funnel) tags.push(b.funnel.split(' ')[0]);
+  if (b.budget) tags.push(`${b.currency} ${b.budget}`);
+  const row = document.getElementById('active-tags');
+  if (tags.length === 0) {
+    row.innerHTML = '<span class="active-tag warn">⚠️ Brief is empty — fill the panel for better outputs</span>';
+  } else {
+    row.innerHTML = tags.map(t => `<span class="active-tag">${esc(t)}</span>`).join('');
+  }
+}
+
+function resetBrief() {
+  if (!confirm('Reset all brief fields?')) return;
+  document.querySelectorAll('.param-input,.param-textarea').forEach(el => el.value = '');
+  document.querySelectorAll('.param-select').forEach(el => el.selectedIndex = 0);
+  document.querySelectorAll('#chips-platform .chip, #chips-funnel .chip').forEach(c => c.classList.remove('on'));
+  document.querySelectorAll('#chips-gender .chip').forEach(c => c.classList.remove('on'));
+  document.querySelector('#chips-gender .chip[data-val="All"]')?.classList.add('on');
+  document.getElementById('b-age-min').value = '28';
+  document.getElementById('b-age-max').value = '45';
+  document.getElementById('b-language').value = 'English';
+  document.getElementById('b-currency').value = 'INR';
+  refreshTags();
+  toast('Brief reset', 'success');
+}
+
+// ═══════════════════════════════════════════════════════════
+// SYSTEM PROMPT (per mode)
+// ═══════════════════════════════════════════════════════════
+function buildSystem() {
+  const b = getBrief();
+  const m = MODES[mode];
+
+  let s = `You are neOwn's senior performance marketing strategist. neOwn is a book rental subscription service for kids in India — delivers curated children's books home, picks them up after a couple of weeks, helps parents replace screen time with reading. Operates in 300+ Indian cities.\n\n`;
+
+  s += `==========================\nBRAND CONTEXT (always honor)\n==========================\n`;
+  s += `- Subscription-only model. Do NOT include pricing/plans in creative copy.\n`;
+  s += `- Core audience: parents (especially mothers) of kids 4–14, urban India.\n`;
+  s += `- Emotional anchors: screen-time guilt, reading joy, parenting pride, child curiosity.\n`;
+  s += `- Differentiators: curated library, expert age-fit recommendations, doorstep delivery, free pickup, 300+ cities.\n`;
+  s += `- Voice: warm, conversational, never preachy or guilt-trippy. Empowering, not lecturing.\n`;
+  s += `- Hinglish allowed when natural — never forced.\n`;
+  s += `- Competitors are mostly local libraries and other rental services. Differentiation is curation + delivery + expert pick.\n\n`;
+
+  s += `==========================\nCAMPAIGN BRIEF\n==========================\n`;
+  if (b.name)        s += `Campaign: ${b.name}\n`;
+  if (b.objective)   s += `Objective: ${b.objective}\n`;
+  if (b.platforms.length) s += `Platforms: ${b.platforms.join(', ')}\n`;
+  if (b.funnel)      s += `Funnel Stage: ${b.funnel}\n`;
+  if (b.budget)      s += `Total Budget: ${b.currency} ${b.budget}\n`;
+  if (b.daily)       s += `Daily Budget: ${b.currency} ${b.daily}\n`;
+  if (b.start || b.end) s += `Duration: ${b.start || '?'} → ${b.end || '?'}\n`;
+  if (b.audience)    s += `Audience: ${b.audience}\n`;
+  if (b.ageMin || b.ageMax) s += `Age Range: ${b.ageMin || '18'}–${b.ageMax || '65'}\n`;
+  if (b.gender && b.gender !== 'All') s += `Gender: ${b.gender}\n`;
+  if (b.geo)         s += `Geography: ${b.geo}\n`;
+  if (b.language)    s += `Output Language: ${b.language}\n`;
+  if (b.usp)         s += `USP / Hook: ${b.usp}\n`;
+  if (b.offer)       s += `Offer / Promo: ${b.offer}\n`;
+  if (b.lp)          s += `Landing Page: ${b.lp}\n`;
+  if (b.competitors) s += `Competitors: ${b.competitors}\n`;
+  if (b.cpa)         s += `Target CPA: ${b.cpa}\n`;
+  if (b.roas)        s += `Target ROAS: ${b.roas}\n`;
+  if (b.ctr)         s += `Target CTR: ${b.ctr}\n`;
+  if (b.conv)        s += `Conversion Event: ${b.conv}\n`;
+  if (importedData)  s += `\n========== EXISTING PERFORMANCE DATA ==========\n${importedData}\n`;
+
+  s += `\n==========================\nTASK: ${m.label.toUpperCase()}\n==========================\n`;
+  s += SCHEMA_INSTRUCTIONS[mode] || SCHEMA_INSTRUCTIONS.full;
+  s += `\n\nReturn ONLY valid JSON, no markdown fences, no commentary. Be specific with numbers, audiences, and benchmarks tailored to neOwn and Indian parents. If the brief is sparse, make smart assumptions and note them in the "summary" field.`;
+
+  return s;
+}
+
+const SCHEMA_INSTRUCTIONS = {
+  full: `Return a complete campaign plan as JSON:
+{
+  "type": "full",
+  "title": "<short campaign title>",
+  "summary": "<2-line strategic summary>",
+  "objective_rationale": "<why this objective for this funnel stage, 2-3 lines>",
+  "architecture": "<naming convention + structure plan, 2-3 lines>",
+  "audiences": [
+    {"name": "<segment name>", "demographics": "<one line>", "interests": ["interest1","interest2",...], "behaviors": "<one line>", "lookalike": "<source + %>", "exclusions": "<one line>", "hypothesis": "<why this audience>"}
+  ],
+  "creative_angles": [
+    {"angle": "<angle name>", "hook": "<actual opening line>", "key_message": "<core message>", "format": "<Reel/Story/Carousel/Video>"}
+  ],
+  "ad_copy_samples": [
+    {"headline": "...", "primary": "...", "description": "...", "cta": "..."}
+  ],
+  "budget_split": [
+    {"channel": "...", "amount": "...", "pct": "...", "rationale": "..."}
+  ],
+  "bidding": "<bid strategy + optimization event>",
+  "placements": ["..."],
+  "predictions": {"cpm": "...", "cpc": "...", "ctr": "...", "cvr": "...", "cpa": "...", "roas": "..."},
+  "tracking": "<pixel events + UTM template + attribution window>",
+  "roadmap_30d": [
+    {"phase": "Days 1-7 — Learning", "actions": ["...", "..."]}
+  ],
+  "risks": [{"risk": "...", "mitigation": "..."}]
+}
+Provide 3-5 audiences, 3-4 creative_angles, 5 ad_copy_samples, 3-5 budget_split rows, 4 roadmap phases, 3 risks.`,
+
+  copy: `Return 10 distinct ad copy variants across different angles:
+{
+  "type": "copy",
+  "title": "<short title>",
+  "summary": "<1-2 lines>",
+  "variants": [
+    {"n": 1, "angle": "<Pain Point | Benefit | Social Proof | Scarcity | Curiosity | Problem-Solution | Transformation | Contrarian | Authority | Question Hook>", "headline": "<≤40 chars>", "primary": "<≤125 chars>", "description": "<≤30 chars>", "cta": "<button label>", "char_total": <total chars across all fields>}
+  ],
+  "why_works": "<2-3 line explanation of strategic logic>"
+}
+Cover all 10 angles. Be specific to neOwn's audience (parents, screen time, books). Hinglish okay if brief allows.`,
+
+  creative: `Return 5 creative concepts with full shot breakdowns:
+{
+  "type": "creative",
+  "title": "<short title>",
+  "summary": "<1-2 lines>",
+  "concepts": [
+    {
+      "name": "<concept name>",
+      "format": "<Reel | Story | Carousel | YouTube Short | UGC Video | Polished Spot>",
+      "style": "<UGC | Polished | Animated | Mixed>",
+      "hook": "<exact first 3 seconds verbatim>",
+      "scenes": [
+        {"time": "0:00-0:03", "visual": "<what we see>", "vo": "<voiceover/dialogue>", "text": "<on-screen text overlay>"}
+      ],
+      "cta_frame": "<closing frame text>",
+      "music": "<music/mood direction>",
+      "why": "<2 lines on why this works for the audience>"
+    }
+  ]
+}
+Mix: at least 2 UGC-style and 2 polished. 4-6 scenes per concept.`,
+
+  audience: `Return 5 audience segments to test:
+{
+  "type": "audience",
+  "title": "<short title>",
+  "summary": "<1-2 lines>",
+  "segments": [
+    {
+      "name": "<memorable segment name>",
+      "demographics": "<age + gender + income + life-stage>",
+      "interests": ["interest1","interest2","interest3","..."],
+      "behaviors": "<purchase + device + engagement patterns>",
+      "custom_audience": "<source: website visitors, video viewers %, customer list, etc.>",
+      "lookalike": "<source + %, e.g. '1% LAL of top 25% LTV customers'>",
+      "exclusions": "<what to exclude and why>",
+      "est_reach": "<order of magnitude>",
+      "hypothesis": "<why this audience for this campaign>"
+    }
+  ],
+  "test_sequencing": "<which to launch first and why, 2-3 lines>"
+}
+Use 8-12 SPECIFIC interests per segment (actual interest names ad platforms recognize).`,
+
+  abtest: `Return a rigorous A/B test plan:
+{
+  "type": "abtest",
+  "title": "<test name>",
+  "summary": "<1-2 lines>",
+  "hypothesis": "<single testable hypothesis>",
+  "variables": ["what's being tested"],
+  "constants": ["what's held constant"],
+  "test_matrix": {"headers": ["Cell","Variable A","Variable B","KPI"], "rows": [["Cell 1","...","...","..."]]},
+  "sample_size": "<estimated impressions/conversions needed + rationale>",
+  "duration": "<test duration + rationale>",
+  "decision_criteria": "<significance threshold + MDE + how winner is called>",
+  "primary_kpi": "<main KPI>",
+  "guardrail_kpis": ["..."],
+  "next_tests": ["test 1 if A wins","test 2 if B wins","test 3 follow-up"],
+  "pitfalls": ["common pitfall 1","common pitfall 2"]
+}`,
+
+  predict: `Return realistic performance predictions with 3 scenarios:
+{
+  "type": "predict",
+  "title": "<short title>",
+  "summary": "<1-2 lines>",
+  "assumptions": ["assumption 1","assumption 2","..."],
+  "scenarios": {
+    "conservative": {"cpm":"...","cpc":"...","ctr":"...","cvr":"...","cpa":"...","roas":"...","daily_reach":"...","daily_clicks":"...","daily_conv":"...","total_spend":"...","total_conv":"..."},
+    "expected":     {"cpm":"...","cpc":"...","ctr":"...","cvr":"...","cpa":"...","roas":"...","daily_reach":"...","daily_clicks":"...","daily_conv":"...","total_spend":"...","total_conv":"..."},
+    "optimistic":   {"cpm":"...","cpc":"...","ctr":"...","cvr":"...","cpa":"...","roas":"...","daily_reach":"...","daily_clicks":"...","daily_conv":"...","total_spend":"...","total_conv":"..."}
+  },
+  "pacing": "<expected day-by-day curve, 2-3 lines>",
+  "risks": ["specific things that push to conservative"],
+  "optimistic_levers": ["specific changes that move to optimistic"]
+}
+Use Indian benchmarks (Meta CPM ₹80-200 for parents audience, etc.) — be honest about ranges.`,
+
+  budget: `Return granular budget allocation:
+{
+  "type": "budget",
+  "title": "<short title>",
+  "summary": "<1-2 lines>",
+  "splits": [{"channel":"...","amount":"...","pct":"...","rationale":"..."}],
+  "ad_set_splits": [{"ad_set":"...","daily":"...","total":"...","rationale":"..."}],
+  "pacing": "<front-loaded/steady/back-loaded recommendation + why>",
+  "scaling_triggers": [{"metric":"CPA","threshold":"below ₹X for 3 days","action":"+20% budget"}],
+  "kill_triggers": [{"metric":"...","threshold":"...","action":"pause"}],
+  "reserve_pct": "<% to hold back>",
+  "guardrails": ["max daily spend","frequency cap","..."]
+}`,
+
+  retargeting: `Return a complete retargeting funnel:
+{
+  "type": "retargeting",
+  "title": "<short title>",
+  "summary": "<1-2 lines>",
+  "stages": [
+    {
+      "stage": "TOF Awareness Retargeting (1-7 days)",
+      "audience": "<audience definition>",
+      "message": "<message direction>",
+      "freq_cap": "<e.g. 3/week>",
+      "budget_pct": "<%>",
+      "creative_direction": "<2-3 lines>"
+    }
+  ],
+  "exclusion_logic": "<master exclusion map so audiences don't overlap, 2-3 lines>",
+  "sequencing": "<total exposure cap + timing between stages>",
+  "creative_rotation": "<ads per stage + refresh cadence>"
+}
+Provide all 4 stages: TOF Retargeting, MOF Consideration, BOF Conversion, Reactivation.`,
+
+  scale: `Return a concrete scaling playbook:
+{
+  "type": "scale",
+  "title": "<short title>",
+  "summary": "<1-2 lines>",
+  "green_lights": ["specific metric thresholds that justify scaling"],
+  "red_flags": ["warning signs to hold or cut"],
+  "vertical_rules": ["budget increase % at once + pacing rules"],
+  "horizontal_directions": ["new audience expansion","new creative angles","new placements","new geos"],
+  "refresh_cadence": "<when + how to refresh creatives>",
+  "budget_thresholds": [{"level":"₹X daily","action":"<restructure CBO→ABO etc.>"}],
+  "scale_risks": ["common things that fail at scale + how to prevent"]
+}`,
+
+  optimize: `Return diagnosis + recommendations based on the imported performance data:
+{
+  "type": "optimize",
+  "title": "<short title>",
+  "summary": "<1-2 lines, sharp>",
+  "diagnosis": "<2-3 lines: what's working, what's not, where the bottleneck is>",
+  "whats_working": ["..."],
+  "whats_not": ["..."],
+  "bottleneck": "<creative | audience | LP | bid | offer — pick one and justify>",
+  "quick_wins": [{"action":"...","impact":"high/med/low","effort":"low/med/high"}],
+  "structural": ["bigger restructuring recs"],
+  "creative_recs": ["specific new angles/hooks/formats"],
+  "audience_recs": ["specific refinements"],
+  "budget_recs": ["where to shift money"],
+  "next_tests": ["top 3 hypotheses prioritized"],
+  "expected_uplift": "<realistic uplift if recs followed>"
+}`,
+
+  landing: `Return conversion-optimized LP copy:
+{
+  "type": "landing",
+  "title": "<short title>",
+  "summary": "<1-2 lines>",
+  "hero": {"headline":"<≤10 words>","subhead":"<1-2 lines>","cta_text":"<button text>","cta_micro":"<microcopy below button>","hero_visual":"<what to show>"},
+  "value_props": [{"icon":"<emoji>","title":"<2-4 words>","desc":"<1 line>"}],
+  "social_proof": {"trust_signals":["..."],"testimonial_slots":["<3 testimonial themes>"],"logo_bar":"<what logos>"},
+  "how_it_works": [{"step":1,"title":"...","desc":"<1 line>"}],
+  "features_benefits": [{"feature":"...","benefit":"..."}],
+  "objections": [{"objection":"...","response":"..."}],
+  "faq": [{"q":"...","a":"..."}],
+  "urgency": "<honest urgency line>",
+  "final_cta": "<closing pitch + repeat CTA>",
+  "footer_microcopy": ["trust badge 1","guarantee","support promise"]
+}
+5 value_props, 3 how_it_works steps, 5 objections, 5 FAQs.`,
+
+  brief: `Return a clean designer/video editor brief:
+{
+  "type": "brief",
+  "title": "<brief title>",
+  "summary": "<1-2 lines>",
+  "overview": "<1 paragraph>",
+  "objective": "<single primary objective + how creative supports it>",
+  "audience": "<who, vivid + concise>",
+  "key_message": "<the ONE thing they remember>",
+  "tone": "<voice + mood + do/don't>",
+  "deliverables": [{"asset":"...","format":"...","dimensions":"...","duration":"...","specs":"...","qty":"..."}],
+  "direction": {"style":"...","mood":"...","refs":["3 reference types/brands"]},
+  "must_include": ["..."],
+  "must_avoid": ["..."],
+  "copy_per_asset": [{"asset":"...","headline":"...","caption":"...","on_screen":"..."}],
+  "production_notes": "<talent + locations + props + music license>",
+  "timeline": [{"phase":"Brief→first cut","date":"..."}],
+  "approval": "<who signs off + flow>"
+}`
+};
+
+// ═══════════════════════════════════════════════════════════
+// SEND
+// ═══════════════════════════════════════════════════════════
+async function send() {
+  const inp = document.getElementById('chat-input');
+  let txt = inp.value.trim();
+  if (busy) return;
+  if (!txt) txt = `Generate a ${MODES[mode].label} based on the current brief.`;
+
+  inp.value = ''; autoResize(inp);
+  busy = true; document.getElementById('send-btn').disabled = true;
+
+  document.getElementById('welcome-state')?.remove();
+
+  addUserMsg(txt);
+  msgs.push({ role:'user', content:txt });
+  const modeForCall = mode;
+
+  showTyping();
+
+  try {
+    const apiUrl = (window.location.hostname === 'localhost' || window.location.protocol === 'file:') ? null : '/api/campaign';
+    let reply;
+
+    if (apiUrl) {
+      const r = await fetch(apiUrl, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ messages: msgs, system: buildSystem() })
+      });
+      const d = await r.json();
+      if (d.error) throw new Error(d.error);
+      reply = d.content;
+    } else {
+      let key = localStorage.getItem('cp_dev_key');
+      if (!key) {
+        const k = prompt('Claude API key for local dev:');
+        if (k) localStorage.setItem('cp_dev_key', k);
+        throw new Error('Need API key');
+      }
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:4000, system:buildSystem(), messages:msgs })
+      });
+      const d = await r.json();
+      if (d.error) throw new Error(d.error.message);
+      reply = d.content[0].text;
+    }
+
+    removeTyping();
+    msgs.push({ role:'assistant', content:reply });
+    lastAI = reply; lastMode = modeForCall;
+    renderOutput(reply, modeForCall);
+
+  } catch (e) {
+    removeTyping();
+    addError(e.message);
+  }
+
+  busy = false; document.getElementById('send-btn').disabled = false;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER OUTPUT (parses JSON, builds card)
+// ═══════════════════════════════════════════════════════════
+function renderOutput(raw, modeUsed) {
+  let data;
+  try {
+    const cleaned = raw.replace(/^```json\s*/,'').replace(/```\s*$/,'').trim();
+    data = JSON.parse(cleaned);
+  } catch {
+    data = { type:'text', title: MODES[modeUsed]?.label, content: raw };
+  }
+
+  const m = MODES[modeUsed] || MODES.full;
+  const b = getBrief();
+  let bodyHTML = '';
+
+  if (data.summary) bodyHTML += `<div class="output-summary">${esc(data.summary)}</div>`;
+
+  switch (data.type) {
+    case 'full':        bodyHTML += renderFull(data); break;
+    case 'copy':        bodyHTML += renderCopy(data); break;
+    case 'creative':    bodyHTML += renderCreative(data); break;
+    case 'audience':    bodyHTML += renderAudience(data); break;
+    case 'abtest':      bodyHTML += renderAbtest(data); break;
+    case 'predict':     bodyHTML += renderPredict(data); break;
+    case 'budget':      bodyHTML += renderBudget(data); break;
+    case 'retargeting': bodyHTML += renderRetargeting(data); break;
+    case 'scale':       bodyHTML += renderScale(data); break;
+    case 'optimize':    bodyHTML += renderOptimize(data); break;
+    case 'landing':     bodyHTML += renderLanding(data); break;
+    case 'brief':       bodyHTML += renderBrief(data); break;
+    default:            bodyHTML += `<div class="plain-text">${esc(data.content || raw)}</div>`;
+  }
+
+  const platTag = b.platforms.length ? `<span class="output-platform-tag">${esc(b.platforms[0])}${b.platforms.length>1?' +'+(b.platforms.length-1):''}</span>` : '';
+  const titleHTML = data.title ? `<span class="output-title">${esc(data.title)}</span>` : '';
+
+  const card = document.createElement('div');
+  card.className = 'msg msg-ai';
+  card.innerHTML = `
+    <div class="output-card" data-raw="${escAttr(raw)}" data-mode="${modeUsed}">
+      <div class="output-card-header">
+        <div class="output-meta">
+          <div class="output-icon">${m.icon}</div>
+          <span class="output-mode-label">${m.label}</span>
+          ${titleHTML}
+          ${platTag}
+        </div>
+        <div class="output-actions">
+          <button class="output-act-btn" onclick="copyOutput(this)" title="Copy raw JSON">📋</button>
+          <button class="output-act-btn" onclick="saveCampaign(this)" title="Save campaign">💾 Save</button>
+          <button class="output-act-btn" onclick="saveToBank(this)" title="Save to Content Bank">📥 Bank</button>
+          <button class="output-act-btn" onclick="toCalendar(this)" title="Add to calendar">📅</button>
+          <button class="output-act-btn" onclick="exportTxt(this)" title="Download .txt">.txt</button>
+          <button class="output-act-btn" onclick="exportJson(this)" title="Download .json">.json</button>
+          <button class="output-act-btn" onclick="refineOutput(this)" title="Refine">✏️</button>
+        </div>
+      </div>
+      <div class="output-body">${bodyHTML}</div>
+    </div>`;
+  document.getElementById('chat-messages').appendChild(card);
+  card.scrollIntoView({ behavior:'smooth', block:'end' });
+}
+
+function section(label, content) {
+  return `<div class="out-section"><div class="out-section-label">${label}</div>${content}</div>`;
+}
+
+// ── Per-mode renderers ──────────────────────────────────────
+function renderFull(d) {
+  let h = '';
+  if (d.objective_rationale) h += section('OBJECTIVE & RATIONALE', `<div class="plain-text">${esc(d.objective_rationale)}</div>`);
+  if (d.architecture)        h += section('CAMPAIGN ARCHITECTURE', `<div class="plain-text">${esc(d.architecture)}</div>`);
+  if (d.audiences?.length)   h += section('AUDIENCES', d.audiences.map((a,i) => audienceCard(a, i+1)).join(''));
+  if (d.creative_angles?.length) {
+    h += section('CREATIVE ANGLES', d.creative_angles.map((c,i) => `
+      <div class="list-card">
+        <div class="list-card-row">
+          <div class="list-card-num">${i+1}</div>
+          <div style="flex:1">
+            <div class="list-card-title">${esc(c.angle)} ${c.format?`<span class="tag-pill" style="margin-left:6px">${esc(c.format)}</span>`:''}</div>
+            <div class="list-card-body"><strong style="color:var(--text)">Hook:</strong> ${esc(c.hook)}<br><strong style="color:var(--text)">Message:</strong> ${esc(c.key_message)}</div>
+          </div>
+        </div>
+      </div>`).join(''));
+  }
+  if (d.ad_copy_samples?.length) {
+    h += section('AD COPY SAMPLES', `<div class="copy-variants">${d.ad_copy_samples.map((c,i) => copyVariantCard({n:i+1, ...c})).join('')}</div>`);
+  }
+  if (d.budget_split?.length) {
+    h += section('BUDGET SPLIT', tableHTML(['Channel','Amount','%','Rationale'], d.budget_split.map(r => [r.channel, r.amount, r.pct, r.rationale])));
+  }
+  if (d.bidding)    h += section('BIDDING', `<div class="plain-text">${esc(d.bidding)}</div>`);
+  if (d.placements?.length) h += section('PLACEMENTS', `<div class="tag-wrap">${d.placements.map(p => `<span class="tag-pill">${esc(p)}</span>`).join('')}</div>`);
+  if (d.predictions) {
+    h += section('KPI PREDICTIONS', `<div class="out-table"><table class="out-table"><tr>${Object.keys(d.predictions).map(k => `<th>${esc(k.toUpperCase())}</th>`).join('')}</tr><tr>${Object.values(d.predictions).map(v => `<td><strong>${esc(v)}</strong></td>`).join('')}</tr></table></div>`);
+  }
+  if (d.tracking)   h += section('TRACKING', `<div class="muted-text">${esc(d.tracking)}</div>`);
+  if (d.roadmap_30d?.length) {
+    h += section('30-DAY ROADMAP', d.roadmap_30d.map((r,i) => `
+      <div class="stage-block" data-num="${i+1}">
+        <div class="stage-name">${esc(r.phase)}</div>
+        <div class="muted-text">${(r.actions||[]).map(a => `• ${esc(a)}`).join('<br>')}</div>
+      </div>`).join(''));
+  }
+  if (d.risks?.length) {
+    h += section('RISKS & MITIGATION', tableHTML(['Risk','Mitigation'], d.risks.map(r => [r.risk, r.mitigation])));
+  }
+  return h;
+}
+
+function renderCopy(d) {
+  let h = '';
+  if (d.variants?.length) {
+    h += section('VARIANTS', `<div class="copy-variants">${d.variants.map(copyVariantCard).join('')}</div>`);
+  }
+  if (d.why_works) h += section('WHY THESE WORK', `<div class="muted-text">${esc(d.why_works)}</div>`);
+  return h;
+}
+
+function copyVariantCard(v) {
+  return `<div class="copy-variant">
+    <div class="copy-variant-head">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="copy-variant-num">#${v.n||'?'}</span>
+        <span class="copy-variant-angle">${esc(v.angle||'')}</span>
+      </div>
+      ${v.char_total ? `<span class="copy-variant-char">${v.char_total} chars</span>`:''}
+    </div>
+    ${v.headline ? `<div class="copy-variant-field"><div class="copy-variant-key">Headline</div><div class="copy-variant-val" style="font-weight:600">${esc(v.headline)}</div></div>`:''}
+    ${v.primary  ? `<div class="copy-variant-field"><div class="copy-variant-key">Primary Text</div><div class="copy-variant-val">${esc(v.primary)}</div></div>`:''}
+    ${v.description ? `<div class="copy-variant-field"><div class="copy-variant-key">Description</div><div class="copy-variant-val muted-text">${esc(v.description)}</div></div>`:''}
+    ${v.cta ? `<div class="copy-variant-cta">${esc(v.cta)}</div>`:''}
+  </div>`;
+}
+
+function renderCreative(d) {
+  if (!d.concepts?.length) return '';
+  return section('CONCEPTS', d.concepts.map((c,i) => `
+    <div class="concept-block">
+      <div class="concept-name">${i+1}. ${esc(c.name)}</div>
+      <div class="concept-meta">
+        ${c.format ? `<span class="tag-pill">${esc(c.format)}</span>`:''}
+        ${c.style ? `<span class="tag-pill green">${esc(c.style)}</span>`:''}
+      </div>
+      ${c.hook ? `<div class="out-section-content hook" style="margin-bottom:10px">${esc(c.hook)}</div>`:''}
+      ${c.scenes?.length ? `<div class="concept-section">
+        <div class="concept-section-label">SCENES</div>
+        ${c.scenes.map(s => `
+          <div class="scene-block">
+            ${s.time ? `<div class="scene-time">${esc(s.time)}</div>`:''}
+            ${s.visual ? `<div style="color:var(--text);margin-bottom:3px;font-size:12.5px"><strong style="color:var(--text2)">📷</strong> ${esc(s.visual)}</div>`:''}
+            ${s.vo ? `<div style="color:var(--text2);margin-bottom:3px;font-size:12.5px"><strong style="color:var(--text2)">🎤</strong> ${esc(s.vo)}</div>`:''}
+            ${s.text ? `<div style="color:var(--text3);font-size:11.5px;font-style:italic">📝 On-screen: ${esc(s.text)}</div>`:''}
+          </div>`).join('')}
+      </div>`:''}
+      ${c.cta_frame ? `<div class="concept-section"><div class="concept-section-label">CTA FRAME</div><div class="muted-text">${esc(c.cta_frame)}</div></div>`:''}
+      ${c.music ? `<div class="concept-section"><div class="concept-section-label">MUSIC / MOOD</div><div class="muted-text">${esc(c.music)}</div></div>`:''}
+      ${c.why ? `<div class="concept-section"><div class="concept-section-label">WHY IT WORKS</div><div class="muted-text">${esc(c.why)}</div></div>`:''}
+    </div>`).join(''));
+}
+
+function renderAudience(d) {
+  let h = '';
+  if (d.segments?.length) h += section('AUDIENCE SEGMENTS', d.segments.map((s,i) => audienceCard(s, i+1)).join(''));
+  if (d.test_sequencing) h += section('TEST SEQUENCING', `<div class="muted-text">${esc(d.test_sequencing)}</div>`);
+  return h;
+}
+
+function audienceCard(a, n) {
+  return `<div class="segment-block">
+    <div class="segment-name">${n}. ${esc(a.name||'Segment')}</div>
+    <div class="segment-grid">
+      ${a.demographics ? `<div class="segment-row"><div class="seg-key">Demographics</div><div class="seg-val">${esc(a.demographics)}</div></div>`:''}
+      ${a.interests?.length ? `<div class="segment-row"><div class="seg-key">Interests</div><div class="seg-val"><div class="tag-wrap">${a.interests.map(i => `<span class="tag-pill">${esc(i)}</span>`).join('')}</div></div></div>`:''}
+      ${a.behaviors ? `<div class="segment-row"><div class="seg-key">Behaviors</div><div class="seg-val">${esc(a.behaviors)}</div></div>`:''}
+      ${a.custom_audience ? `<div class="segment-row"><div class="seg-key">Custom</div><div class="seg-val">${esc(a.custom_audience)}</div></div>`:''}
+      ${a.lookalike ? `<div class="segment-row"><div class="seg-key">Lookalike</div><div class="seg-val">${esc(a.lookalike)}</div></div>`:''}
+      ${a.exclusions ? `<div class="segment-row"><div class="seg-key">Exclusions</div><div class="seg-val">${esc(a.exclusions)}</div></div>`:''}
+      ${a.est_reach ? `<div class="segment-row"><div class="seg-key">Est. Reach</div><div class="seg-val"><strong>${esc(a.est_reach)}</strong></div></div>`:''}
+      ${a.hypothesis ? `<div class="segment-row"><div class="seg-key">Hypothesis</div><div class="seg-val" style="color:var(--text)">${esc(a.hypothesis)}</div></div>`:''}
+    </div>
+  </div>`;
+}
+
+function renderAbtest(d) {
+  let h = '';
+  if (d.hypothesis) h += section('HYPOTHESIS', `<div class="out-section-content hook">${esc(d.hypothesis)}</div>`);
+  if (d.variables?.length) h += section('VARIABLES TESTED', `<div class="tag-wrap">${d.variables.map(v => `<span class="tag-pill">${esc(v)}</span>`).join('')}</div>`);
+  if (d.constants?.length) h += section('HELD CONSTANT', `<div class="tag-wrap">${d.constants.map(v => `<span class="tag-pill green">${esc(v)}</span>`).join('')}</div>`);
+  if (d.test_matrix) h += section('TEST MATRIX', tableHTML(d.test_matrix.headers, d.test_matrix.rows));
+  if (d.sample_size || d.duration) {
+    h += section('SAMPLE SIZE & DURATION', `<div class="plain-text">${d.sample_size?'<strong>Sample:</strong> '+esc(d.sample_size)+'<br>':''}${d.duration?'<strong>Duration:</strong> '+esc(d.duration):''}</div>`);
+  }
+  if (d.decision_criteria) h += section('DECISION CRITERIA', `<div class="muted-text">${esc(d.decision_criteria)}</div>`);
+  if (d.primary_kpi || d.guardrail_kpis?.length) {
+    h += section('KPIs', `${d.primary_kpi?`<div style="margin-bottom:6px"><span class="tag-pill amber">Primary: ${esc(d.primary_kpi)}</span></div>`:''}${d.guardrail_kpis?.length?`<div class="tag-wrap">${d.guardrail_kpis.map(k => `<span class="tag-pill">Guardrail: ${esc(k)}</span>`).join('')}</div>`:''}`);
+  }
+  if (d.next_tests?.length) h += section('NEXT TESTS', bulletsHTML(d.next_tests));
+  if (d.pitfalls?.length) h += section('PITFALLS', bulletsHTML(d.pitfalls, 'red'));
+  return h;
+}
+
+function renderPredict(d) {
+  let h = '';
+  if (d.assumptions?.length) h += section('ASSUMPTIONS', bulletsHTML(d.assumptions));
+  if (d.scenarios) {
+    const c = d.scenarios.conservative || {}, e = d.scenarios.expected || {}, o = d.scenarios.optimistic || {};
+    const keys = Array.from(new Set([...Object.keys(c), ...Object.keys(e), ...Object.keys(o)]));
+    h += section('PERFORMANCE FORECAST', `
+      <div class="scenarios-grid">
+        ${[['Conservative',c,''],['Expected',e,'expected'],['Optimistic',o,'']].map(([n,obj,cls]) => `
+          <div class="scenario-col ${cls}">
+            <div class="scenario-name">${n}</div>
+            ${keys.map(k => `<div class="scenario-row"><span class="k">${esc(k.replace(/_/g,' '))}</span><span class="v">${esc(obj[k]||'—')}</span></div>`).join('')}
+          </div>`).join('')}
+      </div>`);
+  }
+  if (d.pacing) h += section('PACING', `<div class="plain-text">${esc(d.pacing)}</div>`);
+  if (d.risks?.length) h += section('RISKS', bulletsHTML(d.risks, 'red'));
+  if (d.optimistic_levers?.length) h += section('OPTIMISTIC LEVERS', bulletsHTML(d.optimistic_levers, 'green'));
+  return h;
+}
+
+function renderBudget(d) {
+  let h = '';
+  if (d.splits?.length) h += section('CHANNEL SPLIT', tableHTML(['Channel','Amount','%','Rationale'], d.splits.map(r => [r.channel, r.amount, r.pct, r.rationale])));
+  if (d.ad_set_splits?.length) h += section('AD SET ALLOCATION', tableHTML(['Ad Set','Daily','Total','Rationale'], d.ad_set_splits.map(r => [r.ad_set, r.daily, r.total, r.rationale])));
+  if (d.pacing) h += section('PACING', `<div class="plain-text">${esc(d.pacing)}</div>`);
+  if (d.scaling_triggers?.length) h += section('SCALING TRIGGERS', tableHTML(['Metric','Threshold','Action'], d.scaling_triggers.map(r => [r.metric, r.threshold, r.action])));
+  if (d.kill_triggers?.length) h += section('KILL TRIGGERS', tableHTML(['Metric','Threshold','Action'], d.kill_triggers.map(r => [r.metric, r.threshold, r.action])));
+  if (d.reserve_pct) h += section('RESERVE BUDGET', `<div class="plain-text">${esc(d.reserve_pct)}</div>`);
+  if (d.guardrails?.length) h += section('GUARDRAILS', bulletsHTML(d.guardrails));
+  return h;
+}
+
+function renderRetargeting(d) {
+  let h = '';
+  if (d.stages?.length) {
+    h += section('FUNNEL STAGES', d.stages.map((s,i) => `
+      <div class="stage-block" data-num="${i+1}">
+        <div class="stage-name">${esc(s.stage)}</div>
+        <div class="stage-pill-row">
+          ${s.freq_cap?`<span class="tag-pill amber">Freq cap: ${esc(s.freq_cap)}</span>`:''}
+          ${s.budget_pct?`<span class="tag-pill green">Budget: ${esc(s.budget_pct)}</span>`:''}
+        </div>
+        <div class="segment-grid">
+          ${s.audience?`<div class="segment-row"><div class="seg-key">Audience</div><div class="seg-val">${esc(s.audience)}</div></div>`:''}
+          ${s.message?`<div class="segment-row"><div class="seg-key">Message</div><div class="seg-val">${esc(s.message)}</div></div>`:''}
+          ${s.creative_direction?`<div class="segment-row"><div class="seg-key">Creative</div><div class="seg-val">${esc(s.creative_direction)}</div></div>`:''}
+        </div>
+      </div>`).join(''));
+  }
+  if (d.exclusion_logic) h += section('EXCLUSION LOGIC', `<div class="plain-text">${esc(d.exclusion_logic)}</div>`);
+  if (d.sequencing) h += section('SEQUENCING', `<div class="plain-text">${esc(d.sequencing)}</div>`);
+  if (d.creative_rotation) h += section('CREATIVE ROTATION', `<div class="plain-text">${esc(d.creative_rotation)}</div>`);
+  return h;
+}
+
+function renderScale(d) {
+  let h = '';
+  if (d.green_lights?.length) h += section('GREEN LIGHTS', bulletsHTML(d.green_lights, 'green'));
+  if (d.red_flags?.length) h += section('RED FLAGS', bulletsHTML(d.red_flags, 'red'));
+  if (d.vertical_rules?.length) h += section('VERTICAL SCALING', bulletsHTML(d.vertical_rules));
+  if (d.horizontal_directions?.length) h += section('HORIZONTAL EXPANSION', bulletsHTML(d.horizontal_directions));
+  if (d.refresh_cadence) h += section('CREATIVE REFRESH', `<div class="plain-text">${esc(d.refresh_cadence)}</div>`);
+  if (d.budget_thresholds?.length) h += section('BUDGET THRESHOLDS', tableHTML(['Level','Action'], d.budget_thresholds.map(r => [r.level, r.action])));
+  if (d.scale_risks?.length) h += section('SCALE RISKS', bulletsHTML(d.scale_risks, 'red'));
+  return h;
+}
+
+function renderOptimize(d) {
+  let h = '';
+  if (d.diagnosis) h += section('DIAGNOSIS', `<div class="out-section-content hook">${esc(d.diagnosis)}</div>`);
+  if (d.bottleneck) h += section('BOTTLENECK', `<div class="plain-text"><span class="tag-pill amber">${esc(d.bottleneck)}</span></div>`);
+  if (d.whats_working?.length) h += section("WHAT'S WORKING", bulletsHTML(d.whats_working, 'green'));
+  if (d.whats_not?.length) h += section("WHAT'S NOT", bulletsHTML(d.whats_not, 'red'));
+  if (d.quick_wins?.length) h += section('QUICK WINS', tableHTML(['Action','Impact','Effort'], d.quick_wins.map(r => [r.action, r.impact, r.effort])));
+  if (d.structural?.length) h += section('STRUCTURAL CHANGES', bulletsHTML(d.structural));
+  if (d.creative_recs?.length) h += section('CREATIVE RECOMMENDATIONS', bulletsHTML(d.creative_recs));
+  if (d.audience_recs?.length) h += section('AUDIENCE RECOMMENDATIONS', bulletsHTML(d.audience_recs));
+  if (d.budget_recs?.length) h += section('BUDGET RECOMMENDATIONS', bulletsHTML(d.budget_recs));
+  if (d.next_tests?.length) h += section('NEXT TESTS', bulletsHTML(d.next_tests));
+  if (d.expected_uplift) h += section('EXPECTED UPLIFT', `<div class="out-section-content hook">${esc(d.expected_uplift)}</div>`);
+  return h;
+}
+
+function renderLanding(d) {
+  let h = '';
+  if (d.hero) {
+    h += section('HERO', `
+      <div style="background:linear-gradient(135deg, rgba(240,0,140,0.07), rgba(60,40,180,0.07));border:1px solid rgba(240,0,140,0.15);border-radius:12px;padding:16px 18px">
+        ${d.hero.headline?`<div style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.2">${esc(d.hero.headline)}</div>`:''}
+        ${d.hero.subhead?`<div style="font-size:14px;color:var(--text2);line-height:1.5;margin-bottom:12px">${esc(d.hero.subhead)}</div>`:''}
+        ${d.hero.cta_text?`<div style="display:inline-block;background:linear-gradient(135deg,var(--pink),#B8006E);color:#fff;padding:8px 18px;border-radius:8px;font-weight:600;font-size:13px;margin-bottom:6px">${esc(d.hero.cta_text)}</div>`:''}
+        ${d.hero.cta_micro?`<div style="font-size:11px;color:var(--text3)">${esc(d.hero.cta_micro)}</div>`:''}
+        ${d.hero.hero_visual?`<div style="margin-top:10px;font-size:11px;color:var(--text3);font-style:italic">📷 Visual: ${esc(d.hero.hero_visual)}</div>`:''}
+      </div>`);
+  }
+  if (d.value_props?.length) {
+    h += section('VALUE PROPS', d.value_props.map(v => `<div class="list-card"><div class="list-card-row"><div style="font-size:18px;flex-shrink:0">${esc(v.icon||'•')}</div><div style="flex:1"><div class="list-card-title">${esc(v.title)}</div><div class="list-card-body">${esc(v.desc)}</div></div></div></div>`).join(''));
+  }
+  if (d.social_proof) {
+    h += section('SOCIAL PROOF', `
+      ${d.social_proof.trust_signals?.length?`<div style="margin-bottom:8px"><div class="copy-variant-key">TRUST SIGNALS</div><div class="tag-wrap" style="margin-top:4px">${d.social_proof.trust_signals.map(s => `<span class="tag-pill green">${esc(s)}</span>`).join('')}</div></div>`:''}
+      ${d.social_proof.testimonial_slots?.length?`<div style="margin-bottom:8px"><div class="copy-variant-key">TESTIMONIAL THEMES</div>${d.social_proof.testimonial_slots.map(t => `<div class="muted-text" style="margin-top:3px">• ${esc(t)}</div>`).join('')}</div>`:''}
+      ${d.social_proof.logo_bar?`<div><div class="copy-variant-key">LOGO BAR</div><div class="muted-text">${esc(d.social_proof.logo_bar)}</div></div>`:''}
+    `);
+  }
+  if (d.how_it_works?.length) h += section('HOW IT WORKS', d.how_it_works.map(s => `<div class="list-card"><div class="list-card-row"><div class="list-card-num">${s.step||'•'}</div><div style="flex:1"><div class="list-card-title">${esc(s.title)}</div><div class="list-card-body">${esc(s.desc)}</div></div></div></div>`).join(''));
+  if (d.features_benefits?.length) h += section('FEATURES → BENEFITS', tableHTML(['Feature','Benefit'], d.features_benefits.map(r => [r.feature, r.benefit])));
+  if (d.objections?.length) h += section('OBJECTION HANDLERS', d.objections.map(o => `<div class="list-card"><div class="list-card-title" style="color:var(--amber)">"${esc(o.objection)}"</div><div class="list-card-body" style="margin-top:6px">${esc(o.response)}</div></div>`).join(''));
+  if (d.faq?.length) h += section('FAQ', d.faq.map(f => `<div class="list-card"><div class="list-card-title">${esc(f.q)}</div><div class="list-card-body" style="margin-top:4px">${esc(f.a)}</div></div>`).join(''));
+  if (d.urgency) h += section('URGENCY', `<div class="out-section-content hook">${esc(d.urgency)}</div>`);
+  if (d.final_cta) h += section('FINAL CTA', `<div class="plain-text">${esc(d.final_cta)}</div>`);
+  if (d.footer_microcopy?.length) h += section('FOOTER', `<div class="tag-wrap">${d.footer_microcopy.map(t => `<span class="tag-pill">${esc(t)}</span>`).join('')}</div>`);
+  return h;
+}
+
+function renderBrief(d) {
+  let h = '';
+  if (d.overview) h += section('OVERVIEW', `<div class="plain-text">${esc(d.overview)}</div>`);
+  if (d.objective) h += section('OBJECTIVE', `<div class="plain-text">${esc(d.objective)}</div>`);
+  if (d.audience) h += section('AUDIENCE', `<div class="plain-text">${esc(d.audience)}</div>`);
+  if (d.key_message) h += section('KEY MESSAGE', `<div class="out-section-content hook">${esc(d.key_message)}</div>`);
+  if (d.tone) h += section('TONE', `<div class="muted-text">${esc(d.tone)}</div>`);
+  if (d.deliverables?.length) h += section('DELIVERABLES', tableHTML(['Asset','Format','Dimensions','Duration','Specs','Qty'], d.deliverables.map(r => [r.asset, r.format, r.dimensions, r.duration, r.specs, r.qty])));
+  if (d.direction) {
+    h += section('CREATIVE DIRECTION', `<div class="plain-text">${d.direction.style?'<strong>Style:</strong> '+esc(d.direction.style)+'<br>':''}${d.direction.mood?'<strong>Mood:</strong> '+esc(d.direction.mood)+'<br>':''}${d.direction.refs?.length?'<strong>Refs:</strong> '+d.direction.refs.map(esc).join(', '):''}</div>`);
+  }
+  if (d.must_include?.length) h += section('MUST INCLUDE', bulletsHTML(d.must_include, 'green'));
+  if (d.must_avoid?.length) h += section('MUST AVOID', bulletsHTML(d.must_avoid, 'red'));
+  if (d.copy_per_asset?.length) h += section('COPY PER ASSET', tableHTML(['Asset','Headline','Caption','On-Screen'], d.copy_per_asset.map(r => [r.asset, r.headline, r.caption, r.on_screen])));
+  if (d.production_notes) h += section('PRODUCTION NOTES', `<div class="muted-text">${esc(d.production_notes)}</div>`);
+  if (d.timeline?.length) h += section('TIMELINE', tableHTML(['Phase','Date'], d.timeline.map(r => [r.phase, r.date])));
+  if (d.approval) h += section('APPROVAL', `<div class="plain-text">${esc(d.approval)}</div>`);
+  return h;
+}
+
+// ── Helpers for renderers ───────────────────────────────────
+function tableHTML(headers, rows) {
+  return `<table class="out-table"><thead><tr>${headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c||'—')}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+function bulletsHTML(items, cls) {
+  return `<div class="card-list">${items.map(i => `<div class="list-card" style="${cls?'border-color:'+(cls==='green'?'rgba(0,204,122,0.25)':cls==='red'?'rgba(255,68,102,0.25)':'rgba(255,181,32,0.25)'):''}"><div class="list-card-body" style="color:var(--text)">${typeof i === 'string' ? esc(i) : esc(JSON.stringify(i))}</div></div>`).join('')}</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// MESSAGES / TYPING
+// ═══════════════════════════════════════════════════════════
+function addUserMsg(text) {
+  const c = document.getElementById('chat-messages');
+  const d = document.createElement('div');
+  d.className = 'msg msg-user';
+  d.innerHTML = `<div class="msg-bubble">${esc(text)}</div>`;
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+function addError(msg) {
+  const c = document.getElementById('chat-messages');
+  const d = document.createElement('div');
+  d.className = 'msg msg-ai';
+  d.innerHTML = `<div style="color:var(--red);font-size:13px;padding:10px 14px;background:rgba(255,68,102,0.06);border:1px solid rgba(255,68,102,0.2);border-radius:10px;max-width:80%">⚠️ ${esc(msg)}</div>`;
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+function showTyping() {
+  const c = document.getElementById('chat-messages');
+  const d = document.createElement('div');
+  d.id = 'typing'; d.className = 'msg msg-ai';
+  d.innerHTML = `<div class="typing-indicator"><div class="typing-dots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div><span>Generating ${MODES[mode]?.label || ''}…</span></div>`;
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+function removeTyping() { document.getElementById('typing')?.remove(); }
+
+// ═══════════════════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════════════════
+function copyOutput(btn) {
+  navigator.clipboard.writeText(btn.closest('.output-card').dataset.raw);
+  toast('Copied!', 'success');
+}
+
+function saveCampaign(btn) {
+  const card = btn.closest('.output-card');
+  const raw = card.dataset.raw;
+  const modeUsed = card.dataset.mode || 'full';
+  const b = getBrief();
+  const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  const id = 'cmp_' + Date.now();
+  list.unshift({
+    id,
+    name: b.name || `Untitled — ${new Date().toLocaleDateString()}`,
+    mode: modeUsed,
+    modeLabel: MODES[modeUsed]?.label || modeUsed,
+    icon: MODES[modeUsed]?.icon,
+    brief: b,
+    output: raw,
+    timestamp: new Date().toISOString()
+  });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, 50)));
+  renderSaved();
+  toast('Campaign saved!', 'success');
+}
+
+async function saveToBank(btn) {
+  const card = btn.closest('.output-card');
+  const raw = card.dataset.raw;
+  const modeUsed = card.dataset.mode || 'full';
+  const b = getBrief();
+  try {
+    if (typeof DB !== 'undefined') {
+      await DB.saveBankItem({
+        title: `Campaign — ${b.name || MODES[modeUsed]?.label || 'Untitled'} (${new Date().toLocaleDateString()})`,
+        description: raw, script: raw,
+        platform: b.platforms[0] || null,
+        status: 'idea', source: 'campaign',
+        objective: b.objective || null,
+        tags: [modeUsed, b.objective, b.funnel].filter(Boolean)
+      });
+      toast('Saved to Content Bank!', 'success');
+    } else { toast('DB not available', 'error'); }
+  } catch (e) { toast('Save failed: ' + e.message, 'error'); }
+}
+
+function toCalendar(btn) {
+  const card = btn.closest('.output-card');
+  const raw = card.dataset.raw;
+  const modeUsed = card.dataset.mode || 'full';
+  const b = getBrief();
+  try {
+    if (typeof DB !== 'undefined' && DB.setPending) {
+      DB.setPending('calendar_item', {
+        title: `${b.name || 'Campaign'} — ${MODES[modeUsed]?.label}`,
+        script: raw, description: raw,
+        platform: b.platforms[0] || null,
+        liveDate: b.start || null,
+        deadline: b.end || null
+      });
+    }
+    window.location.href = 'calendar.html';
+  } catch (e) { toast('Calendar unavailable', 'error'); }
+}
+
+function exportTxt(btn) {
+  const card = btn.closest('.output-card');
+  const raw = card.dataset.raw;
+  const modeUsed = card.dataset.mode || 'full';
+  const b = getBrief();
+  // Pretty-print: try parsing JSON, then format readably
+  let pretty = raw;
+  try { pretty = JSON.stringify(JSON.parse(raw.replace(/^```json\s*/,'').replace(/```\s*$/,'').trim()), null, 2); } catch {}
+  const filename = `campaign_${slugify(b.name || 'untitled')}_${modeUsed}_${Date.now()}.txt`;
+  download(new Blob([pretty], {type:'text/plain'}), filename);
+  toast('Downloaded', 'success');
+}
+
+function exportJson(btn) {
+  const card = btn.closest('.output-card');
+  const raw = card.dataset.raw;
+  const modeUsed = card.dataset.mode || 'full';
+  const b = getBrief();
+  let payload;
+  try {
+    payload = {
+      campaign_name: b.name, mode: modeUsed, mode_label: MODES[modeUsed]?.label,
+      generated_at: new Date().toISOString(), brief: b,
+      output: JSON.parse(raw.replace(/^```json\s*/,'').replace(/```\s*$/,'').trim())
+    };
+  } catch {
+    payload = { campaign_name: b.name, mode: modeUsed, generated_at: new Date().toISOString(), brief: b, raw_output: raw };
+  }
+  const filename = `campaign_${slugify(b.name || 'untitled')}_${modeUsed}.json`;
+  download(new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'}), filename);
+  toast('JSON downloaded', 'success');
+}
+
+function refineOutput(btn) {
+  const modeUsed = btn.closest('.output-card').dataset.mode || 'full';
+  const inp = document.getElementById('chat-input');
+  inp.value = `Refine the previous ${MODES[modeUsed]?.label}: `;
+  inp.focus(); autoResize(inp);
+}
+
+function download(blob, filename) {
+  const u = URL.createObjectURL(blob); const a = document.createElement('a');
+  a.href = u; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(u);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SAVED CAMPAIGNS
+// ═══════════════════════════════════════════════════════════
+function renderSaved() {
+  const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  document.getElementById('saved-count').textContent = `${list.length} ${list.length === 1 ? 'campaign' : 'campaigns'}`;
+  const el = document.getElementById('saved-list');
+  if (list.length === 0) {
+    el.innerHTML = `<div class="empty-saved"><div class="empty-saved-icon">📭</div>No saved campaigns.<br>Hit "💾 Save" on any output to keep it here.</div>`;
+    return;
+  }
+  el.innerHTML = list.map(c => `
+    <div class="saved-card" onclick="loadCampaign('${c.id}')">
+      <button class="saved-card-x" onclick="event.stopPropagation();deleteCampaign('${c.id}')" title="Delete">×</button>
+      <div class="saved-card-name">${esc(c.name)}</div>
+      <div class="saved-card-meta">
+        <span class="saved-card-mode">${esc(c.icon || '')} ${esc(c.modeLabel || c.mode)}</span>
+        ${c.brief?.platforms?.length ? `<span class="saved-card-platform">${esc(c.brief.platforms[0])}</span>` : ''}
+        <span>${new Date(c.timestamp).toLocaleDateString([], {month:'short', day:'numeric'})}</span>
+      </div>
+    </div>`).join('');
+}
+
+function loadCampaign(id) {
+  const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  const c = list.find(x => x.id === id);
+  if (!c) return;
+  // Restore brief
+  const b = c.brief || {};
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.value = v; };
+  Object.entries({
+    'b-name':b.name,'b-objective':b.objective,'b-budget':b.budget,'b-currency':b.currency,
+    'b-daily':b.daily,'b-start':b.start,'b-end':b.end,'b-audience':b.audience,
+    'b-age-min':b.ageMin,'b-age-max':b.ageMax,'b-geo':b.geo,'b-language':b.language,
+    'b-usp':b.usp,'b-offer':b.offer,'b-lp':b.lp,'b-competitors':b.competitors,
+    'b-cpa':b.cpa,'b-roas':b.roas,'b-ctr':b.ctr,'b-conv':b.conv
+  }).forEach(([k,v]) => setVal(k, v));
+  // Chips
+  document.querySelectorAll('#chips-platform .chip').forEach(c => c.classList.remove('on'));
+  (b.platforms || []).forEach(p => {
+    const chip = document.querySelector(`#chips-platform .chip[data-val="${p}"]`);
+    chip?.classList.add('on');
+  });
+  document.querySelectorAll('#chips-funnel .chip').forEach(c => c.classList.remove('on'));
+  if (b.funnel) document.querySelector(`#chips-funnel .chip[data-val="${b.funnel}"]`)?.classList.add('on');
+  document.querySelectorAll('#chips-gender .chip').forEach(c => c.classList.remove('on'));
+  document.querySelector(`#chips-gender .chip[data-val="${b.gender || 'All'}"]`)?.classList.add('on');
+  refreshTags();
+
+  // Switch mode
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === c.mode));
+  setMode(c.mode);
+
+  // Render output
+  document.getElementById('chat-messages').innerHTML = '';
+  msgs = [];
+  renderOutput(c.output, c.mode);
+  toast(`Loaded: ${c.name}`, 'success');
+}
+
+function deleteCampaign(id) {
+  if (!confirm('Delete this saved campaign?')) return;
+  let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  list = list.filter(x => x.id !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  renderSaved();
+  toast('Deleted', 'success');
+}
+
+function newCampaign() {
+  if (msgs.length > 0 && !confirm('Start fresh? Current chat clears (saved campaigns are kept).')) return;
+  clearChat();
+  resetBrief();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════
+function openImport() { document.getElementById('import-modal').classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function useImport() {
+  importedData = document.getElementById('import-data').value.trim();
+  closeModal('import-modal');
+  if (importedData) {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === 'optimize'));
+    setMode('optimize');
+    toast('Data imported. Now in Optimize mode.', 'success');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════
+function clearChat() {
+  msgs = []; lastAI = '';
+  document.getElementById('chat-messages').innerHTML = `
+    <div class="welcome-wrap" id="welcome-state">
+      <div class="welcome-icon">🚀</div>
+      <div class="welcome-title">Campaign Manager</div>
+      <div class="welcome-sub">Set your brief on the left, pick a mode above, then describe what you need.</div>
+      <div class="quick-grid" id="quick-grid"></div>
+    </div>`;
+  buildQuickGrid();
+}
+
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 130) + 'px'; }
+function esc(s) { if (s === null || s === undefined) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function slugify(s) { return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40) || 'untitled'; }
+
+function toast(msg, type) {
+  const t = document.getElementById('global-toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.className = 'toast show ' + (type || '');
+  setTimeout(() => { t.className = 'toast'; }, 2400);
+}
+</script>
+</body>
+</html>
