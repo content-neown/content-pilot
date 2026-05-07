@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ContentPilot — ICP: The Reading Believer</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+:root {
+  --icp-amber: #f59e0b;
+  --icp-amber-dim: rgba(245,158,11,0.12);
+  --icp-amber-border: rgba(245,158,11,0.25);
+  --icp-teal: #2dd4bf;
+  --icp-teal-dim: rgba(45,212,191,0.1);
+  --icp-rose: #fb7185;
+  --icp-rose-dim: rgba(251,113,133,0.1);
+}
+
+body { background: var(--bg); color: var(--text); font-family: 'Satoshi', sans-serif; min-height: 100vh; }
+.top-nav { flex-shrink: 0; }
+
+.icp-page { max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, rgba(108,99,255,0.08) 0%, rgba(244,114,182,0.06) 50%, transparent 100%);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 48px;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(108,99,255,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.3);
+  color: var(--accent2); border-radius: 20px;
+  padding: 4px 12px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 16px;
+}
+.hero h1 { font-size: 38px; font-weight: 800; line-height: 1.15; margin-bottom: 10px; }
+.hero h1 em { font-style: normal; color: var(--accent2); }
+.hero-sub { font-size: 16px; color: var(--text2); line-height: 1.6; max-width: 600px; margin-bottom: 28px; }
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff;
+  padding: 11px 22px; border-radius: 10px; font-size: 13px; font-weight: 700;
+  text-decoration: none; transition: all 0.2s;
+}
+.hero-cta:hover { background: var(--accent2); transform: translateY(-1px); }
+
+/* STATS STRIP */
+.stats-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-bottom: 40px;
+}
+.stat-pill {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 22px 20px; text-align: center;
+  transition: transform 0.2s;
+}
+.stat-pill:hover { transform: translateY(-2px); }
+.stat-num {
+  font-size: 36px; font-weight: 800;
+  font-family: 'Clash Display', 'Satoshi', sans-serif;
+  line-height: 1;
+}
+.stat-pill:nth-child(1) .stat-num { color: var(--accent2); }
+.stat-pill:nth-child(2) .stat-num { color: var(--green); }
+.stat-pill:nth-child(3) .stat-num { color: var(--icp-amber); }
+.stat-pill:nth-child(4) .stat-num { color: var(--pink); }
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 6px; font-weight: 600; }
+
+/* SECTION */
+.section { margin-bottom: 40px; }
+.section-title {
+  font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text3);
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.section-title::before { content: ''; width: 3px; height: 16px; border-radius: 2px; background: var(--accent); display: block; }
+
+/* WHO SHE IS */
+.profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.profile-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+}
+.profile-card .pc-label { font-size: 11px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.profile-card .pc-val { font-size: 14px; color: var(--text); line-height: 1.6; }
+.profile-card .pc-val strong { color: var(--accent2); }
+
+/* ANXIETY STACK */
+.anxiety-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.anxiety-card {
+  border-radius: 16px; padding: 28px; position: relative; overflow: hidden;
+}
+.anxiety-card.surface {
+  background: rgba(251,146,60,0.06); border: 1px solid rgba(251,146,60,0.2);
+}
+.anxiety-card.deep {
+  background: rgba(139,92,246,0.07); border: 1px solid rgba(139,92,246,0.2);
+}
+.anxiety-layer {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+}
+.anxiety-card.surface .anxiety-layer { color: var(--orange); }
+.anxiety-card.deep .anxiety-layer { color: var(--accent2); }
+.anxiety-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+.anxiety-card p { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 12px; }
+.anxiety-data {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;
+}
+.data-chip {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; padding: 4px 10px; font-size: 11px; color: var(--text2); font-weight: 600;
+}
+.anxiety-connector {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 20px; margin-top: 12px;
+  font-size: 13px; color: var(--text2); line-height: 1.6; font-style: italic;
+}
+.anxiety-connector strong { color: var(--text); font-style: normal; }
+
+/* TRIGGER FLOW */
+.trigger-flow {
+  display: flex; align-items: stretch; gap: 0;
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+}
+.trigger-step {
+  flex: 1; padding: 28px 24px; position: relative;
+}
+.trigger-step:not(:last-child) { border-right: 1px solid var(--border); }
+.trigger-step::after {
+  content: '→';
+  position: absolute; right: -13px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent2); font-size: 18px; font-weight: 700;
+  z-index: 1; display: none;
+}
+.trigger-step:nth-child(1) { background: rgba(108,99,255,0.04); }
+.trigger-step:nth-child(3) { background: rgba(52,211,153,0.04); }
+.trigger-step-icon { font-size: 28px; margin-bottom: 12px; }
+.trigger-step-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 6px; }
+.trigger-step-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.trigger-step p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.trigger-step-stat { margin-top: 14px; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--text3); }
+.trigger-step-stat strong { color: var(--text2); }
+.trigger-divider {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; flex-shrink: 0; font-size: 22px; color: var(--accent2);
+  background: var(--bg2);
+}
+
+/* RENEWAL / CHURN */
+.rc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.rc-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.rc-header {
+  padding: 16px 20px; font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.rc-card.renewal .rc-header { background: rgba(52,211,153,0.08); color: var(--green); border-bottom: 1px solid rgba(52,211,153,0.15); }
+.rc-card.churn .rc-header { background: rgba(248,113,113,0.08); color: var(--red); border-bottom: 1px solid rgba(248,113,113,0.15); }
+.rc-items { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+.rc-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px; color: var(--text2); line-height: 1.5;
+}
+.rc-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+.rc-card.renewal .rc-dot { background: var(--green); }
+.rc-card.churn .rc-dot { background: var(--red); }
+
+/* MESSAGING PEGS */
+.pegs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.peg-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+  cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+}
+.peg-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.peg-card:hover .peg-copy-hint { opacity: 1; }
+.peg-num {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text3); margin-bottom: 8px;
+}
+.peg-hook {
+  font-size: 16px; font-weight: 700; line-height: 1.35;
+  color: var(--text); margin-bottom: 10px;
+}
+.peg-hook em { font-style: normal; color: var(--accent2); }
+.peg-why { font-size: 12px; color: var(--text3); line-height: 1.6; }
+.peg-tag {
+  display: inline-block; margin-top: 10px;
+  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.tag-conv { background: rgba(52,211,153,0.12); color: var(--green); }
+.tag-guilt { background: rgba(108,99,255,0.12); color: var(--accent2); }
+.tag-tier2 { background: rgba(251,146,60,0.12); color: var(--orange); }
+.tag-outcome { background: rgba(244,114,182,0.12); color: var(--pink); }
+.peg-copy-hint {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 10px; color: var(--text3);
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 6px;
+  opacity: 0; transition: opacity 0.2s;
+}
+
+/* CHILD ENGAGEMENT */
+.engagement-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.eng-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; text-align: center;
+}
+.eng-icon { font-size: 28px; margin-bottom: 10px; }
+.eng-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.eng-desc { font-size: 12px; color: var(--text3); line-height: 1.6; }
+
+/* BAR CHARTS */
+.bar-list { display: flex; flex-direction: column; gap: 10px; }
+.bar-item { display: flex; flex-direction: column; gap: 4px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); }
+.bar-label span:last-child { font-weight: 700; color: var(--text); }
+.bar-track { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+
+/* DATA GRID */
+.data-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* TIER 2 CALLOUT */
+.tier2-callout {
+  background: linear-gradient(135deg, rgba(251,146,60,0.07) 0%, rgba(251,146,60,0.03) 100%);
+  border: 1px solid rgba(251,146,60,0.2); border-radius: 16px; padding: 28px;
+}
+.tier2-callout h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+.tier2-callout h3 em { font-style: normal; color: var(--icp-amber); }
+.tier2-callout p { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 14px; }
+.tier2-quote {
+  background: rgba(0,0,0,0.2); border-left: 3px solid var(--icp-amber);
+  border-radius: 0 8px 8px 0; padding: 12px 16px;
+  font-size: 13px; color: var(--text); font-style: italic; line-height: 1.7;
+  margin-bottom: 10px;
+}
+.tier2-hook {
+  background: rgba(251,146,60,0.1); border: 1px dashed rgba(251,146,60,0.3);
+  border-radius: 10px; padding: 14px 18px;
+  font-size: 14px; font-weight: 700; color: var(--icp-amber); text-align: center;
+  cursor: pointer;
+}
+.tier2-hook:hover { background: rgba(251,146,60,0.15); }
+
+/* TOAST */
+.copy-toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--green); color: #fff;
+  border-radius: 20px; padding: 10px 20px; font-size: 13px; font-weight: 700;
+  transition: transform 0.3s; z-index: 999; pointer-events: none;
+}
+.copy-toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeSlide { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeSlide 0.4s ease forwards; opacity: 0; }
+.delay-1 { animation-delay: 0.05s; } .delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; } .delay-4 { animation-delay: 0.2s; }
+
+@media (max-width: 768px) {
+  .stats-strip, .profile-grid, .anxiety-layout, .rc-grid, .pegs-grid, .engagement-grid, .data-2col { grid-template-columns: 1fr; }
+  .trigger-flow { flex-direction: column; }
+  .trigger-divider { width: 100%; height: 36px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="dashboard.html" class="nav-logo">ContentPilot</a>
+    <span style="color:var(--text3);font-size:20px;font-weight:200">/</span>
+    <span style="font-size:14px;color:var(--text2);font-weight:600">ICP</span>
+  </div>
+  <div class="nav-actions">
+    <a href="copywriter.html" class="btn-ghost" style="text-decoration:none">✍️ Write for Her</a>
+    <div class="avatar" id="nav-avatar">?</div>
+  </div>
+</nav>
+
+<div class="icp-page">
+
+  <!-- HERO -->
+  <div class="hero fade-in">
+    <div class="hero-tag">🎯 Primary ICP — 52% of Subscriber Base</div>
+    <h1>The <em>Reading Believer</em></h1>
+    <p class="hero-sub">She believes in reading, but is not a reader herself. She cannot model the habit at home — so neOwn becomes the infrastructure for something she genuinely wants her child to have.</p>
+    <a href="copywriter.html?icp=1" class="hero-cta">✍️ Generate Content for This ICP →</a>
+  </div>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip fade-in delay-1">
+    <div class="stat-pill">
+      <div class="stat-num">52%</div>
+      <div class="stat-label">of loyalist base</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-num">94%</div>
+      <div class="stat-label">recommend neOwn</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-num">9.57</div>
+      <div class="stat-label">reading importance (out of 10)</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-num">49</div>
+      <div class="stat-label">respondents in this ICP</div>
+    </div>
+  </div>
+
+  <!-- WHO SHE IS -->
+  <div class="section fade-in delay-2">
+    <div class="section-title">👤 Who She Is</div>
+    <div class="profile-grid">
+      <div class="profile-card">
+        <div class="pc-label">Age & Life Stage</div>
+        <div class="pc-val">A mother aged <strong>30–42</strong>, with a child between <strong>5 and 12</strong> (sometimes as young as 3). Not defined by work status — the split between working mothers and stay-at-home parents is almost even.</div>
+      </div>
+      <div class="profile-card">
+        <div class="pc-label">Location</div>
+        <div class="pc-val"><strong>Mumbai dominates</strong> (25 of 49), but nearly half are from outside — Hyderabad, Delhi, Ahmedabad, Bhopal, Bhubaneswar, Salem, Ranchi, and 8+ more Tier 2 cities.</div>
+      </div>
+      <div class="profile-card">
+        <div class="pc-label">Spending Behaviour</div>
+        <div class="pc-val"><strong>34 of 49</strong> spend under ₹5,000/month on all child activities. neOwn is not a luxury purchase for her — it's a smart one. Budget-aware, not budget-limited.</div>
+      </div>
+      <div class="profile-card">
+        <div class="pc-label">Parenting Style</div>
+        <div class="pc-val">Structured but not controlling. She <strong>plans academics</strong>, gives autonomy on extracurriculars, researches purchases, and is drawn to services that make her feel like she's doing the right thing.</div>
+      </div>
+      <div class="profile-card" style="grid-column: 1 / -1;">
+        <div class="pc-label">The Core Tension</div>
+        <div class="pc-val" style="font-size:15px;">She has a <strong>conviction</strong> that books are foundational, but she didn't grow up reading for pleasure herself. She can't sit beside her child and model the habit. What she has is aspiration — and what neOwn gives her is a system to act on it without having to be the example.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANXIETY STACK -->
+  <div class="section fade-in">
+    <div class="section-title">😟 Her Anxiety Stack — Two Layers</div>
+    <div class="anxiety-layout">
+      <div class="anxiety-card surface">
+        <div class="anxiety-layer">🔝 Surface Anxiety</div>
+        <h3>My child is too distracted and screen-dependent</h3>
+        <p>She sees her child gravitating toward passive, mindless consumption. Books feel like the antidote. This is what she talks about — the visible, concrete problem she can point to.</p>
+        <div class="anxiety-data">
+          <div class="data-chip">30/49 cite screen time</div>
+          <div class="data-chip">12/49 cite low attention span</div>
+          <div class="data-chip">Same fear, two words</div>
+        </div>
+      </div>
+      <div class="anxiety-card deep">
+        <div class="anxiety-layer">🔻 Deeper Anxiety</div>
+        <h3>I'm not doing enough for my child</h3>
+        <p>She believes reading is foundational. She didn't read as a child. She can't model the habit at home. A quiet, persistent guilt that her child is missing something important — and that it's partly on her.</p>
+        <div class="anxiety-data">
+          <div class="data-chip">Doesn't show in checkboxes</div>
+          <div class="data-chip">Lives in open-text responses</div>
+          <div class="data-chip">Drives purchase psychology</div>
+        </div>
+      </div>
+    </div>
+    <div class="anxiety-connector">
+      <strong>Why neOwn resolves both:</strong> It addresses the surface anxiety practically — books replace screens. And it addresses the deeper anxiety emotionally — subscribing is proof to herself that she took action. <strong>The act of subscribing is itself relieving.</strong> When her child enjoys the books, it quiets both anxieties at once.
+    </div>
+  </div>
+
+  <!-- TRIGGER FLOW -->
+  <div class="section fade-in">
+    <div class="section-title">⚡ The Sign-Up Sequence</div>
+    <div class="trigger-flow">
+      <div class="trigger-step">
+        <div class="trigger-step-icon">💡</div>
+        <div class="trigger-step-label">Step 1 — Aspiration</div>
+        <div class="trigger-step-title">Wants her child to read more</div>
+        <p>The underlying belief was already in place. Reading matters. Her child should have what she didn't. This brings her to neOwn.</p>
+        <div class="trigger-step-stat"><strong>49/49</strong> cited this as a reason for first trying neOwn</div>
+      </div>
+      <div class="trigger-divider">→</div>
+      <div class="trigger-step">
+        <div class="trigger-step-icon">💸</div>
+        <div class="trigger-step-label">Step 2 — Cost Trigger</div>
+        <div class="trigger-step-title">Buying books one at a time is an expensive gamble</div>
+        <p>At ₹400–600 a book, if her child loses interest, she's wasted money. neOwn removes the financial risk. The subscription gives her permission to act on a belief she already had.</p>
+        <div class="trigger-step-stat"><strong>26/49</strong> also cited buying books being too expensive</div>
+      </div>
+      <div class="trigger-divider">→</div>
+      <div class="trigger-step">
+        <div class="trigger-step-icon">✅</div>
+        <div class="trigger-step-label">Step 3 — Conversion</div>
+        <div class="trigger-step-title">She subscribes</div>
+        <p>Not because neOwn convinced her reading matters — she already believed that. The subscription is the lower-risk version of an aspiration she already had.</p>
+        <div class="trigger-step-stat">Aspiration first. <strong>Cost as the conversion trigger.</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RENEWAL + CHURN -->
+  <div class="section fade-in">
+    <div class="section-title">🔄 Why She Stays / Why She Leaves</div>
+    <div class="rc-grid">
+      <div class="rc-card renewal">
+        <div class="rc-header">✅ Renewal Signals</div>
+        <div class="rc-items">
+          <div class="rc-item"><div class="rc-dot"></div><div><strong style="color:var(--text)">Child picks up a book independently</strong> — without being asked</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div><strong style="color:var(--text)">Child finishes a book and asks for more</strong></div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div>38/49 say "my child enjoys it" — <strong style="color:var(--text)">enjoyment is the renewal trigger, not her belief</strong></div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div>Reading spills into other parts of child's life (dinner, bedtime, school)</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div>Monthly delivery excitement — the package arriving feels like an event</div></div>
+        </div>
+      </div>
+      <div class="rc-card churn">
+        <div class="rc-header">⚠️ Churn Triggers</div>
+        <div class="rc-items">
+          <div class="rc-item"><div class="rc-dot"></div><div><strong style="color:var(--text)">Child loses interest after initial novelty</strong> — she has no backup plan</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div>Books don't match child's interest level or preferred genre</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div><strong style="color:var(--text)">Books in circulation / out of stock</strong> — most common actionable complaint (8–9 responses)</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div>Because she can't model reading herself, <strong style="color:var(--text)">a disengaged child = cancelled subscription</strong></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA SECTION -->
+  <div class="section fade-in">
+    <div class="section-title">📊 What the Data Says</div>
+    <div class="data-2col">
+      <div class="profile-card">
+        <div class="pc-label">Child Age Distribution (within ICP)</div>
+        <div class="bar-list" style="margin-top:12px">
+          <div class="bar-item">
+            <div class="bar-label"><span>Ages 9–12</span><span>41% (20)</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:41%;background:var(--accent)"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label"><span>Ages 3–5</span><span>24% (12)</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:24%;background:var(--accent2)"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label"><span>Ages 6–8</span><span>18% (9)</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--pink)"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label"><span>Ages 0–2 & 13+</span><span>17% (8)</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:17%;background:var(--text3)"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="pc-label">Biggest Benefit Seen</div>
+        <div class="bar-list" style="margin-top:12px">
+          <div class="bar-item">
+            <div class="bar-label"><span>Stays meaningfully engaged</span><span>39%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:39%;background:var(--green)"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label"><span>Reads more independently</span><span>35%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:35%;background:var(--icp-teal)"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label"><span>More curiosity</span><span>12%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:12%;background:var(--orange)"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label"><span>Other outcomes</span><span>14%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:14%;background:var(--text3)"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHILD ENGAGEMENT -->
+  <div class="section fade-in">
+    <div class="section-title">📚 What Actually Keeps Children Engaged</div>
+    <div class="engagement-grid">
+      <div class="eng-card">
+        <div class="eng-icon">🎯</div>
+        <div class="eng-title">Child-Led Selection</div>
+        <div class="eng-desc">When children choose their own books, they read them. The app's selection experience isn't just UX — it's the core engagement mechanism. Parents say it again and again.</div>
+      </div>
+      <div class="eng-card">
+        <div class="eng-icon">📦</div>
+        <div class="eng-title">Monthly Delivery as Event</div>
+        <div class="eng-desc">The anticipation of new books arriving every month is a motivation engine. "I am happy to see the excitement in my child every month when neOwn delivers books."</div>
+      </div>
+      <div class="eng-card">
+        <div class="eng-icon">🏆</div>
+        <div class="eng-title">Challenges & Rewards</div>
+        <div class="eng-desc">Programs like the 20x20 challenge actively extend the subscriber lifecycle. A goal and a finish line give children a reason to engage beyond just reading a book.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGING PEGS -->
+  <div class="section fade-in">
+    <div class="section-title">💬 7 Messaging Pegs — Click to Copy</div>
+    <div class="pegs-grid" id="pegs-grid">
+
+      <div class="peg-card" onclick="copyPeg(this)">
+        <div class="peg-copy-hint">click to copy</div>
+        <div class="peg-num">Hook 01 — Most Powerful</div>
+        <div class="peg-hook"><em>"You don't have to be a reader to raise one."</em></div>
+        <div class="peg-why">Directly acknowledges the guilt she carries — that she wants reading for her child but can't model it herself — and removes the shame. Positions neOwn as the bridge. Use this as a hook, not a tagline.</div>
+        <span class="peg-tag tag-guilt">Guilt Relief</span>
+      </div>
+
+      <div class="peg-card" onclick="copyPeg(this)">
+        <div class="peg-copy-hint">click to copy</div>
+        <div class="peg-num">Hook 02 — Cost Permission</div>
+        <div class="peg-hook"><em>"Stop buying books they read once."</em></div>
+        <div class="peg-why">Validates her hesitation about the high cost of building a reading habit. Reframes the subscription as the smarter, lower-risk version of the same aspiration. Concrete follow-through: "At ₹400–600 a book, one unread book pays for a month of neOwn."</div>
+        <span class="peg-tag tag-conv">Conversion</span>
+      </div>
+
+      <div class="peg-card" onclick="copyPeg(this)">
+        <div class="peg-copy-hint">click to copy</div>
+        <div class="peg-num">Hook 03 — Product Insight</div>
+        <div class="peg-hook"><em>"When they choose the book, they actually read it."</em></div>
+        <div class="peg-why">Addresses the deep parental anxiety: "what if I subscribe and my child still doesn't read?" The child's agency is the mechanism that makes it work. Make this visible in ads.</div>
+        <span class="peg-tag tag-outcome">Outcome</span>
+      </div>
+
+      <div class="peg-card" onclick="copyPeg(this)">
+        <div class="peg-copy-hint">click to copy</div>
+        <div class="peg-num">Hook 04 — Delivery Moment</div>
+        <div class="peg-hook"><em>"The book arrives. Watch what happens next."</em></div>
+        <div class="peg-why">The delivery moment is an emotional goldmine. Show the child's face when the package arrives, the scramble to pick first. Visceral proof that bypasses the intellectual "will my child read?" doubt.</div>
+        <span class="peg-tag tag-outcome">Outcome</span>
+      </div>
+
+      <div class="peg-card" onclick="copyPeg(this)">
+        <div class="peg-copy-hint">click to copy</div>
+        <div class="peg-num">Hook 05 — The Outcome Image</div>
+        <div class="peg-hook"><em>"She's reading at the dinner table. Before bed. In the car."</em></div>
+        <div class="peg-why">Not "develops a reading habit" in abstract — but the specific, recognisable moments when you know the habit has taken hold. "She's always engaged in reading — while eating, and even before sleeping." That sentence is an ad.</div>
+        <span class="peg-tag tag-guilt">Guilt Relief</span>
+      </div>
+
+      <div class="peg-card" onclick="copyPeg(this)">
+        <div class="peg-copy-hint">click to copy</div>
+        <div class="peg-num">Hook 06 — Metro / Space</div>
+        <div class="peg-hook"><em>"50,000 books. None of them take up your cupboard space."</em></div>
+        <div class="peg-why">Specifically for metro and Mumbai parents. Space is a genuine constraint in small apartments. Addresses the practical anxiety while making it feel clever rather than limiting.</div>
+        <span class="peg-tag tag-conv">Conversion</span>
+      </div>
+
+      <div class="peg-card" style="grid-column: 1 / -1;" onclick="copyPeg(this)">
+        <div class="peg-copy-hint">click to copy</div>
+        <div class="peg-num">Hook 07 — Tier 2 Specific 🎯 High-Loyalty Segment</div>
+        <div class="peg-hook"><em>"A library for your child, even if your city doesn't have one."</em></div>
+        <div class="peg-why">For non-converting parents in smaller cities. Acknowledges the reality of their city and positions neOwn as the fill for a genuine gap — not a convenience upgrade. The most honest and powerful message for this segment. They are deeply loyal precisely because they have no alternative.</div>
+        <span class="peg-tag tag-tier2">Tier 2</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TIER 2 CALLOUT -->
+  <div class="section fade-in">
+    <div class="section-title">📍 The Tier 2 Lens</div>
+    <div class="tier2-callout">
+      <h3>~30% of this ICP comes from <em>outside metros</em></h3>
+      <p>13 distinct Tier 2 and smaller cities — Ahmedabad, Bhopal, Coimbatore, Guntur, Bhubaneswar, Salem, Vadodara, Kolhapur, Ranchi, Surat, Varanasi, Dehradun, and more.</p>
+      <p>The Tier 2 parent isn't choosing neOwn over buying books. <strong>She's choosing neOwn over nothing</strong> — because a good English library doesn't exist in her city. This makes her retention extremely different from the metro parent.</p>
+      <div class="tier2-quote">"Sadly there aren't enough public libraries in this country that our kids can enjoy — the next best option is an online library." — Parent, Bhubaneswar</div>
+      <div class="tier2-quote">"An online resource found at a time where there were no libraries near me." — Parent, Hyderabad</div>
+      <div class="tier2-hook" onclick="copyText('A library for your child, even if your city doesn\'t have one.')">
+        🎯 Use This Hook for Tier 2 Targeting: "A library for your child, even if your city doesn't have one."
+      </div>
+    </div>
+  </div>
+
+</div><!-- end icp-page -->
+
+<div class="copy-toast" id="copy-toast">✓ Copied to clipboard</div>
+<div id="global-toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script>
+window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+(async () => {
+  const user = await Auth.requireAuth();
+  if (user) document.getElementById('nav-avatar').textContent = user.avatar;
+})();
+
+function copyPeg(card) {
+  const hook = card.querySelector('.peg-hook').textContent.replace(/["""]/g, '').trim();
+  copyText(hook);
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.getElementById('copy-toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  });
+}
+
+// Animate bars on load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill').forEach(b => {
+      const w = b.style.width;
+      b.style.width = '0';
+      setTimeout(() => b.style.width = w, 100);
+    });
+  }, 300);
+});
+</script>
+</body>
+</html>

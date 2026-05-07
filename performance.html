@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="shared.css"/>
 <style>
 body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
-.top-nav{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;min-height:52px}
+.top-nav{flex-shrink:0}
 .perf-layout{display:flex;flex:1;overflow:hidden}
 .perf-sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:16px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
 .perf-main{flex:1;overflow-y:auto;padding:28px}
@@ -17,7 +17,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .kpi-card.green::after{background:var(--green)}.kpi-card.orange::after{background:var(--orange)}
 .kpi-card.pink::after{background:var(--pink)}.kpi-card.red::after{background:var(--red)}
 .kpi-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
-.kpi-value{font-size:26px;font-weight:800;letter-spacing:-0.5px}
+.kpi-value{font-size:28px;font-family:'Clash Display',sans-serif;font-weight:700}
 .perf-table{width:100%;border-collapse:collapse}
 .perf-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg2);white-space:nowrap}
 .perf-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;vertical-align:middle}
@@ -39,33 +39,57 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .log-btn{background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:var(--accent3);padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s}
 .log-btn:hover{background:rgba(56,189,248,0.2)}
 
-  /* ── ContentPilot alignment fixes (v2) ── */
-  body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-  .top-nav { flex-shrink: 0; }
-  .sidebar-item { display: flex; align-items: center; gap: 8px; }
-  .sidebar-item .icon,
-  .sidebar-item .si-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
-  .nav-page-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text2);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .btn-primary, .btn-ghost { display: inline-flex; align-items: center; gap: 5px; }
+/* AD SCRIPTS */
+.adscript-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;height:100%}
+.adscript-form-panel{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;height:fit-content}
+.adscript-output-panel{display:flex;flex-direction:column;gap:12px}
+.as-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);margin-bottom:8px;display:block}
+.as-select,.as-input,.as-textarea{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;width:100%;font-family:'Satoshi',sans-serif;transition:all 0.2s;outline:none}
+.as-select:focus,.as-input:focus,.as-textarea:focus{border-color:var(--accent)}
+.as-textarea{resize:vertical;min-height:72px}
+.as-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2360607a' d='M5 7L0 2h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.as-select option{background:var(--bg3)}
+.as-chips{display:flex;flex-wrap:wrap;gap:6px}
+.as-chip{padding:5px 11px;border-radius:20px;font-size:12px;font-weight:600;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all 0.15s}
+.as-chip.active{background:rgba(108,99,255,0.2);border-color:var(--accent);color:var(--accent2)}
+.generate-btn{background:linear-gradient(135deg,var(--accent),var(--pink));color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.generate-btn:hover{opacity:0.9;transform:translateY(-1px)}
+.generate-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 
+.script-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;animation:fadeIn 0.4s ease}
+.script-card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2)}
+.script-card-label{font-size:12px;font-weight:700;color:var(--accent2)}
+.script-card-meta{font-size:11px;color:var(--text3)}
+.script-card-body{padding:18px;font-size:13px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-family:'Satoshi',sans-serif}
+.script-card-actions{padding:10px 18px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--bg2)}
+.script-action-btn{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--text3);cursor:pointer;transition:all 0.15s;font-weight:600}
+.script-action-btn:hover{border-color:var(--accent);color:var(--text)}
+
+.perf-context-card{background:linear-gradient(135deg,rgba(108,99,255,0.07),rgba(244,114,182,0.05));border:1px solid rgba(108,99,255,0.2);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.6}
+.perf-context-card strong{color:var(--text)}
+
+.typing-dots{display:flex;gap:4px;padding:18px}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:pulse 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:0.2s}.typing-dot:nth-child(3){animation-delay:0.4s}
+
+.adscript-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px;color:var(--text3);background:var(--card);border:1px dashed var(--border);border-radius:14px;height:100%;min-height:300px}
+.adscript-empty h3{font-size:16px;color:var(--text2);margin-bottom:8px}
+
+.variant-count-row{display:flex;gap:8px;align-items:center}
+.variant-label{font-size:12px;color:var(--text3);white-space:nowrap}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
-<body>
 
-<nav class="top-nav" style="background:var(--bg2);border-bottom:1px solid var(--border)">
-  <div style="display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden">
-    <a href="dashboard.html" class="nav-logo" style="flex-shrink:0"><img src="https://neown.in/cdn/shop/files/neOwn_website_logo_4f4f6dc2-8b02-4ac7-bfda-842abc1992f8.png?v=1745232656&width=500" alt="neOwn" class="nav-logo-img"/></a>
-    <span class="nav-sep" style="width:auto;height:auto;background:transparent;color:var(--text3);font-size:16px;font-weight:300">/</span>
-    <span class="nav-page-title">Performance</span>
+<body>
+<nav class="top-nav">
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="dashboard.html" class="nav-logo">ContentPilot</a>
+    <span style="color:var(--text3);font-size:20px;font-weight:200">/</span>
+    <span style="font-size:14px;color:var(--text2);font-weight:600">Performance</span>
   </div>
-  <div class="nav-actions" >
+  <div class="nav-actions">
     <button class="log-btn" onclick="openAdd()">+ Log Metrics</button>
     <div class="avatar" id="nav-avatar">?</div>
   </div>
@@ -78,11 +102,13 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
     <div class="sidebar-item active" id="nav-overview" onclick="setSection('overview',this)"><span class="icon">🏠</span> Overview</div>
     <div class="sidebar-item" id="nav-content" onclick="setSection('content',this)"><span class="icon">📋</span> By Content</div>
     <div class="sidebar-item" id="nav-platform" onclick="setSection('platform',this)"><span class="icon">📱</span> By Platform</div>
+    <div class="sidebar-item" id="nav-adscripts" onclick="setSection('adscripts',this)"><span class="icon">🎯</span> Ad Scripts <span style="font-size:9px;font-weight:800;background:rgba(108,99,255,0.2);color:var(--accent2);border-radius:4px;padding:1px 5px;margin-left:2px">AI</span></div>
     <div class="sidebar-section">Tools</div>
     <div class="sidebar-item" onclick="location.href='copywriter.html'"><span class="icon">✍️</span> Copywriter</div>
     <div class="sidebar-item" onclick="location.href='calendar.html'"><span class="icon">📅</span> Calendar</div>
     <div class="sidebar-item" onclick="location.href='bank.html'"><span class="icon">🗂️</span> Content Bank</div>
   </div>
+
   <div class="perf-main" id="perf-main"><div style="text-align:center;padding:60px;color:var(--text3)">Loading...</div></div>
 </div>
 
@@ -159,6 +185,7 @@ body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
 <script>
 window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentSection='overview', editingId=null, allMetrics=[];
+let adScriptMessages = [], adScriptLoading = false;
 
 (async()=>{
   const user=await Auth.requireAuth();
@@ -181,6 +208,7 @@ function render(){
   if(currentSection==='overview') renderOverview(c);
   else if(currentSection==='content') renderContent(c);
   else if(currentSection==='platform') renderPlatform(c);
+  else if(currentSection==='adscripts') renderAdScripts(c);
 }
 
 function fmt(n){
@@ -208,65 +236,349 @@ function renderOverview(c){
   const tr=allMetrics.reduce((s,m)=>s+Number(m.revenue||0),0);
   const tc=allMetrics.reduce((s,m)=>s+Number(m.conversions||0),0);
   const avgER=allMetrics.length?(allMetrics.reduce((s,m)=>s+parseFloat(calcER(m)),0)/allMetrics.length).toFixed(2):0;
+
   c.innerHTML=`
-    <div style="margin-bottom:24px"><h2 style="font-size:22px;margin-bottom:4px">Performance Overview</h2><p style="color:var(--text3);font-size:13px">${allMetrics.length} content pieces tracked</p></div>
-    <div class="kpi-grid">
-      <div class="kpi-card purple"><div class="kpi-label">Total Views</div><div class="kpi-value">${fmt(tv)}</div></div>
-      <div class="kpi-card blue"><div class="kpi-label">Total Likes</div><div class="kpi-value">${fmt(tl)}</div></div>
-      <div class="kpi-card green"><div class="kpi-label">Avg Eng. Rate</div><div class="kpi-value">${avgER}%</div></div>
-      <div class="kpi-card orange"><div class="kpi-label">Leads</div><div class="kpi-value">${fmt(tle)}</div></div>
-      <div class="kpi-card pink"><div class="kpi-label">Conversions</div><div class="kpi-value">${fmt(tc)}</div></div>
-      <div class="kpi-card red"><div class="kpi-label">Revenue</div><div class="kpi-value">₹${fmt(tr)}</div></div>
-    </div>
-    ${allMetrics.length===0?`<div class="empty-state"><div style="font-size:48px;margin-bottom:12px">📊</div><h3>No metrics yet</h3><p>Log metrics for your live content</p><button class="btn-primary" onclick="openAdd()">+ Log First Metrics</button></div>`:`
-    <div class="section-header"><h3>Top Performing Content</h3></div>
-    <table class="perf-table"><thead><tr><th>Content</th><th>Platform</th><th>Views</th><th>ER%</th><th>Leads</th><th>Score</th><th></th></tr></thead>
-    <tbody>${[...allMetrics].sort((a,b)=>Number(b.views||0)-Number(a.views||0)).slice(0,10).map(m=>{
-      const sc=calcScore(m);const scClass=sc>=60?'score-high':sc>=30?'score-mid':'score-low';
-      return`<tr class="perf-row" onclick="openEdit('${m.id}')"><td><strong>${m.title}</strong></td><td><span class="tag tag-blue" style="font-size:11px">${m.platform||'—'}</span></td><td>${fmt(m.views)}</td><td>${calcER(m)}%</td><td>${fmt(m.leads)}</td><td><div class="score-badge ${scClass}">${sc}</div></td><td><button onclick="event.stopPropagation();delMetric('${m.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px">🗑</button></td></tr>`;
-    }).join('')}</tbody></table>`}`;
+  <div style="margin-bottom:24px"><h2 style="font-size:22px;margin-bottom:4px">Performance Overview</h2><p style="color:var(--text3);font-size:13px">${allMetrics.length} content pieces tracked</p></div>
+  <div class="kpi-grid">
+    <div class="kpi-card purple"><div class="kpi-label">Total Views</div><div class="kpi-value">${fmt(tv)}</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Total Likes</div><div class="kpi-value">${fmt(tl)}</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Avg Eng. Rate</div><div class="kpi-value">${avgER}%</div></div>
+    <div class="kpi-card orange"><div class="kpi-label">Leads</div><div class="kpi-value">${fmt(tle)}</div></div>
+    <div class="kpi-card pink"><div class="kpi-label">Conversions</div><div class="kpi-value">${fmt(tc)}</div></div>
+    <div class="kpi-card red"><div class="kpi-label">Revenue</div><div class="kpi-value">₹${fmt(tr)}</div></div>
+  </div>
+  ${allMetrics.length===0?`<div class="empty-state"><div style="font-size:48px;margin-bottom:12px">📊</div><h3>No metrics yet</h3><p>Log metrics for your live content</p><button class="btn-primary" onclick="openAdd()">+ Log First Metrics</button></div>`:`
+  <div class="section-header"><h3>Top Performing Content</h3><button class="log-btn" onclick="setSection('adscripts',document.getElementById('nav-adscripts'))">🎯 Generate Ad Scripts from Performance</button></div>
+  <table class="perf-table"><thead><tr><th>Content</th><th>Platform</th><th>Views</th><th>ER%</th><th>Leads</th><th>Score</th><th></th></tr></thead>
+  <tbody>${[...allMetrics].sort((a,b)=>Number(b.views||0)-Number(a.views||0)).slice(0,10).map(m=>{
+    const sc=calcScore(m);const scClass=sc>=60?'score-high':sc>=30?'score-mid':'score-low';
+    return`<tr class="perf-row" onclick="openEdit('${m.id}')"><td><strong>${m.title}</strong></td><td><span class="tag tag-blue" style="font-size:11px">${m.platform||'—'}</span></td><td>${fmt(m.views)}</td><td>${calcER(m)}%</td><td>${fmt(m.leads)}</td><td><div class="score-badge ${scClass}">${sc}</div></td><td><button onclick="event.stopPropagation();delMetric('${m.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px">🗑</button></td></tr>`;
+  }).join('')}</tbody></table>`}`;
 }
 
 function renderContent(c){
   c.innerHTML=`<div style="margin-bottom:20px"><h2 style="font-size:20px">Content Performance</h2></div>
-    ${allMetrics.length===0?'<div class="empty-state"><h3>No data yet</h3><p>Log metrics to see content performance</p></div>':`
-    <table class="perf-table"><thead><tr><th>Content</th><th>Platform</th><th>Date</th><th>Views</th><th>Likes</th><th>Comments</th><th>Shares</th><th>ER%</th><th>CTR%</th><th>Leads</th><th>Revenue</th><th>Score</th></tr></thead>
-    <tbody>${allMetrics.map(m=>{
-      const sc=calcScore(m);const scClass=sc>=60?'score-high':sc>=30?'score-mid':'score-low';
-      return`<tr class="perf-row" onclick="openEdit('${m.id}')"><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><strong>${m.title}</strong></td><td><span class="tag tag-blue" style="font-size:11px">${m.platform||'—'}</span></td><td style="font-size:12px;color:var(--text3)">${formatDate(m.date)}</td><td>${fmt(m.views)}</td><td>${fmt(m.likes)}</td><td>${fmt(m.comments)}</td><td>${fmt(m.shares)}</td><td>${calcER(m)}%</td><td>${m.ctr||0}%</td><td>${fmt(m.leads)}</td><td>₹${fmt(m.revenue)}</td><td><div class="score-badge ${scClass}">${sc}</div></td></tr>`;
-    }).join('')}</tbody></table>`}`;
+  ${allMetrics.length===0?'<div class="empty-state"><h3>No data yet</h3><p>Log metrics to see content performance</p></div>':`
+  <table class="perf-table"><thead><tr><th>Content</th><th>Platform</th><th>Date</th><th>Views</th><th>Likes</th><th>Comments</th><th>Shares</th><th>ER%</th><th>CTR%</th><th>Leads</th><th>Revenue</th><th>Score</th></tr></thead>
+  <tbody>${allMetrics.map(m=>{
+    const sc=calcScore(m);const scClass=sc>=60?'score-high':sc>=30?'score-mid':'score-low';
+    return`<tr class="perf-row" onclick="openEdit('${m.id}')"><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><strong>${m.title}</strong></td><td><span class="tag tag-blue" style="font-size:11px">${m.platform||'—'}</span></td><td style="font-size:12px;color:var(--text3)">${formatDate(m.date)}</td><td>${fmt(m.views)}</td><td>${fmt(m.likes)}</td><td>${fmt(m.comments)}</td><td>${fmt(m.shares)}</td><td>${calcER(m)}%</td><td>${m.ctr||0}%</td><td>${fmt(m.leads)}</td><td>₹${fmt(m.revenue)}</td><td><div class="score-badge ${scClass}">${sc}</div></td></tr>`;
+  }).join('')}</tbody></table>`}`;
 }
 
 function renderPlatform(c){
   const platforms=[...new Set(allMetrics.map(m=>m.platform).filter(Boolean))];
   c.innerHTML=`<div style="margin-bottom:20px"><h2 style="font-size:20px">Platform Breakdown</h2></div>
-    ${platforms.length===0?'<div class="empty-state"><h3>No platform data yet</h3></div>':`
-    <div class="platform-grid">${platforms.map(p=>{
-      const pm=allMetrics.filter(m=>m.platform===p);
-      const tv=pm.reduce((s,m)=>s+Number(m.views||0),0);
-      const tl=pm.reduce((s,m)=>s+Number(m.likes||0),0);
-      const avgER=pm.length?(pm.reduce((s,m)=>s+parseFloat(calcER(m)),0)/pm.length).toFixed(1):0;
-      return`<div class="platform-card"><div style="font-size:13px;font-weight:700;margin-bottom:4px">${p}</div><div style="font-size:11px;color:var(--text3);margin-bottom:10px">${pm.length} posts tracked</div><div class="platform-metric"><span>Views</span><span>${fmt(tv)}</span></div><div class="platform-metric"><span>Likes</span><span>${fmt(tl)}</span></div><div class="platform-metric"><span>Avg ER</span><span style="color:var(--green)">${avgER}%</span></div></div>`;
-    }).join('')}</div>`}`;
+  ${platforms.length===0?'<div class="empty-state"><h3>No platform data yet</h3></div>':`
+  <div class="platform-grid">${platforms.map(p=>{
+    const pm=allMetrics.filter(m=>m.platform===p);
+    const tv=pm.reduce((s,m)=>s+Number(m.views||0),0);
+    const tl=pm.reduce((s,m)=>s+Number(m.likes||0),0);
+    const avgER=pm.length?(pm.reduce((s,m)=>s+parseFloat(calcER(m)),0)/pm.length).toFixed(1):0;
+    return`<div class="platform-card"><div style="font-size:13px;font-weight:700;margin-bottom:4px">${p}</div><div style="font-size:11px;color:var(--text3);margin-bottom:10px">${pm.length} posts tracked</div><div class="platform-metric"><span>Views</span><span>${fmt(tv)}</span></div><div class="platform-metric"><span>Likes</span><span>${fmt(tl)}</span></div><div class="platform-metric"><span>Avg ER</span><span style="color:var(--green)">${avgER}%</span></div></div>`;
+  }).join('')}</div>`}`;
 }
+
+// ── AD SCRIPTS SECTION ─────────────────────────────────────────────────────
+
+function renderAdScripts(c) {
+  const metricOptions = allMetrics.length
+    ? allMetrics.sort((a,b)=>calcScore(b)-calcScore(a)).map(m=>`<option value="${m.id}">${m.title}${m.platform?' ('+m.platform+')':''} — Score ${calcScore(m)}</option>`).join('')
+    : '<option value="">No metrics logged yet</option>';
+
+  c.innerHTML = `
+  <div style="margin-bottom:20px">
+    <h2 style="font-size:22px;margin-bottom:4px">🎯 Ad Script Generator</h2>
+    <p style="color:var(--text3);font-size:13px">Turn your best-performing content into conversion-optimised ad scripts. Feed in what worked, get scripts built to replicate it.</p>
+  </div>
+
+  <div class="adscript-layout">
+
+    <!-- LEFT: CONFIG PANEL -->
+    <div class="adscript-form-panel">
+
+      <div>
+        <span class="as-section-label">Base Content (optional)</span>
+        <select class="as-select" id="as-metric-select" onchange="prefillMetricContext()">
+          <option value="">Start from scratch / describe manually</option>
+          ${metricOptions}
+        </select>
+        <div id="as-metric-preview" style="margin-top:8px"></div>
+      </div>
+
+      <div>
+        <span class="as-section-label">What performed well?</span>
+        <textarea class="as-textarea" id="as-what-worked" placeholder="e.g. High ER on a guilt-relief hook about screen time, 4.2% CTR on a delivery-moment video, 12 leads from a cost-saving angle..."></textarea>
+      </div>
+
+      <div>
+        <span class="as-section-label">Ad Platform</span>
+        <select class="as-select" id="as-platform">
+          <option value="Meta Ads (Instagram/Facebook)">Meta Ads (Instagram / Facebook)</option>
+          <option value="Instagram Reels">Instagram Reels</option>
+          <option value="YouTube Shorts">YouTube Shorts</option>
+          <option value="Google Display Ads">Google Display Ads</option>
+          <option value="Google Search Ads">Google Search Ads</option>
+          <option value="TikTok Ads">TikTok Ads</option>
+        </select>
+      </div>
+
+      <div>
+        <span class="as-section-label">Script Format</span>
+        <div class="as-chips" id="as-format-chips">
+          <div class="as-chip active" data-val="Video Script (hook + body + CTA)">Video Script</div>
+          <div class="as-chip" data-val="Static Ad Copy (headline + body + CTA)">Static Ad Copy</div>
+          <div class="as-chip" data-val="Carousel Caption Series">Carousel Series</div>
+          <div class="as-chip" data-val="Testimonial-Style Script">Testimonial-Style</div>
+        </div>
+      </div>
+
+      <div>
+        <span class="as-section-label">Angle / Hook Type</span>
+        <div class="as-chips" id="as-angle-chips">
+          <div class="as-chip active" data-val="Guilt relief (I can't model reading but I want to raise a reader)">Guilt Relief</div>
+          <div class="as-chip" data-val="Cost savings (stop buying books they read once)">Cost Savings</div>
+          <div class="as-chip" data-val="Outcome moment (child reading independently, before bed, at dinner)">Outcome Moment</div>
+          <div class="as-chip" data-val="Delivery excitement (the package arriving is the event)">Delivery Excitement</div>
+          <div class="as-chip" data-val="Child's agency (when they choose the book, they read it)">Child's Choice</div>
+          <div class="as-chip" data-val="Tier 2 library gap (a library even if your city doesn't have one)">Tier 2 / Library Gap</div>
+        </div>
+      </div>
+
+      <div>
+        <span class="as-section-label">Language</span>
+        <select class="as-select" id="as-language">
+          <option>English</option><option>Hindi</option><option>Hinglish</option>
+          <option>Marathi</option><option>Tamil</option><option>Telugu</option>
+        </select>
+      </div>
+
+      <div>
+        <span class="as-section-label">Number of Variants</span>
+        <div class="variant-count-row">
+          <span class="variant-label">Generate</span>
+          <select class="as-select" id="as-variants" style="width:80px">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+          </select>
+          <span class="variant-label">script variants</span>
+        </div>
+      </div>
+
+      <div>
+        <span class="as-section-label">Additional Context (optional)</span>
+        <textarea class="as-textarea" id="as-extra" placeholder="Any specific offer, CTA, promo, or product detail to include..."></textarea>
+      </div>
+
+      <button class="generate-btn" id="as-generate-btn" onclick="generateAdScripts()">
+        ✨ Generate Ad Scripts
+      </button>
+    </div>
+
+    <!-- RIGHT: OUTPUT PANEL -->
+    <div class="adscript-output-panel" id="as-output-panel">
+      <div class="adscript-empty">
+        <div style="font-size:48px;margin-bottom:12px">🎯</div>
+        <h3>No scripts yet</h3>
+        <p style="font-size:13px;max-width:280px;line-height:1.6">Configure your inputs on the left and hit Generate. Scripts are built from your actual performance data.</p>
+      </div>
+    </div>
+
+  </div>`;
+
+  // Attach chip toggle listeners
+  document.querySelectorAll('#as-format-chips .as-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#as-format-chips .as-chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+  document.querySelectorAll('#as-angle-chips .as-chip').forEach(chip => {
+    chip.addEventListener('click', () => chip.classList.toggle('active'));
+  });
+}
+
+function prefillMetricContext() {
+  const id = document.getElementById('as-metric-select').value;
+  const preview = document.getElementById('as-metric-preview');
+  if (!id) { preview.innerHTML = ''; return; }
+  const m = allMetrics.find(x => x.id === id);
+  if (!m) return;
+  const sc = calcScore(m);
+  const er = calcER(m);
+  preview.innerHTML = `<div class="perf-context-card">
+    <strong>${m.title}</strong> · ${m.platform||'No platform'}<br>
+    Views: ${fmt(m.views)} · ER: ${er}% · CTR: ${m.ctr||0}% · Leads: ${fmt(m.leads)} · Score: ${sc}
+    ${m.notes ? `<br><span style="color:var(--text3);font-size:11px;margin-top:4px;display:block">"${m.notes}"</span>` : ''}
+  </div>`;
+  // Pre-fill "what worked" based on score analysis
+  const insights = [];
+  if (parseFloat(er) > 5) insights.push(`high engagement rate (${er}%)`);
+  if (m.leads > 0) insights.push(`generated ${m.leads} leads`);
+  if (m.conversions > 0) insights.push(`${m.conversions} conversions`);
+  if (parseFloat(m.ctr) > 2) insights.push(`strong CTR of ${m.ctr}%`);
+  if (m.shares > 0) insights.push(`${fmt(m.shares)} shares (high shareability)`);
+  if (insights.length) {
+    document.getElementById('as-what-worked').value = `Content "${m.title}" on ${m.platform||'this platform'} performed well: ${insights.join(', ')}.`;
+  }
+}
+
+async function generateAdScripts() {
+  const btn = document.getElementById('as-generate-btn');
+  const outputPanel = document.getElementById('as-output-panel');
+  if (adScriptLoading) return;
+
+  const whatWorked = document.getElementById('as-what-worked').value.trim();
+  const platform = document.getElementById('as-platform').value;
+  const format = document.querySelector('#as-format-chips .as-chip.active')?.dataset.val || 'Video Script';
+  const angles = [...document.querySelectorAll('#as-angle-chips .as-chip.active')].map(c=>c.dataset.val);
+  const language = document.getElementById('as-language').value;
+  const variants = parseInt(document.getElementById('as-variants').value) || 3;
+  const extra = document.getElementById('as-extra').value.trim();
+
+  // Build selected metric context
+  const metricId = document.getElementById('as-metric-select').value;
+  const m = metricId ? allMetrics.find(x=>x.id===metricId) : null;
+  let perfContext = '';
+  if (m) {
+    perfContext = `\n\nPERFORMANCE DATA FROM TOP CONTENT:\n- Title: "${m.title}"\n- Platform: ${m.platform||'unknown'}\n- Views: ${fmt(m.views)}, Engagement Rate: ${calcER(m)}%, CTR: ${m.ctr||0}%, Leads: ${m.leads||0}, Conversions: ${m.conversions||0}\n- Performance Score: ${calcScore(m)}/100\n- Notes: ${m.notes||'none'}\nUse these signals to inform what tone, hook style and CTA angle performed well.`;
+  }
+
+  const systemPrompt = `You are an expert performance-driven ad copywriter for neOwn, a children's book subscription service in India.
+
+BRAND CONTEXT:
+- neOwn delivers curated children's books monthly via subscription
+- Primary audience: mothers aged 30-42 with children aged 3-12
+- She believes reading matters but is not a reader herself — cannot model the habit at home
+- She is budget-aware; at ₹400-600/book, buying is a gamble. neOwn removes the financial risk.
+- Key insight: when children choose their own books from the app, they actually read them
+- 94% of loyal subscribers would recommend neOwn
+- Tier 2 parents have additional motivation: no physical library in their city${perfContext}
+
+YOUR JOB:
+Generate ${variants} distinct ad script variant(s) for ${platform}.
+Format: ${format}
+Angle(s) to use: ${angles.length ? angles.join(' / ') : 'best judgment based on performance data'}
+Language: ${language}
+${whatWorked ? `What we know worked: ${whatWorked}` : ''}
+${extra ? `Additional context: ${extra}` : ''}
+
+OUTPUT FORMAT:
+Return exactly ${variants} variant(s). Label each clearly:
+
+---VARIANT 1---
+[HOOK] (first 3 seconds / opening line)
+[BODY] (main message)
+[CTA] (call to action)
+[DIRECTOR'S NOTE] (1 sentence on why this angle should convert)
+
+---VARIANT 2---
+(if applicable)
+
+And so on. Each variant must use a meaningfully different angle, hook, or emotional entry point. Keep hooks under 8 words. CTAs should be specific, not generic ("Start your child's reading habit for ₹X/month" not "Subscribe now").`;
+
+  adScriptLoading = true;
+  btn.disabled = true;
+  btn.innerHTML = '<span style="opacity:0.7">Generating...</span>';
+
+  outputPanel.innerHTML = `<div class="script-card"><div class="script-card-body"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>`;
+
+  try {
+    const resp = await fetch('/api/copywriter', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: 'Generate the ad scripts now based on all the parameters in the system prompt.' }],
+        system: systemPrompt
+      })
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    const reply = data.content;
+    renderAdScriptOutput(reply, platform, format);
+  } catch(err) {
+    outputPanel.innerHTML = `<div class="script-card"><div class="script-card-body">⚠️ Error: ${err.message}</div></div>`;
+  }
+
+  adScriptLoading = false;
+  btn.disabled = false;
+  btn.innerHTML = '✨ Generate Ad Scripts';
+}
+
+function renderAdScriptOutput(rawText, platform, format) {
+  const outputPanel = document.getElementById('as-output-panel');
+
+  // Split into variants
+  const variants = rawText.split(/---VARIANT\s*\d+---/i).map(s=>s.trim()).filter(Boolean);
+
+  if (!variants.length) {
+    // Fallback: show as a single card
+    outputPanel.innerHTML = buildScriptCard(rawText, platform, format, 1, 1);
+    return;
+  }
+
+  outputPanel.innerHTML = variants.map((v, i) =>
+    buildScriptCard(v, platform, format, i+1, variants.length)
+  ).join('');
+}
+
+function buildScriptCard(text, platform, format, num, total) {
+  const id = 'sc_' + Date.now() + '_' + num;
+  return `<div class="script-card" id="${id}">
+    <div class="script-card-header">
+      <span class="script-card-label">Variant ${num}${total>1?' of '+total:''} · ${format.split('(')[0].trim()}</span>
+      <span class="script-card-meta">${platform}</span>
+    </div>
+    <div class="script-card-body">${escHtml(text)}</div>
+    <div class="script-card-actions">
+      <button class="script-action-btn" onclick="copyScript('${id}')">📋 Copy</button>
+      <button class="script-action-btn" onclick="saveScriptToBank('${id}', '${escAttr(platform)}', '${escAttr(format)}')">💾 Save to Bank</button>
+      <button class="script-action-btn" onclick="sendScriptToWriter('${id}')">✍️ Refine in Copywriter</button>
+    </div>
+  </div>`;
+}
+
+function copyScript(cardId) {
+  const text = document.getElementById(cardId)?.querySelector('.script-card-body')?.textContent || '';
+  navigator.clipboard.writeText(text.trim());
+  showToast('Copied!', 'success');
+}
+
+async function saveScriptToBank(cardId, platform, format) {
+  const text = document.getElementById(cardId)?.querySelector('.script-card-body')?.textContent || '';
+  await DB.saveBankItem({
+    title: `Ad Script — ${platform} (${new Date().toLocaleDateString()})`,
+    description: text.trim(), script: text.trim(),
+    platform, status: 'idea', source: 'performance-ad-scripts',
+    tags: ['ad-script', format.toLowerCase().split('(')[0].trim()]
+  });
+  showToast('Saved to Content Bank!', 'success');
+}
+
+function sendScriptToWriter(cardId) {
+  const text = document.getElementById(cardId)?.querySelector('.script-card-body')?.textContent || '';
+  DB.setPending('copywriter_prefill', { text: text.trim() });
+  window.location.href = 'copywriter.html';
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return String(s).replace(/'/g,"\\'"); }
+
+// ── EXISTING METRIC FUNCTIONS ──────────────────────────────────────────────
 
 async function openAdd(){
   editingId=null;
   document.getElementById('mm-title').textContent='Log Content Metrics';
-  ['m-title','m-views','m-likes','m-comments','m-shares','m-saves','m-reach','m-clicks','m-leads','m-conversions','m-spend','m-revenue','m-watchtime','m-avgdur','m-followers','m-ctr','m-er','m-notes'].forEach(id=>document.getElementById(id).value='');
+  ['m-title','m-views','m-likes','m-comments','m-shares','m-saves','m-reach','m-clicks','m-leads','m-conversions','m-spend','m-revenue','m-watchtime','m-avgdur','m-followers','m-ctr','m-er','m-notes'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
   document.getElementById('m-platform').value='';
   document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
-  const tasks=await DB.getTasks({status:'content-live,live'});
+  const tasks=await DB.getTasks({status:'live'});
   const sel=document.getElementById('m-task-select');
   sel.innerHTML='<option value="">Pick a live content piece...</option>';
-  tasks.forEach(t=>{
-    let platformLabel = '';
-    if (t.platform) {
-      try { const p=JSON.parse(t.platform); platformLabel=Array.isArray(p)?p[0]:t.platform; }
-      catch { platformLabel=t.platform; }
-    }
-    sel.innerHTML+=`<option value="${t.id}" data-platform="${platformLabel||''}" data-date="${t.liveDate||''}">${t.title}${platformLabel?' ('+platformLabel+')':''}</option>`;
-  });
+  tasks.forEach(t=>sel.innerHTML+=`<option value="${t.id}" data-platform="${t.platform||''}" data-date="${t.liveDate||''}">${t.title}${t.platform?' ('+t.platform+')':''}</option>`);
   document.getElementById('metrics-modal').classList.add('open');
 }
 
@@ -303,9 +615,7 @@ function prefill(taskId){
   if(!opt) return;
   const text=opt.textContent;
   document.getElementById('m-title').value=text.split('(')[0].trim();
-  let platform=opt.dataset.platform||'';
-  // platform may be JSON array
-  try { const parsed=JSON.parse(platform); if(Array.isArray(parsed)) platform=parsed[0]||''; } catch{}
+  const platform=opt.dataset.platform||'';
   if(platform) document.getElementById('m-platform').value=platform;
   const date=opt.dataset.date||'';
   if(date) document.getElementById('m-date').value=date;

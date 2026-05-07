@@ -2,398 +2,131 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>neOwn — Content Studio</title>
+<title>ContentPilot — Dashboard</title>
 <link rel="stylesheet" href="shared.css"/>
 <style>
-body { display: flex; flex-direction: column; min-height: 100vh; }
+.dash-nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.user-chip{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:40px;padding:6px 14px 6px 6px;cursor:pointer;transition:all 0.2s}
+.user-chip:hover{border-color:var(--accent)}
+.user-chip .avatar{width:28px;height:28px;font-size:12px}
+.user-chip span{font-size:13px;font-weight:600}
+.dashboard-body{min-height:calc(100vh - 65px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;background:radial-gradient(ellipse at 50% 0%,rgba(108,99,255,0.06) 0%,transparent 60%)}
+.dash-header{text-align:center;margin-bottom:60px}
+.dash-header h1{font-size:42px;font-weight:700;line-height:1.2}
+.dash-header h1 span{background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dash-header p{color:var(--text3);font-size:16px;margin-top:12px}
+.widgets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%;max-width:1020px}
+.widget-span-2{grid-column:span 2}
+.widget-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 32px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;animation:fadeIn 0.5s ease forwards;opacity:0;text-decoration:none;display:block}
+.widget-card:nth-child(1){animation-delay:0.05s}.widget-card:nth-child(2){animation-delay:0.1s}.widget-card:nth-child(3){animation-delay:0.15s}.widget-card:nth-child(4){animation-delay:0.2s}.widget-card:nth-child(5){animation-delay:0.25s}
+.widget-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;border-radius:20px}
+.widget-card:hover{transform:translateY(-4px);border-color:transparent;box-shadow:0 20px 50px rgba(0,0,0,0.3)}
+.widget-card:hover::before{opacity:1}
+.widget-card.purple::before{background:linear-gradient(135deg,rgba(108,99,255,0.1),rgba(139,92,246,0.05))}
+.widget-card.blue::before{background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(99,179,237,0.05))}
+.widget-card.green::before{background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(16,185,129,0.05))}
+.widget-card.pink::before{background:linear-gradient(135deg,rgba(244,114,182,0.1),rgba(236,72,153,0.05))}
+.widget-card.amber::before{background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(251,146,60,0.05))}
+.widget-card:hover .widget-icon{transform:scale(1.1) rotate(-5deg)}
+.widget-icon{font-size:44px;margin-bottom:20px;display:block;transition:transform 0.3s;position:relative;z-index:1}
+.widget-title{font-size:22px;font-weight:700;margin-bottom:10px;position:relative;z-index:1}
+.widget-desc{font-size:14px;color:var(--text3);line-height:1.6;position:relative;z-index:1}
+.widget-arrow{position:absolute;bottom:28px;right:28px;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:0;transform:translateX(-8px);transition:all 0.3s}
+.widget-card:hover .widget-arrow{opacity:1;transform:translateX(0)}
+.widget-card.purple .widget-arrow{background:rgba(108,99,255,0.2);color:var(--accent2)}
+.widget-card.blue .widget-arrow{background:rgba(56,189,248,0.2);color:var(--accent3)}
+.widget-card.green .widget-arrow{background:rgba(52,211,153,0.2);color:var(--green)}
+.widget-card.pink .widget-arrow{background:rgba(244,114,182,0.2);color:var(--pink)}
+.widget-card.amber .widget-arrow{background:rgba(245,158,11,0.2);color:#f59e0b}
+.widget-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px;position:relative;z-index:1}
+.tag-purple-bg{background:rgba(108,99,255,0.15);color:var(--accent2)}
+.tag-blue-bg{background:rgba(56,189,248,0.15);color:var(--accent3)}
+.tag-green-bg{background:rgba(52,211,153,0.15);color:var(--green)}
+.tag-pink-bg{background:rgba(244,114,182,0.15);color:var(--pink)}
+.tag-amber-bg{background:rgba(245,158,11,0.15);color:#f59e0b}
+.quick-stats{display:flex;gap:32px;margin-top:48px;color:var(--text3);font-size:13px}
+.quick-stats span{display:flex;align-items:center;gap:6px}
+.stat-dot{width:8px;height:8px;border-radius:50%}
 
-/* ── Dashboard Nav ── */
-.dash-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 28px;
-  height: 54px;
-  background: rgba(11,10,23,0.95);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  gap: 12px;
-}
-.dash-nav::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(240,0,140,0.35) 50%, transparent 100%);
-  pointer-events: none;
-}
-
-.user-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 99px;
-  padding: 4px 12px 4px 4px;
-  cursor: default;
-  transition: border-color 0.2s;
-}
-.user-chip:hover { border-color: rgba(240,0,140,0.3); }
-.user-chip .avatar { width: 26px; height: 26px; font-size: 11px; }
-.user-chip span { font-size: 13px; font-weight: 600; color: var(--text2); }
-
-/* ── Main Body ── */
-.dashboard-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 52px 24px 72px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Ambient background orbs */
-.dashboard-body::before {
-  content: '';
-  position: absolute;
-  width: 600px; height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(240,0,140,0.06) 0%, transparent 70%);
-  top: -200px; left: 50%;
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-.dashboard-body::after {
-  content: '';
-  position: absolute;
-  width: 400px; height: 400px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(110,91,255,0.05) 0%, transparent 70%);
-  bottom: -100px; right: 10%;
-  pointer-events: none;
-}
-
-/* ── Header ── */
-.dash-header {
-  text-align: center;
-  margin-bottom: 52px;
-  position: relative;
-  z-index: 1;
-}
-.dash-greeting-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--pink-light);
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.dash-greeting-eyebrow::before,
-.dash-greeting-eyebrow::after {
-  content: '';
-  width: 28px;
-  height: 1px;
-  background: rgba(240,0,140,0.35);
-}
-.dash-header h1 {
-  font-family: 'Syne', sans-serif;
-  font-size: 36px;
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  color: var(--text);
-}
-.dash-header h1 .name-accent {
-  background: linear-gradient(120deg, var(--pink) 0%, var(--indigo) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.dash-header p {
-  color: var(--text3);
-  font-size: 14px;
-  margin-top: 10px;
-  font-weight: 400;
-}
-
-/* ── Widget Grid ── */
-.widgets-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  width: 100%;
-  max-width: 800px;
-  position: relative;
-  z-index: 1;
-}
-
-/* ── Widget Card ── */
-.widget-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 24px 22px 20px;
-  cursor: pointer;
-  transition: border-color 0.22s, transform 0.22s, background 0.22s, box-shadow 0.22s;
-  position: relative;
-  overflow: hidden;
-  text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  opacity: 0;
-  animation: fadeInUp 0.4s ease forwards;
-  box-shadow: var(--shadow-card);
-}
-
-/* Stagger */
-.widget-card:nth-child(1) { animation-delay: 0.05s; }
-.widget-card:nth-child(2) { animation-delay: 0.10s; }
-.widget-card:nth-child(3) { animation-delay: 0.15s; }
-.widget-card:nth-child(4) { animation-delay: 0.20s; }
-.widget-card:nth-child(5) { animation-delay: 0.25s; }
-.widget-card:nth-child(6) { animation-delay: 0.30s; }
-.widget-card:nth-child(7) { animation-delay: 0.35s; }
-.widget-card:nth-child(8) { animation-delay: 0.40s; }
-
-.widget-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--border2);
-  background: var(--card2);
-}
-
-/* Color-coded top border */
-.widget-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  opacity: 0;
-  transition: opacity 0.22s;
-}
-.widget-card:hover::before { opacity: 1; }
-.widget-card.pink::before   { background: linear-gradient(90deg, var(--pink), var(--indigo)); }
-.widget-card.orange::before { background: linear-gradient(90deg, var(--orange), var(--amber)); }
-.widget-card.blue::before   { background: linear-gradient(90deg, var(--blue), var(--teal)); }
-.widget-card.green::before  { background: linear-gradient(90deg, var(--green), var(--teal)); }
-.widget-card.indigo::before { background: linear-gradient(90deg, var(--indigo), var(--blue)); }
-.widget-card.teal::before   { background: linear-gradient(90deg, var(--teal), var(--green)); }
-
-/* Hover glow based on color */
-.widget-card.pink:hover   { box-shadow: 0 8px 32px rgba(240,0,140,0.12); }
-.widget-card.orange:hover { box-shadow: 0 8px 32px rgba(255,112,48,0.12); }
-.widget-card.blue:hover   { box-shadow: 0 8px 32px rgba(56,189,248,0.12); }
-.widget-card.green:hover  { box-shadow: 0 8px 32px rgba(0,204,122,0.12); }
-.widget-card.indigo:hover { box-shadow: 0 8px 32px rgba(110,91,255,0.12); }
-.widget-card.teal:hover   { box-shadow: 0 8px 32px rgba(0,212,176,0.12); }
-
-/* Card content */
-.widget-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-.widget-icon {
-  font-size: 24px;
-  line-height: 1;
-  transition: transform 0.22s;
-}
-.widget-card:hover .widget-icon { transform: scale(1.12) rotate(-4deg); }
-
-.widget-tag {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-/* Tag variants */
-.tag-pink-bg   { background: rgba(240,0,140,0.12);   color: var(--pink-light); }
-.tag-orange-bg { background: rgba(255,112,48,0.12);  color: var(--orange); }
-.tag-blue-bg   { background: rgba(56,189,248,0.12);  color: var(--blue); }
-.tag-green-bg  { background: rgba(0,204,122,0.12);   color: var(--green); }
-.tag-indigo-bg { background: rgba(110,91,255,0.12);  color: var(--indigo2); }
-.tag-teal-bg   { background: rgba(0,212,176,0.12);   color: var(--teal); }
-
-.widget-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.3;
-  font-family: 'Syne', sans-serif;
-}
-.widget-desc {
-  font-size: 12.5px;
-  color: var(--text3);
-  line-height: 1.55;
-}
-
-/* NEW badge */
-.new-badge {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
-  color: #fff;
-  font-size: 9px;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 20px;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  box-shadow: 0 2px 8px var(--pink-glow);
-}
-
-/* ── Stats Bar ── */
-.quick-stats {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  margin-top: 36px;
-  color: var(--text3);
-  font-size: 12.5px;
-  flex-wrap: wrap;
-  justify-content: center;
-  position: relative;
-  z-index: 1;
-}
-.quick-stats span {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  transition: color 0.15s;
-}
-.quick-stats span:hover { color: var(--text2); }
-.stat-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.stat-num { font-weight: 700; color: var(--text2); font-family: 'Syne', sans-serif; }
+/* ICP card inline stats */
+.icp-mini-stats{display:flex;gap:14px;margin-top:16px;position:relative;z-index:1}
+.icp-mini-stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 10px;text-align:center}
+.icp-mini-stat .num{font-size:15px;font-weight:800;color:#f59e0b}
+.icp-mini-stat .lbl{font-size:10px;color:var(--text3);margin-top:1px}
 </style>
 </head>
 <body>
-
 <nav class="dash-nav">
-  <a href="dashboard.html" class="nav-logo">
-    <img src="https://neown.in/cdn/shop/files/neOwn_website_logo_4f4f6dc2-8b02-4ac7-bfda-842abc1992f8.png?v=1745232656&width=500" alt="neOwn" class="nav-logo-img"/>
-  </a>
-  <div style="display:flex;align-items:center;gap:8px;">
+  <div class="nav-logo">ContentPilot</div>
+  <div style="display:flex;gap:12px;align-items:center">
     <div class="user-chip">
       <div class="avatar" id="user-avatar">?</div>
-      <span id="user-name">Loading…</span>
+      <span id="user-name">Loading...</span>
     </div>
-    <button class="btn-ghost" onclick="Auth.logout()">Sign out</button>
+    <button class="btn-ghost" onclick="Auth.logout()">Sign Out</button>
   </div>
 </nav>
 
 <main class="dashboard-body">
   <div class="dash-header">
-    <div class="dash-greeting-eyebrow">Content Studio</div>
-    <h1>Hello, <span class="name-accent" id="greeting-name">there</span> 👋</h1>
+    <h1>Hello, <span id="greeting-name">there</span> 👋</h1>
     <p>What would you like to work on today?</p>
   </div>
 
   <div class="widgets-grid">
 
-    <a href="copywriter.html" class="widget-card pink">
-      <div class="widget-top">
-        <span class="widget-icon">✍️</span>
-        <span class="widget-tag tag-pink-bg">AI Powered</span>
-      </div>
+    <a href="copywriter.html" class="widget-card purple">
+      <span class="widget-icon">✍️</span>
+      <div class="widget-tag tag-purple-bg">AI Powered</div>
       <div class="widget-title">Copywriter</div>
-      <div class="widget-desc">Generate scripts, captions, and copy for any platform with AI.</div>
-    </a>
-
-    <a href="text-to-video.html" class="widget-card orange">
-      <span class="new-badge">New</span>
-      <div class="widget-top">
-        <span class="widget-icon">🎬</span>
-        <span class="widget-tag tag-orange-bg">Veo Powered</span>
-      </div>
-      <div class="widget-title">Text to Video</div>
-      <div class="widget-desc">Generate short-form videos from text prompts using Google Veo.</div>
+      <div class="widget-desc">Generate scripts, captions, and copy for any platform with AI. Set tone, format, language, and more.</div>
+      <div class="widget-arrow">→</div>
     </a>
 
     <a href="calendar.html" class="widget-card blue">
-      <div class="widget-top">
-        <span class="widget-icon">📅</span>
-        <span class="widget-tag tag-blue-bg">Planning</span>
-      </div>
+      <span class="widget-icon">📅</span>
+      <div class="widget-tag tag-blue-bg">Planning</div>
       <div class="widget-title">Content Calendar</div>
-      <div class="widget-desc">Plan and track all your content with quota tracking and book library.</div>
+      <div class="widget-desc">Plan and track all your content. Kanban, list, calendar, and block views with team collaboration.</div>
+      <div class="widget-arrow">→</div>
+    </a>
+
+    <a href="icp.html" class="widget-card amber">
+      <span class="widget-icon">🎯</span>
+      <div class="widget-tag tag-amber-bg">Strategy</div>
+      <div class="widget-title">ICP Reference</div>
+      <div class="widget-desc">The Reading Believer — who she is, what drives her, 7 messaging pegs, and the signals that make her stay or churn.</div>
+      <div class="icp-mini-stats">
+        <div class="icp-mini-stat"><div class="num">52%</div><div class="lbl">of base</div></div>
+        <div class="icp-mini-stat"><div class="num">94%</div><div class="lbl">rec. rate</div></div>
+        <div class="icp-mini-stat"><div class="num">9.57</div><div class="lbl">read score</div></div>
+      </div>
+      <div class="widget-arrow">→</div>
     </a>
 
     <a href="bank.html" class="widget-card green">
-      <div class="widget-top">
-        <span class="widget-icon">🗂️</span>
-        <span class="widget-tag tag-green-bg">Repository</span>
-      </div>
+      <span class="widget-icon">🗂️</span>
+      <div class="widget-tag tag-green-bg">Repository</div>
       <div class="widget-title">Content Bank</div>
-      <div class="widget-desc">Store and organize ideas, scripts, and assets in one place.</div>
+      <div class="widget-desc">Store and organize your content ideas, scripts, and assets in one searchable repository.</div>
+      <div class="widget-arrow">→</div>
     </a>
 
-    <a href="mytasks.html" class="widget-card indigo">
-      <span class="new-badge">New</span>
-      <div class="widget-top">
-        <span class="widget-icon">✅</span>
-        <span class="widget-tag tag-indigo-bg">Personal</span>
-      </div>
-      <div class="widget-title">My Tasks</div>
-      <div class="widget-desc">Private daily to-do list with priorities — visible only to you.</div>
-    </a>
-
-    <a href="graphic-gen.html" class="widget-card teal">
-      <span class="new-badge">New</span>
-      <div class="widget-top">
-        <span class="widget-icon">🎨</span>
-        <span class="widget-tag tag-teal-bg">Imagen 4</span>
-      </div>
-      <div class="widget-title">Graphic Generator</div>
-      <div class="widget-desc">Generate ads, carousels and creatives with Google Imagen 4.</div>
-    </a>
-
-    <a href="campaign.html" class="widget-card pink" style="grid-column: 1 / -1; max-width: 100%;">
-      <span class="new-badge">New</span>
-      <div class="widget-top">
-        <span class="widget-icon">🚀</span>
-        <span class="widget-tag tag-pink-bg">Performance Marketing</span>
-      </div>
-      <div class="widget-title">Campaign Manager</div>
-      <div class="widget-desc">Plan, optimize &amp; scale ad campaigns end-to-end — copy, audiences, creatives, A/B tests, budgets, predictions, retargeting funnels &amp; more.</div>
-    </a>
-
-    <a href="performance.html" class="widget-card pink" style="grid-column: 1 / -1; max-width: 100%;">
-      <div class="widget-top">
-        <span class="widget-icon">📊</span>
-        <span class="widget-tag tag-pink-bg">Analytics</span>
-      </div>
+    <a href="performance.html" class="widget-card pink">
+      <span class="widget-icon">📊</span>
+      <div class="widget-tag tag-pink-bg">Analytics</div>
       <div class="widget-title">Performance</div>
-      <div class="widget-desc">Track KPIs and metrics for your live content. Understand what's working.</div>
+      <div class="widget-desc">Track KPIs, understand what worked, and generate performance-based ad scripts with AI.</div>
+      <div class="widget-arrow">→</div>
     </a>
 
   </div>
 
   <div class="quick-stats">
-    <span><div class="stat-dot" style="background:var(--pink)"></div><span class="stat-num" id="stat-tasks">—</span> tasks</span>
-    <span><div class="stat-dot" style="background:var(--green)"></div><span class="stat-num" id="stat-live">—</span> live</span>
-    <span><div class="stat-dot" style="background:var(--orange)"></div><span class="stat-num" id="stat-progress">—</span> in progress</span>
-    <span><div class="stat-dot" style="background:var(--blue)"></div><span class="stat-num" id="stat-bank">—</span> in bank</span>
+    <span><div class="stat-dot" style="background:var(--accent)"></div><span id="stat-tasks">— tasks</span></span>
+    <span><div class="stat-dot" style="background:var(--green)"></div><span id="stat-live">— live</span></span>
+    <span><div class="stat-dot" style="background:var(--orange)"></div><span id="stat-progress">— in progress</span></span>
+    <span><div class="stat-dot" style="background:var(--pink)"></div><span id="stat-bank">— in bank</span></span>
   </div>
 </main>
 
@@ -402,27 +135,17 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 <script src="auth.js"></script>
 <script>
 window._sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 (async () => {
-  try {
-    const user = await Auth.requireAuth();
-    if (!user) return;
-    document.getElementById('user-avatar').textContent = user.avatar || user.email?.[0]?.toUpperCase() || '?';
-    document.getElementById('user-name').textContent = user.name || user.email || 'User';
-    document.getElementById('greeting-name').textContent = (user.name || user.email || 'there').split(' ')[0];
-  } catch(e) {
-    document.getElementById('greeting-name').textContent = 'there';
-  }
-})();
-
-(async () => {
-  try {
-    const [tasks, bankItems] = await Promise.all([DB.getTasks(), DB.getBankItems()]);
-    document.getElementById('stat-tasks').textContent = tasks.length;
-    document.getElementById('stat-live').textContent = tasks.filter(t=>t.status==='content-live'||t.status==='live').length;
-    document.getElementById('stat-progress').textContent = tasks.filter(t=>['shoot-in-progress','edit-in-progress','in-progress'].includes(t.status)).length;
-    document.getElementById('stat-bank').textContent = bankItems.length;
-  } catch(e) {}
+  const user = await Auth.requireAuth();
+  if (!user) return;
+  document.getElementById('user-avatar').textContent = user.avatar;
+  document.getElementById('user-name').textContent = user.name;
+  document.getElementById('greeting-name').textContent = user.name.split(' ')[0];
+  const [tasks, bankItems] = await Promise.all([DB.getTasks(), DB.getBankItems()]);
+  document.getElementById('stat-tasks').textContent = tasks.length + ' tasks';
+  document.getElementById('stat-live').textContent = tasks.filter(t=>t.status==='live').length + ' live';
+  document.getElementById('stat-progress').textContent = tasks.filter(t=>t.status==='in-progress').length + ' in progress';
+  document.getElementById('stat-bank').textContent = bankItems.length + ' in bank';
 })();
 </script>
 </body>
